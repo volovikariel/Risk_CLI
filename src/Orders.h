@@ -1,9 +1,12 @@
-class Order
+namespace Warzone
 {
+    class Order
+    {
 
-};
+    };
 
-class OrdersList
-{
+    class OrdersList
+    {
 
-};
+    };
+}

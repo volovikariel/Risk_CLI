@@ -1,4 +1,7 @@
-class GameEngine
+namespace Warzone
 {
+    class GameEngine
+    {
 
-};
+    };
+}

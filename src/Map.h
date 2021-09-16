@@ -1,11 +1,14 @@
-class Territory
+namespace Warzone
 {
+    class Territory
+    {
 
-};
+    };
 
-class Map
-{
-public:
+    class Map
+    {
+    public:
 
-    bool validate();
-};
+        bool validate();
+    };
+}

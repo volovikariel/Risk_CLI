@@ -1,6 +1,9 @@
 #include "Map.h"
 
-class Player
+namespace Warzone
 {
+    class Player
+    {
 
-};
+    };
+}

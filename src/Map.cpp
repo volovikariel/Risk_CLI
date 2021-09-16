@@ -1,6 +1,9 @@
 #include "Map.h"
 
-bool Map::validate()
+namespace Warzone
 {
-    return true;
+    bool Map::validate()
+    {
+        return true;
+    }
 }

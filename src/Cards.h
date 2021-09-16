@@ -1,14 +1,17 @@
-class Card
+namespace Warzone
 {
+    class Card
+    {
 
-};
+    };
 
-class Deck
-{
+    class Deck
+    {
 
-};
+    };
 
-class Hand
-{
+    class Hand
+    {
 
-};
+    };
+}
