@@ -15,3 +15,10 @@ add_executable(${EXEC} ${SRC})
 list(APPEND BIN ${EXEC})
 
 install(TARGETS ${BIN} DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+# Enable all compiler warnings
+if(MSVC)
+    target_compile_options(Warzone PRIVATE /W4)
+else()
+    target_compile_options(Warzone PRIVATE -Wall)
+endif()
