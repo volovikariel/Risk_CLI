@@ -58,6 +58,7 @@ public:
     {
         None,
         NotConnectedGraph,
+        TerritoryNotInAContinent,
         TerritoryInMultipleContinents
     };
 

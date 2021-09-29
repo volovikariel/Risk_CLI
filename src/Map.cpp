@@ -126,10 +126,11 @@ std::ostream& operator << (std::ostream &out, const Territory& source)
 
 std::ostream& operator << (std::ostream& out, const Map::FormatError source)
 {
-    static const char* names[3] =
+    static const char* names[4] =
     {
         "None",
         "NotConnectedGraph",
+        "TerritoryNotInAContinent",
         "TerritoryInMultipleContinents"
     };
 
@@ -186,6 +187,7 @@ Map::FormatError Map::validate() const
 {
     const size_t numTerritories = territories.size();
 
+    // Validation 1: the map is a connected graph
     for (int i = 0; i < numTerritories; ++i)
     {
         std::vector<bool> visited(numTerritories);
@@ -200,6 +202,7 @@ Map::FormatError Map::validate() const
 
     // TODO validation 2
 
+    // Validation 3: Each country belongs to one and only one continent
     for (auto territory : territories)
     {
         bool belongsToContinent = false;
@@ -219,6 +222,11 @@ Map::FormatError Map::validate() const
                     belongsToContinent = true;
                 }
             }
+        }
+
+        if (!belongsToContinent) // Belongs to no continent at all
+        {
+            return Map::FormatError::TerritoryNotInAContinent;
         }
     }
 
