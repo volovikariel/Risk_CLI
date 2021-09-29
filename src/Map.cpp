@@ -169,7 +169,7 @@ void DFS(const std::vector<Territory*>& territories, int v, std::vector<bool>& v
     }
 }
 
-Map::FormatError Map::validate()
+Map::FormatError Map::validate() const
 {
     const size_t numTerritories = territories.size();
 
@@ -226,7 +226,7 @@ enum ParserState
     BorderState
 };
 
-Map::FormatError MapLoader::load(const std::string& filepath, Map& destination)
+Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) const
 {
     std::ifstream inputFile(filepath);
     std::string line;
@@ -241,7 +241,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination)
         {
             continue;
         }
-        else // Add a new cube transform to the current character
+        else
         {
             std::istringstream l = std::istringstream(line);
 

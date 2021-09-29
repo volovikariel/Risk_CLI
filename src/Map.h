@@ -67,14 +67,14 @@ public:
     bool operator==(const Map& other);
     friend std::ostream& operator << (std::ostream &out, const Map& source);
 
-    FormatError validate();
+    FormatError validate() const;
 
-    const std::vector<Continent*>& getContinents()
+    inline const std::vector<Continent*>& getContinents() const
     {
         return continents;
     }
 
-    const std::vector<Territory*>& getTerritories()
+    inline const std::vector<Territory*>& getTerritories() const
     {
         return territories;
     }
@@ -98,5 +98,5 @@ public:
     bool operator==(const MapLoader& other);
     friend std::ostream& operator<<(std::ostream& out, const MapLoader& source);
 
-    Map::FormatError load(const std::string& filepath, Map& destination);
+    Map::FormatError load(const std::string& filepath, Map& destination) const;
 };
