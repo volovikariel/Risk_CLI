@@ -33,3 +33,5 @@
 
 # Directories
 /build
+/.vscode
+/.vs
