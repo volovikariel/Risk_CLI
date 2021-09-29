@@ -12,7 +12,10 @@ void analyzeFile(const char* filepath)
     Map map;
     MapLoader loader;
     auto result = loader.load(filepath, map);
-    std::cout << "Load error: " << result << std::endl << std::endl;
+
+    std::cout << "Map: " << map.name << std::endl;
+    std::cout << "Load error: " << result << std::endl;
+    std::cout << std::endl;
 
     for (auto continent : map.getContinents())
     {
@@ -41,10 +44,19 @@ void analyzeFile(const char* filepath)
     }
 }
 
+void loadFile(const char* filepath)
+{
+    Map map;
+    MapLoader loader;
+    auto result = loader.load(filepath, map);
+
+    std::cout << "Map: " << map.name << std::endl;
+    std::cout << "Load error: " << result << std::endl;
+    std::cout << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
-    // TODO load any number of maps
-    
     bool displayHelp = argc > 1 && (
         sameString(argv[1], "h") ||
         sameString(argv[1], "help") ||
@@ -69,6 +81,10 @@ int main(int argc, char *argv[])
     }
     else
     {
-        // TODO multiple files
+        for (int i = 1; i < argc; ++i)
+        {
+            char* filepath = argv[i];
+            loadFile(filepath);
+        }
     }
 }

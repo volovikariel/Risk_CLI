@@ -271,6 +271,23 @@ enum class ParserState
 
 Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) const
 {
+    // Extract filename from filepath
+    int sepIdx = 0;
+    int dotIdx = filepath.size();
+    for (int i = 0; i < filepath.size(); ++i)
+    {
+        const char currentChar = filepath.at(i);
+        if (currentChar == '/' || currentChar == '\\' || currentChar == ':')
+        {
+            sepIdx = i + 1;
+        }
+        if (currentChar == '.')
+        {
+            dotIdx = i;
+        }
+    }
+    destination.name = filepath.substr(sepIdx, dotIdx - sepIdx);
+
     std::ifstream inputFile(filepath);
     std::string line;
 
