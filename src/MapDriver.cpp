@@ -11,10 +11,18 @@ void analyzeFile(const char* filepath)
 {
     Map map;
     MapLoader loader;
-    Map::FormatError result = loader.load(filepath, map);
+    int errorLine;
+    Map::FormatError result = loader.load(filepath, map, errorLine);
 
     std::cout << "Map: " << map.name << std::endl;
-    std::cout << "Load error: " << result << std::endl;
+    if (errorLine > 0)
+    {
+        std::cout << "Load error: " << result << " on line " << errorLine << std::endl;
+    }
+    else
+    {
+        std::cout << "Load error: " << result << std::endl;
+    }
     std::cout << std::endl;
 
     for (const Continent* const continent : map.getContinents())
@@ -48,10 +56,19 @@ void loadFile(const char* filepath)
 {
     Map map;
     MapLoader loader;
-    Map::FormatError result = loader.load(filepath, map);
+    int errorLine;
+    Map::FormatError result = loader.load(filepath, map, errorLine);
 
     std::cout << "Map: " << map.name << std::endl;
-    std::cout << "Load error: " << result << std::endl;
+    if (errorLine > 0)
+    {
+        std::cout << "Load error: " << result << " on line " << errorLine << std::endl;
+    }
+    else
+    {
+        std::cout << "Load error: " << result << std::endl;
+    }
+    std::cout << std::endl;
     std::cout << std::endl;
 }
 

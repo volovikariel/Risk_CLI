@@ -126,10 +126,13 @@ std::ostream& operator << (std::ostream &out, const Territory& source)
 
 std::ostream& operator << (std::ostream& out, const Map::FormatError source)
 {
-    static const char* names[6] =
+    static const char* names[9] =
     {
         "None",
         "FileDoesNotExist",
+        "BadContinentFormat",
+        "BadTerritoryFormat",
+        "BadBorderFormat",
         "NotConnectedGraph",
         "NotConnectedContinent",
         "TerritoryNotInAContinent",
@@ -186,7 +189,7 @@ void DFS(const std::vector<Territory*>& territories, const Territory* const node
     {
         int neighborIndex = neighbor->ID - 1;
 
-        // Modified DFS, only explores neighbors which are included in the territories argument
+        // Modified DFS: only explores neighbors which are included in the territories argument
         if (find(territories.begin(), territories.end(), neighbor) != territories.end())
         {
             if (!visited.at(neighborIndex))
@@ -202,6 +205,7 @@ Map::FormatError Map::validate() const
     const size_t numTerritories = territories.size();
 
     // Validation 1: The map is a connected graph
+    // Check that every territory can reach every other territory
     for (const Territory* const territory : territories)
     {
         std::vector<bool> visited(numTerritories);
@@ -217,12 +221,16 @@ Map::FormatError Map::validate() const
     // Validation 2: Continents are connected subgraphs
     for (const Continent* const continent : continents)
     {
+        // Check that every territory in this continent can reach every other
+        // territory in this continent, using paths that do not leave the
+        // continent.
         for (const Territory* const territory : continent->territories)
         {
             std::vector<bool> visited(numTerritories);
 
             DFS(continent->territories, territory, visited);
 
+            // Check that every territory in this continent was reached
             for (const Territory* const territoryCheck : continent->territories)
             {
                 int territoryCheckIndex = territoryCheck->ID - 1;
@@ -240,13 +248,15 @@ Map::FormatError Map::validate() const
     {
         bool belongsToContinent = false;
 
+        // Find continents that contain this territory
         for (const Continent* const continent : continents)
         {
             const std::vector<Territory*>& continentTerritories = continent->territories;
 
+            // Check if this territory belongs to this continent
             if (find(continentTerritories.begin(), continentTerritories.end(), territory) != continentTerritories.end())
             {
-                if (belongsToContinent) // Already belongs to a continent
+                if (belongsToContinent) // Already belongs to another continent
                 {
                     return Map::FormatError::TerritoryInMultipleContinents;
                 }
@@ -257,7 +267,7 @@ Map::FormatError Map::validate() const
             }
         }
 
-        if (!belongsToContinent) // Belongs to no continent at all
+        if (!belongsToContinent) // This territory belongs to no continent at all
         {
             return Map::FormatError::TerritoryNotInAContinent;
         }
@@ -302,8 +312,10 @@ enum class ParserState
     Border
 };
 
-Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) const
+Map::FormatError MapLoader::load(const std::string& filepath, Map& destination, int& errorLine) const
 {
+    errorLine = 0;
+
     // Extract filename from filepath
     size_t sepIdx = 0;
     size_t dotIdx = filepath.size();
@@ -324,6 +336,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
     std::ifstream inputFile(filepath);
     std::string line;
 
+    // Check that the file exists
     if (!inputFile.good())
     {
         return Map::FormatError::FileDoesNotExist;
@@ -335,7 +348,10 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
     // Read line by line
     while (std::getline(inputFile, line))
     {
-        if (line.length() <= 0) // Skipping empty line
+        errorLine++;
+
+        // Skipping empty line
+        if (line.length() <= 0)
         {
             continue;
         }
@@ -346,11 +362,13 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
             std::string firstWord;
             l >> firstWord;
 
-            if (firstWord == ";") // Skipping comments
+            // Skipping comments and empty lines
+            if (firstWord == ";" || firstWord.size() <= 0 || firstWord.front() == ';')
             {
                 continue;
             }
 
+            // Exit current state and prepare to parse a heading
             if (firstWord.front() == '[')
             {
                 state = ParserState::Heading;
@@ -379,12 +397,31 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
 
                 l >> bonus >> color;
 
+                // Check for format errors
+                if (l.fail())
+                {
+                    return Map::FormatError::BadContinentFormat;
+                }
+
                 Continent* continent = new Continent(continentID++, name, color, bonus);
                 destination.continents.push_back(continent);
             }
             else if (state == ParserState::Territory)
             {
-                int ID = std::stoi(firstWord);
+                int ID = -1;
+                try
+                {
+                    ID = std::stoi(firstWord);
+                }
+                catch (const std::invalid_argument&)
+                {
+                    return Map::FormatError::BadTerritoryFormat;
+                }
+                catch (const std::out_of_range&)
+                {
+                    return Map::FormatError::BadTerritoryFormat;
+                }
+
                 std::string name;
                 int continentID;
                 int x;
@@ -392,27 +429,85 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
 
                 l >> name >> continentID >> x >> y;
 
-                Continent* continent = destination.continents.at(continentID - 1);
+                // Check for format errors
+                if (l.fail())
+                {
+                    return Map::FormatError::BadTerritoryFormat;
+                }
+
+                int continentIndex = continentID - 1;
+
+                // Check that the continent exists
+                if (continentIndex < 0 || continentIndex >= destination.continents.size())
+                {
+                    return Map::FormatError::BadTerritoryFormat;
+                }
+
+                Continent* continent = destination.continents.at(continentIndex);
                 Territory* territory = new Territory(ID, name, continent, x, y);
 
                 continent->territories.push_back(territory);
                 destination.territories.push_back(territory);
+
+                // Ensure the territories are in perfect sequential order
+                if (destination.territories.size() != ID)
+                {
+                    return Map::FormatError::BadTerritoryFormat;
+                }
             }
             else if (state == ParserState::Border)
             {
-                int ID = std::stoi(firstWord);
+                int ID = -1;
+                try
+                {
+                    ID = std::stoi(firstWord);
+                }
+                catch (const std::invalid_argument&)
+                {
+                    return Map::FormatError::BadBorderFormat;
+                }
+                catch (const std::out_of_range&)
+                {
+                    return Map::FormatError::BadBorderFormat;
+                }
+
+                int territoryIndex = ID - 1;
+
+                // Check that territory exists
+                if (territoryIndex < 0 || territoryIndex >= destination.territories.size())
+                {
+                    return Map::FormatError::BadBorderFormat;
+                }
+
+                Territory* territory = destination.territories.at(territoryIndex);
+
                 int neighborID;
-
-                Territory* territory = destination.territories.at(ID - 1);
-
                 while (l >> neighborID)
                 {
-                    Territory* neighbor = destination.territories.at(neighborID - 1);
+                    int neighborIndex = neighborID - 1;
+
+                    // Check that neighbor exists
+                    if (neighborIndex < 0 || neighborIndex >= destination.territories.size())
+                    {
+                        return Map::FormatError::BadBorderFormat;
+                    }
+
+                    Territory* neighbor = destination.territories.at(neighborIndex);
                     territory->neighbors.push_back(neighbor);
+                }
+
+                // Did we miss any borders because of a bad intermediate value?
+                if (!l.eof())
+                {
+                    return Map::FormatError::BadBorderFormat;
                 }
             }
         }
     }
+
+    // Past this point there will only be graph errors
+    // which aren't related to a specific line.
+    errorLine = -1;
 
     inputFile.close();
     return destination.validate();

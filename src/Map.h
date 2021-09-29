@@ -58,6 +58,9 @@ public:
     {
         None,
         FileDoesNotExist,
+        BadContinentFormat,
+        BadTerritoryFormat,
+        BadBorderFormat,
         NotConnectedGraph,
         NotConnectedContinent,
         TerritoryNotInAContinent,
@@ -104,5 +107,5 @@ public:
     bool operator==(const MapLoader& other);
     friend std::ostream& operator<<(std::ostream& out, const MapLoader& source);
 
-    Map::FormatError load(const std::string& filepath, Map& destination) const;
+    Map::FormatError load(const std::string& filepath, Map& destination, int& errorLine) const;
 };
