@@ -126,10 +126,12 @@ std::ostream& operator << (std::ostream &out, const Territory& source)
 
 std::ostream& operator << (std::ostream& out, const Map::FormatError source)
 {
-    static const char* names[4] =
+    static const char* names[6] =
     {
         "None",
+        "FileDoesNotExist",
         "NotConnectedGraph",
+        "NotConnectedContinent",
         "TerritoryNotInAContinent",
         "TerritoryInMultipleContinents"
     };
@@ -168,17 +170,22 @@ std::ostream& operator << (std::ostream &out, const Map& source)
     return out;
 }
 
-void DFS(const std::vector<Territory*>& territories, int v, std::vector<bool>& visited)
+void DFS(const std::vector<Territory*>& territories, Territory* node, std::vector<bool>& visited)
 {
-    visited[v] = true;
+    int territoryIndex = node->ID - 1;
+    visited[territoryIndex] = true;
 
-    for (auto neighbor : territories.at(v)->neighbors)
+    for (auto neighbor : node->neighbors)
     {
         int neighborIndex = neighbor->ID - 1;
 
-        if (!visited.at(neighborIndex))
+        // Modified DFS, only explores neighbors which are included in the territories argument
+        if (find(territories.begin(), territories.end(), neighbor) != territories.end())
         {
-            DFS(territories, neighborIndex, visited);
+            if (!visited.at(neighborIndex))
+            {
+                DFS(territories, neighbor, visited);
+            }
         }
     }
 }
@@ -187,12 +194,12 @@ Map::FormatError Map::validate() const
 {
     const size_t numTerritories = territories.size();
 
-    // Validation 1: the map is a connected graph
-    for (int i = 0; i < numTerritories; ++i)
+    // Validation 1: The map is a connected graph
+    for (auto territory : territories)
     {
         std::vector<bool> visited(numTerritories);
 
-        DFS(territories, i, visited);
+        DFS(territories, territory, visited);
 
         if (find(visited.begin(), visited.end(), false) != visited.end())
         {
@@ -200,7 +207,26 @@ Map::FormatError Map::validate() const
         }
     }
 
-    // TODO validation 2
+    // Validation 2: Continents are connected subgraphs
+    for (auto continent : continents)
+    {
+        for (auto territory : continent->territories)
+        {
+            std::vector<bool> visited(numTerritories);
+
+            DFS(continent->territories, territory, visited);
+
+            for (auto territoryCheck : continent->territories)
+            {
+                int territoryCheckIndex = territoryCheck->ID - 1;
+
+                if (visited.at(territoryCheckIndex) == false)
+                {
+                    return FormatError::NotConnectedContinent;
+                }
+            }
+        }
+    }
 
     // Validation 3: Each country belongs to one and only one continent
     for (auto territory : territories)
@@ -272,11 +298,11 @@ enum class ParserState
 Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) const
 {
     // Extract filename from filepath
-    int sepIdx = 0;
-    int dotIdx = filepath.size();
-    for (int i = 0; i < filepath.size(); ++i)
+    size_t sepIdx = 0;
+    size_t dotIdx = filepath.size();
+    for (size_t i = 0; i < filepath.size(); ++i)
     {
-        const char currentChar = filepath.at(i);
+        const char& currentChar = filepath.at(i);
         if (currentChar == '/' || currentChar == '\\' || currentChar == ':')
         {
             sepIdx = i + 1;
@@ -290,6 +316,11 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
 
     std::ifstream inputFile(filepath);
     std::string line;
+
+    if (!inputFile.good())
+    {
+        return Map::FormatError::FileDoesNotExist;
+    }
 
     ParserState state = ParserState::Heading;
     int continentID = 1;

@@ -57,7 +57,9 @@ public:
     enum class FormatError
     {
         None,
+        FileDoesNotExist,
         NotConnectedGraph,
+        NotConnectedContinent,
         TerritoryNotInAContinent,
         TerritoryInMultipleContinents
     };
