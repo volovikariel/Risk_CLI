@@ -32,7 +32,7 @@ Continent::Continent(const Continent& other)
     name = other.name;
     color = other.color;
     bonus = other.bonus;
-    // TODO territories
+    territories = other.territories;
 }
 
 Continent::~Continent()
@@ -46,8 +46,8 @@ bool Continent::operator==(const Continent& other)
         ID == other.ID &&
         name == other.name &&
         color == other.color &&
-        bonus == other.bonus;
-    // TODO territories
+        bonus == other.bonus &&
+        territories == other.territories;
 }
 
 std::ostream& operator<<(std::ostream& out, const Continent& source)
@@ -92,9 +92,9 @@ Territory::Territory(const Territory& other)
     continent = other.continent;
     x = other.x;
     y = other.y;
+    neighbors = other.neighbors;
     player = other.player;
     armies = other.armies;
-    // TODO neighbors
 }
 
 Territory::~Territory()
@@ -110,9 +110,9 @@ bool Territory::operator==(const Territory& other)
         continent == other.continent &&
         x == other.x &&
         y == other.y &&
+        neighbors == other.neighbors &&
         player == other.player &&
         armies == other.armies;
-    // TODO neighbors
 }
 
 std::ostream& operator << (std::ostream &out, const Territory& source)
@@ -155,7 +155,14 @@ Map::Map(const Map& other)
 
 Map::~Map()
 {
-    // TODO
+    for (const Continent* const continent : continents)
+    {
+        delete continent;
+    }
+    for (const Territory* const territory : territories)
+    {
+        delete territory;
+    }
 }
 
 bool Map::operator==(const Map& other)
@@ -170,12 +177,12 @@ std::ostream& operator << (std::ostream &out, const Map& source)
     return out;
 }
 
-void DFS(const std::vector<Territory*>& territories, Territory* node, std::vector<bool>& visited)
+void DFS(const std::vector<Territory*>& territories, const Territory* const node, std::vector<bool>& visited)
 {
     int territoryIndex = node->ID - 1;
     visited[territoryIndex] = true;
 
-    for (auto neighbor : node->neighbors)
+    for (const Territory* const neighbor : node->neighbors)
     {
         int neighborIndex = neighbor->ID - 1;
 
@@ -195,7 +202,7 @@ Map::FormatError Map::validate() const
     const size_t numTerritories = territories.size();
 
     // Validation 1: The map is a connected graph
-    for (auto territory : territories)
+    for (const Territory* const territory : territories)
     {
         std::vector<bool> visited(numTerritories);
 
@@ -208,15 +215,15 @@ Map::FormatError Map::validate() const
     }
 
     // Validation 2: Continents are connected subgraphs
-    for (auto continent : continents)
+    for (const Continent* const continent : continents)
     {
-        for (auto territory : continent->territories)
+        for (const Territory* const territory : continent->territories)
         {
             std::vector<bool> visited(numTerritories);
 
             DFS(continent->territories, territory, visited);
 
-            for (auto territoryCheck : continent->territories)
+            for (const Territory* const territoryCheck : continent->territories)
             {
                 int territoryCheckIndex = territoryCheck->ID - 1;
 
@@ -229,13 +236,13 @@ Map::FormatError Map::validate() const
     }
 
     // Validation 3: Each country belongs to one and only one continent
-    for (auto territory : territories)
+    for (const Territory* const territory : territories)
     {
         bool belongsToContinent = false;
 
-        for (auto continent : continents)
+        for (const Continent* const continent : continents)
         {
-            auto& continentTerritories = continent->territories;
+            const std::vector<Territory*>& continentTerritories = continent->territories;
 
             if (find(continentTerritories.begin(), continentTerritories.end(), territory) != continentTerritories.end())
             {
@@ -279,7 +286,7 @@ MapLoader::~MapLoader()
 
 bool MapLoader::operator==(const MapLoader& other)
 {
-    return false;
+    return this == &other;
 }
 
 std::ostream& operator<<(std::ostream& out, const MapLoader& source)

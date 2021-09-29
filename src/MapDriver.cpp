@@ -11,31 +11,31 @@ void analyzeFile(const char* filepath)
 {
     Map map;
     MapLoader loader;
-    auto result = loader.load(filepath, map);
+    Map::FormatError result = loader.load(filepath, map);
 
     std::cout << "Map: " << map.name << std::endl;
     std::cout << "Load error: " << result << std::endl;
     std::cout << std::endl;
 
-    for (auto continent : map.getContinents())
+    for (const Continent* const continent : map.getContinents())
     {
         std::cout << *continent << std::endl;
     }
 
     std::cout << std::endl;
 
-    for (auto territory : map.getTerritories())
+    for (const Territory* const territory : map.getTerritories())
     {
         std::cout << *territory << std::endl;
     }
 
     std::cout << std::endl;
 
-    for (auto territory : map.getTerritories())
+    for (const Territory* const territory : map.getTerritories())
     {
         std::cout << "Neighbors of: " << *territory << std::endl;
 
-        for (auto neighbor : territory->neighbors)
+        for (const Territory* const neighbor : territory->neighbors)
         {
             std::cout << "    " << *neighbor << std::endl;
         }
@@ -48,7 +48,7 @@ void loadFile(const char* filepath)
 {
     Map map;
     MapLoader loader;
-    auto result = loader.load(filepath, map);
+    Map::FormatError result = loader.load(filepath, map);
 
     std::cout << "Map: " << map.name << std::endl;
     std::cout << "Load error: " << result << std::endl;
