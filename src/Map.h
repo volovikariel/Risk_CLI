@@ -54,11 +54,13 @@ class Map
 
 public:
 
-    enum FormatError
+    enum class FormatError
     {
         None,
         NotConnectedGraph
     };
+
+    friend std::ostream& operator << (std::ostream& out, const FormatError source);
 
     Map();
     ~Map();

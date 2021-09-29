@@ -193,6 +193,18 @@ Map::FormatError Map::validate() const
 
 /* --- MapLoader --- */
 
+std::ostream& operator << (std::ostream& out, const Map::FormatError source)
+{
+    static const char* names[2] =
+    {
+        "None",
+        "NotConnectedGraph"
+    };
+
+    out << names[static_cast<size_t>(source)];
+    return out;
+}
+
 MapLoader::MapLoader()
 {
 
@@ -218,12 +230,12 @@ std::ostream& operator<<(std::ostream& out, const MapLoader& source)
     return out;
 }
 
-enum ParserState
+enum class ParserState
 {
-    HeadingState,
-    ContinentState,
-    TerritoryState,
-    BorderState
+    Heading,
+    Continent,
+    Territory,
+    Border
 };
 
 Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) const
@@ -231,7 +243,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
     std::ifstream inputFile(filepath);
     std::string line;
 
-    ParserState state = HeadingState;
+    ParserState state = ParserState::Heading;
     int continentID = 1;
 
     // Read line by line
@@ -255,25 +267,25 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
 
             if (firstWord.at(0) == '[')
             {
-                state = HeadingState;
+                state = ParserState::Heading;
             }
 
-            if (state == HeadingState)
+            if (state == ParserState::Heading)
             {
                 if (firstWord == "[continents]")
                 {
-                    state = ContinentState;
+                    state = ParserState::Continent;
                 }
                 else if (firstWord == "[countries]")
                 {
-                    state = TerritoryState;
+                    state = ParserState::Territory;
                 }
                 else if (firstWord == "[borders]")
                 {
-                    state = BorderState;
+                    state = ParserState::Border;
                 }
             }
-            else if (state == ContinentState)
+            else if (state == ParserState::Continent)
             {
                 std::string name = firstWord;
                 int bonus;
@@ -284,7 +296,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
                 Continent* continent = new Continent(continentID++, name, color, bonus);
                 destination.continents.push_back(continent);
             }
-            else if (state == TerritoryState)
+            else if (state == ParserState::Territory)
             {
                 int ID = std::stoi(firstWord);
                 std::string name;
@@ -300,7 +312,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
                 continent->territories.push_back(territory);
                 destination.territories.push_back(territory);
             }
-            else if (state == BorderState)
+            else if (state == ParserState::Border)
             {
                 int ID = std::stoi(firstWord);
                 int neighborID;

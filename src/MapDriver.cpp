@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
         Map map;
         MapLoader loader;
         auto result = loader.load(filepath, map);
-        std::cout << result << std::endl << std::endl;
+        std::cout << "Load error: " << result << std::endl << std::endl;
 
         for (auto continent : map.getContinents())
         {
