@@ -57,7 +57,8 @@ public:
     enum class FormatError
     {
         None,
-        NotConnectedGraph
+        NotConnectedGraph,
+        TerritoryInMultipleContinents
     };
 
     friend std::ostream& operator << (std::ostream& out, const FormatError source);

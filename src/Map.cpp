@@ -124,6 +124,19 @@ std::ostream& operator << (std::ostream &out, const Territory& source)
 
 /* --- Map --- */
 
+std::ostream& operator << (std::ostream& out, const Map::FormatError source)
+{
+    static const char* names[3] =
+    {
+        "None",
+        "NotConnectedGraph",
+        "TerritoryInMultipleContinents"
+    };
+
+    out << names[static_cast<size_t>(source)];
+    return out;
+}
+
 Map::Map():
     name(""),
     continents(),
@@ -185,25 +198,35 @@ Map::FormatError Map::validate() const
         }
     }
 
-    // TODO validations 2 and 3
+    // TODO validation 2
+
+    for (auto territory : territories)
+    {
+        bool belongsToContinent = false;
+
+        for (auto continent : continents)
+        {
+            auto& continentTerritories = continent->territories;
+
+            if (find(continentTerritories.begin(), continentTerritories.end(), territory) != continentTerritories.end())
+            {
+                if (belongsToContinent) // Already belongs to a continent
+                {
+                    return Map::FormatError::TerritoryInMultipleContinents;
+                }
+                else
+                {
+                    belongsToContinent = true;
+                }
+            }
+        }
+    }
 
     return Map::FormatError::None;
 }
 
 
 /* --- MapLoader --- */
-
-std::ostream& operator << (std::ostream& out, const Map::FormatError source)
-{
-    static const char* names[2] =
-    {
-        "None",
-        "NotConnectedGraph"
-    };
-
-    out << names[static_cast<size_t>(source)];
-    return out;
-}
 
 MapLoader::MapLoader()
 {
@@ -265,7 +288,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination) 
                 continue;
             }
 
-            if (firstWord.at(0) == '[')
+            if (firstWord.front() == '[')
             {
                 state = ParserState::Heading;
             }
