@@ -23,6 +23,7 @@ public:
     int bonus;
 
     std::vector<Territory*> territories;
+    std::vector<int> territoryIDs;
 };
 
 class Territory
@@ -40,9 +41,11 @@ public:
     int ID;
     std::string name;
     Continent* continent;
+    int continentID;
     int x;
     int y;
     std::vector<Territory*> neighbors;
+    std::vector<int> neighborIDs;
 
     Player* player;
     int armies;

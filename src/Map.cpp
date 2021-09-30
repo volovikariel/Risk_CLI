@@ -11,7 +11,8 @@ Continent::Continent():
     name(""),
     color(""),
     bonus(0),
-    territories()
+    territories(),
+    territoryIDs()
 {
 
 }
@@ -21,12 +22,13 @@ Continent::Continent(int ID, const std::string& name, const std::string& color, 
     name(name),
     color(color),
     bonus(bonus),
-    territories()
+    territories(),
+    territoryIDs()
 {
 
 }
 
-// Shallow copy of territories
+// Shallow copy of territory pointers
 Continent::Continent(const Continent& other)
 {
     ID = other.ID;
@@ -34,6 +36,7 @@ Continent::Continent(const Continent& other)
     color = other.color;
     bonus = other.bonus;
     territories = other.territories;
+    territoryIDs = other.territoryIDs;
 }
 
 Continent::~Continent()
@@ -41,31 +44,15 @@ Continent::~Continent()
 
 }
 
-// For territories, compares IDs
+// For territories, compares IDs (not pointers)
 bool Continent::operator==(const Continent& other)
 {
-    if (ID != other.ID ||
-        name != other.name ||
-        color != other.color ||
-        bonus != other.bonus)
-    {
-        return false;
-    }
-
-    if (territories.size() != other.territories.size())
-    {
-        return false;
-    }
-
-    for (int i = 0; i < territories.size(); ++i)
-    {
-        if (territories[i]->ID != other.territories[i]->ID)
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return
+        ID == other.ID &&
+        name == other.name &&
+        color == other.color &&
+        bonus == other.bonus &&
+        territoryIDs == other.territoryIDs;
 }
 
 std::ostream& operator<<(std::ostream& out, const Continent& source)
@@ -81,6 +68,7 @@ Territory::Territory():
     ID(0),
     name(""),
     continent(nullptr),
+    continentID(0),
     x(0),
     y(0),
     neighbors(),
@@ -94,24 +82,28 @@ Territory::Territory(int ID, const std::string& name, Continent* const continent
     ID(ID),
     name(name),
     continent(continent),
+    continentID(continent->ID),
     x(x),
     y(y),
     neighbors(),
+    neighborIDs(),
     player(nullptr),
     armies(0)
 {
 
 }
 
-// Shallow copy of continent and neighbors
+// Shallow copy of continent and neighbor pointers
 Territory::Territory(const Territory& other)
 {
     ID = other.ID;
     name = other.name;
     continent = other.continent;
+    continentID = other.continentID;
     x = other.x;
     y = other.y;
     neighbors = other.neighbors;
+    neighborIDs = other.neighborIDs;
     player = other.player;
     armies = other.armies;
 }
@@ -121,34 +113,16 @@ Territory::~Territory()
 
 }
 
-// For continent and neighbors, compares IDs
+// For continent and neighbors, compares IDs (not pointers)
 bool Territory::operator==(const Territory& other)
 {
-    if (ID != other.ID ||
-        name != other.name ||
-        x != other.x ||
-        y != other.y ||
-        player != other.player ||
-        continent->ID != other.continent->ID ||
-        armies != other.armies)
-    {
-        return false;
-    }
-
-    if (neighbors.size() != other.neighbors.size())
-    {
-        return false;
-    }
-
-    for (int i = 0; i < neighbors.size(); ++i)
-    {
-        if (neighbors[i]->ID != other.neighbors[i]->ID)
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return
+        ID == other.ID &&
+        name == other.name &&
+        continentID == other.continentID &&
+        x == other.x &&
+        y == other.y &&
+        neighborIDs == other.neighborIDs;
 }
 
 std::ostream& operator << (std::ostream &out, const Territory& source)
@@ -214,26 +188,24 @@ Map::Map(const Map& other)
         Continent* newContinent = new Continent(*otherContinent);
         continents.push_back(newContinent);
 
-        // Re-assign territories
-        for (int i = 0; i < newContinent->territories.size(); ++i)
+        // Re-assign territory pointers
+        for (int i = 0; i < newContinent->territoryIDs.size(); ++i)
         {
-            const Territory* const oldTerritory = newContinent->territories[i];
-            int territoryIndex = oldTerritory->ID - 1;
+            int territoryIndex = newContinent->territoryIDs[i] - 1;
             newContinent->territories[i] = territories.at(territoryIndex);
         }
     }
 
     for (Territory* newTerritory : territories)
     {
-        // Re-assign continent
+        // Re-assign continent pointer
         int continentIndex = newTerritory->continent->ID - 1;
         newTerritory->continent = continents[continentIndex];
 
-        // Re-assign neighbors
-        for (int i = 0; i < newTerritory->neighbors.size(); ++i)
+        // Re-assign neighbor pointers
+        for (int i = 0; i < newTerritory->neighborIDs.size(); ++i)
         {
-            const Territory* const oldTerritory = newTerritory->neighbors[i];
-            int territoryIndex = oldTerritory->ID - 1;
+            int territoryIndex = newTerritory->neighborIDs[i] - 1;
             newTerritory->neighbors[i] = territories.at(territoryIndex);
         }
     }
@@ -252,8 +224,8 @@ Map::~Map()
     }
 }
 
-// For continents and territories, compares IDs
-// Two instances of the same map file loaded twice (or copy-constructed) are equal
+// For continents and territories, compares IDs (not pointers)
+// So that two instances of the same map file loaded twice (or copy-constructed) are equal
 bool Map::operator==(const Map& other)
 {
     if (name != other.name)
@@ -563,6 +535,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination, 
                 Territory* territory = new Territory(ID, name, continent, x, y);
 
                 continent->territories.push_back(territory);
+                continent->territoryIDs.push_back(territory->ID);
                 destination.territories.push_back(territory);
 
                 // Ensure the territories are in perfect sequential order
@@ -610,6 +583,7 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination, 
 
                     Territory* neighbor = destination.territories.at(neighborIndex);
                     territory->neighbors.push_back(neighbor);
+                    territory->neighborIDs.push_back(neighborID);
                 }
 
                 // Did we miss any borders because of a bad intermediate value?
