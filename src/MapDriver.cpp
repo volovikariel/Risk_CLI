@@ -1,6 +1,7 @@
 #include "Map.h"
 
 #include <iostream>
+#include <string.h>
 
 bool sameString(const char* lhs, const char* rhs)
 {
