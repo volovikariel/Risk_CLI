@@ -26,6 +26,7 @@ Continent::Continent(int ID, const std::string& name, const std::string& color, 
 
 }
 
+// Shallow copy of territories
 Continent::Continent(const Continent& other)
 {
     ID = other.ID;
@@ -40,14 +41,31 @@ Continent::~Continent()
 
 }
 
+// For territories, compares IDs
 bool Continent::operator==(const Continent& other)
 {
-    return
-        ID == other.ID &&
-        name == other.name &&
-        color == other.color &&
-        bonus == other.bonus &&
-        territories == other.territories;
+    if (ID != other.ID ||
+        name != other.name ||
+        color != other.color ||
+        bonus != other.bonus)
+    {
+        return false;
+    }
+
+    if (territories.size() != other.territories.size())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < territories.size(); ++i)
+    {
+        if (territories[i]->ID != other.territories[i]->ID)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::ostream& operator<<(std::ostream& out, const Continent& source)
@@ -85,6 +103,7 @@ Territory::Territory(int ID, const std::string& name, Continent* const continent
 
 }
 
+// Shallow copy of continent and neighbors
 Territory::Territory(const Territory& other)
 {
     ID = other.ID;
@@ -102,17 +121,34 @@ Territory::~Territory()
 
 }
 
+// For continent and neighbors, compares IDs
 bool Territory::operator==(const Territory& other)
 {
-    return
-        ID == other.ID &&
-        name == other.name &&
-        continent == other.continent &&
-        x == other.x &&
-        y == other.y &&
-        neighbors == other.neighbors &&
-        player == other.player &&
-        armies == other.armies;
+    if (ID != other.ID ||
+        name != other.name ||
+        x != other.x ||
+        y != other.y ||
+        player != other.player ||
+        continent->ID != other.continent->ID ||
+        armies != other.armies)
+    {
+        return false;
+    }
+
+    if (neighbors.size() != other.neighbors.size())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < neighbors.size(); ++i)
+    {
+        if (neighbors[i]->ID != other.neighbors[i]->ID)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::ostream& operator << (std::ostream &out, const Territory& source)
@@ -151,11 +187,59 @@ Map::Map():
 
 }
 
+// Deep copy
 Map::Map(const Map& other)
 {
-    // TODO
+    name = other.name;
+
+    for (const Continent* const continent : continents)
+    {
+        delete continent;
+    }
+    for (const Territory* const territory : territories)
+    {
+        delete territory;
+    }
+
+    territories.clear();
+    for (const Territory* const otherTerritory : other.territories)
+    {
+        Territory* newTerritory = new Territory(*otherTerritory);
+        territories.push_back(newTerritory);
+    }
+
+    continents.clear();
+    for (const Continent* const otherContinent : other.continents)
+    {
+        Continent* newContinent = new Continent(*otherContinent);
+        continents.push_back(newContinent);
+
+        // Re-assign territories
+        for (int i = 0; i < newContinent->territories.size(); ++i)
+        {
+            const Territory* const oldTerritory = newContinent->territories[i];
+            int territoryIndex = oldTerritory->ID - 1;
+            newContinent->territories[i] = territories.at(territoryIndex);
+        }
+    }
+
+    for (Territory* newTerritory : territories)
+    {
+        // Re-assign continent
+        int continentIndex = newTerritory->continent->ID - 1;
+        newTerritory->continent = continents[continentIndex];
+
+        // Re-assign neighbors
+        for (int i = 0; i < newTerritory->neighbors.size(); ++i)
+        {
+            const Territory* const oldTerritory = newTerritory->neighbors[i];
+            int territoryIndex = oldTerritory->ID - 1;
+            newTerritory->neighbors[i] = territories.at(territoryIndex);
+        }
+    }
 }
 
+// Full cleanup of continents and territories
 Map::~Map()
 {
     for (const Continent* const continent : continents)
@@ -168,10 +252,42 @@ Map::~Map()
     }
 }
 
+// For continents and territories, compares IDs
+// Two instances of the same map file loaded twice (or copy-constructed) are equal
 bool Map::operator==(const Map& other)
 {
-    // TODO
-    return false;
+    if (name != other.name)
+    {
+        return false;
+    }
+
+    if (continents.size() != other.continents.size())
+    {
+        return false;
+    }
+
+    if (territories.size() != other.territories.size())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < continents.size(); ++i)
+    {
+        if (!(*continents[i] == *other.continents[i]))
+        {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < territories.size(); ++i)
+    {
+        if (!(*territories[i] == *other.territories[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::ostream& operator << (std::ostream &out, const Map& source)

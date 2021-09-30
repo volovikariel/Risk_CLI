@@ -25,21 +25,21 @@ void analyzeFile(const char* filepath)
     }
     std::cout << std::endl;
 
-    for (const Continent* const continent : map.getContinents())
+    for (const Continent* const continent : map.continents)
     {
         std::cout << *continent << std::endl;
     }
 
     std::cout << std::endl;
 
-    for (const Territory* const territory : map.getTerritories())
+    for (const Territory* const territory : map.territories)
     {
         std::cout << *territory << std::endl;
     }
 
     std::cout << std::endl;
 
-    for (const Territory* const territory : map.getTerritories())
+    for (const Territory* const territory : map.territories)
     {
         std::cout << "Neighbors of: " << *territory << std::endl;
 
@@ -50,6 +50,9 @@ void analyzeFile(const char* filepath)
 
         std::cout << std::endl;
     }
+
+    Map mapClone(map);
+    std::cout << "Copy constructor and equality operator test: " << (mapClone == map ? "Succeeded" : "Failed");
 }
 
 void loadFile(const char* filepath)
@@ -87,8 +90,12 @@ int main(int argc, char *argv[])
     if (argc <= 1 || displayHelp)
     {
         std::cout << "Usage: provide one or more filepaths as arguments." << std::endl;
-        std::cout << "If only one filepath is provided: the file will be loaded and its load status, continent, and territory details will be displayed." << std::endl;
-        std::cout << "If multiple filepaths are provided: each file will be loaded and only its load status will be displayed." << std::endl;
+        std::cout << "If only one filepath is provided:" << std::endl;
+        std::cout << "    The file will be loaded and its load status, continent, and territory details will be displayed." << std::endl;
+        std::cout << "    The copy constructor and equality operator will also be tested." << std::endl;
+        std::cout << std::endl;
+        std::cout << "If multiple filepaths are provided:" << std::endl;
+        std::cout << "    Each file will be loaded and only its load status will be displayed." << std::endl;
         std::cout << std::endl;
     }
     else if (argc == 2)

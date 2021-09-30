@@ -78,20 +78,7 @@ public:
 
     FormatError validate() const;
 
-    inline const std::vector<Continent*>& getContinents() const
-    {
-        return continents;
-    }
-
-    inline const std::vector<Territory*>& getTerritories() const
-    {
-        return territories;
-    }
-
     std::string name;
-
-private:
-
     std::vector<Continent*> continents;
     std::vector<Territory*> territories;
 };
