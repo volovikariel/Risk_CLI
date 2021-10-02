@@ -102,10 +102,10 @@ public:
         BadContinentFormat,
         BadTerritoryFormat,
         BadBorderFormat,
-        NotConnectedGraph,
-        NotConnectedContinent,
-        TerritoryNotInAContinent,
-        TerritoryInMultipleContinents
+        NotConnectedGraph,              // Validation case 1
+        NotConnectedContinent,          // Validation case 2
+        TerritoryNotInAContinent,       // Validation case 3
+        TerritoryInMultipleContinents   // Validation case 3
     };
 
     // Stream output operator of FormatError
@@ -122,6 +122,13 @@ public:
     void operator = (const Map& other);
     // Stream output operator
     friend std::ostream& operator << (std::ostream &out, const Map& source);
+
+    // Returns a pointer to a territory, given its ID
+    // (nullptr if the ID is invalid)
+    Continent* getContinentByID(int ID) const;
+    // Returns a pointer to a territory, given its ID
+    // (nullptr if the ID is invalid)
+    Territory* getTerritoryByID(int ID) const;
 
     // The name of the map, determined from the filepath that MapLoader receives
     std::string name;
