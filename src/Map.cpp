@@ -581,6 +581,12 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination, 
                 int neighborID;
                 while (l >> neighborID)
                 {
+                    // Self-loop
+                    if (neighborID == ID)
+                    {
+                        return Map::FormatError::BadBorderFormat;
+                    }
+
                     Territory* neighbor = destination.getTerritoryByID(neighborID);
 
                     // Check that neighbor exists
