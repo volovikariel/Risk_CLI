@@ -30,7 +30,19 @@ Continent::Continent(int ID, const std::string& name, const std::string& color, 
 }
 
 // Shallow copy of territory pointers
-Continent::Continent(const Continent& other)
+Continent::Continent(const Continent& other):
+    ID(other.ID),
+    name(other.name),
+    color(other.color),
+    bonus(other.bonus),
+    territories(other.territories),
+    territoryIDs(other.territoryIDs)
+{
+
+}
+
+// Shallow copy of territory pointers
+void Continent::operator = (const Continent& other)
 {
     ID = other.ID;
     name = other.name;
@@ -45,18 +57,7 @@ Continent::~Continent()
 
 }
 
-// For territories, compares IDs (not pointers)
-bool Continent::operator==(const Continent& other)
-{
-    return
-        ID == other.ID &&
-        name == other.name &&
-        color == other.color &&
-        bonus == other.bonus &&
-        territoryIDs == other.territoryIDs;
-}
-
-std::ostream& operator<<(std::ostream& out, const Continent& source)
+std::ostream& operator << (std::ostream& out, const Continent& source)
 {
     out << "[" << source.ID << "] " << source.name << " (" << source.bonus << ")";
     return out;
@@ -95,7 +96,24 @@ Territory::Territory(int ID, const std::string& name, Continent* const continent
 }
 
 // Shallow copy of continent and neighbor pointers
-Territory::Territory(const Territory& other)
+Territory::Territory(const Territory& other):
+    ID(other.ID),
+    name(other.name),
+    continent(other.continent),
+    continentID(other.continentID),
+    x(other.x),
+    y(other.y),
+    neighbors(other.neighbors),
+    neighborIDs(other.neighborIDs),
+    player(other.player),
+    armies(other.armies)
+{
+    
+}
+
+// Shallow copy of continent and neighbor pointers
+void Territory::operator = (const Territory& other)
+    
 {
     ID = other.ID;
     name = other.name;
@@ -112,18 +130,6 @@ Territory::Territory(const Territory& other)
 Territory::~Territory()
 {
 
-}
-
-// For continent and neighbors, compares IDs (not pointers)
-bool Territory::operator==(const Territory& other)
-{
-    return
-        ID == other.ID &&
-        name == other.name &&
-        continentID == other.continentID &&
-        x == other.x &&
-        y == other.y &&
-        neighborIDs == other.neighborIDs;
 }
 
 std::ostream& operator << (std::ostream &out, const Territory& source)
@@ -162,105 +168,22 @@ Map::Map():
 
 }
 
-// Deep copy
+// Makes a deep copy of the other map and its graph
 Map::Map(const Map& other)
 {
-    name = other.name;
+    deepCopy(other);
+}
 
-    for (const Continent* const continent : continents)
-    {
-        delete continent;
-    }
-    for (const Territory* const territory : territories)
-    {
-        delete territory;
-    }
-
-    territories.clear();
-    for (const Territory* const otherTerritory : other.territories)
-    {
-        Territory* newTerritory = new Territory(*otherTerritory);
-        territories.push_back(newTerritory);
-    }
-
-    continents.clear();
-    for (const Continent* const otherContinent : other.continents)
-    {
-        Continent* newContinent = new Continent(*otherContinent);
-        continents.push_back(newContinent);
-
-        // Re-assign territory pointers
-        for (int i = 0; i < newContinent->territoryIDs.size(); ++i)
-        {
-            int territoryIndex = newContinent->territoryIDs[i] - 1;
-            newContinent->territories[i] = territories.at(territoryIndex);
-        }
-    }
-
-    for (Territory* newTerritory : territories)
-    {
-        // Re-assign continent pointer
-        int continentIndex = newTerritory->continent->ID - 1;
-        newTerritory->continent = continents[continentIndex];
-
-        // Re-assign neighbor pointers
-        for (int i = 0; i < newTerritory->neighborIDs.size(); ++i)
-        {
-            int territoryIndex = newTerritory->neighborIDs[i] - 1;
-            newTerritory->neighbors[i] = territories.at(territoryIndex);
-        }
-    }
+// Makes a deep copy of the other map and its graph
+void Map::operator = (const Map& other)
+{
+    deepCopy(other);
 }
 
 // Full cleanup of continents and territories
 Map::~Map()
 {
-    for (const Continent* const continent : continents)
-    {
-        delete continent;
-    }
-    for (const Territory* const territory : territories)
-    {
-        delete territory;
-    }
-}
-
-// For continents and territories, compares IDs (not pointers)
-// So that two instances of the same map file loaded twice (or copy-constructed) are equal
-bool Map::operator==(const Map& other)
-{
-    if (name != other.name)
-    {
-        return false;
-    }
-
-    if (continents.size() != other.continents.size())
-    {
-        return false;
-    }
-
-    if (territories.size() != other.territories.size())
-    {
-        return false;
-    }
-
-    for (int i = 0; i < continents.size(); ++i)
-    {
-        if (!(*continents[i] == *other.continents[i]))
-        {
-            return false;
-        }
-    }
-
-    for (int i = 0; i < territories.size(); ++i)
-    {
-        if (!(*territories[i] == *other.territories[i]))
-        {
-            return false;
-        }
-    }
-
-    return true;
+    releaseAllocs();
 }
 
 std::ostream& operator << (std::ostream &out, const Map& source)
@@ -365,6 +288,61 @@ Map::FormatError Map::validate() const
     return Map::FormatError::None;
 }
 
+void Map::releaseAllocs()
+{
+    for (const Continent* const continent : continents)
+    {
+        delete continent;
+    }
+
+    for (const Territory* const territory : territories)
+    {
+        delete territory;
+    }
+}
+
+void Map::deepCopy(const Map& other)
+{
+    name = other.name;
+
+    releaseAllocs();
+
+    territories.clear();
+    for (const Territory* const otherTerritory : other.territories)
+    {
+        Territory* newTerritory = new Territory(*otherTerritory);
+        territories.push_back(newTerritory);
+    }
+
+    continents.clear();
+    for (const Continent* const otherContinent : other.continents)
+    {
+        Continent* newContinent = new Continent(*otherContinent);
+        continents.push_back(newContinent);
+
+        // Re-assign territory pointers
+        for (int i = 0; i < newContinent->territoryIDs.size(); ++i)
+        {
+            int territoryIndex = newContinent->territoryIDs[i] - 1;
+            newContinent->territories[i] = territories.at(territoryIndex);
+        }
+    }
+
+    for (Territory* newTerritory : territories)
+    {
+        // Re-assign continent pointer
+        int continentIndex = newTerritory->continent->ID - 1;
+        newTerritory->continent = continents[continentIndex];
+
+        // Re-assign neighbor pointers
+        for (int i = 0; i < newTerritory->neighborIDs.size(); ++i)
+        {
+            int territoryIndex = newTerritory->neighborIDs[i] - 1;
+            newTerritory->neighbors[i] = territories.at(territoryIndex);
+        }
+    }
+}
+
 
 /* --- MapLoader --- */
 
@@ -378,18 +356,19 @@ MapLoader::MapLoader(const MapLoader& other)
 
 }
 
+void MapLoader::operator = (const MapLoader& other)
+{
+    return;
+}
+
 MapLoader::~MapLoader()
 {
 
 }
 
-bool MapLoader::operator==(const MapLoader& other)
+std::ostream& operator << (std::ostream& out, const MapLoader& source)
 {
-    return this == &other;
-}
-
-std::ostream& operator<<(std::ostream& out, const MapLoader& source)
-{
+    out << &source;
     return out;
 }
 

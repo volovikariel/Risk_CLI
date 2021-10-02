@@ -14,8 +14,8 @@ public:
     ~Continent();
 
     Continent(const Continent& other);
-    bool operator==(const Continent& other);
-    friend std::ostream& operator<<(std::ostream& out, const Continent& source);
+    void operator = (const Continent& other);
+    friend std::ostream& operator << (std::ostream& out, const Continent& source);
 
     int ID;
     std::string name;
@@ -35,7 +35,7 @@ public:
     ~Territory();
 
     Territory(const Territory& other);
-    bool operator==(const Territory& other);
+    void operator = (const Territory& other);
     friend std::ostream& operator << (std::ostream &out, const Territory& source);
 
     int ID;
@@ -76,7 +76,7 @@ public:
     ~Map();
 
     Map(const Map& other);
-    bool operator==(const Map& other);
+    void operator = (const Map& other);
     friend std::ostream& operator << (std::ostream &out, const Map& source);
 
     FormatError validate() const;
@@ -84,6 +84,11 @@ public:
     std::string name;
     std::vector<Continent*> continents;
     std::vector<Territory*> territories;
+
+private:
+
+    void releaseAllocs();
+    void deepCopy(const Map& other);
 };
 
 class MapLoader
@@ -94,8 +99,8 @@ public:
     ~MapLoader();
 
     MapLoader(const MapLoader& other);
-    bool operator==(const MapLoader& other);
-    friend std::ostream& operator<<(std::ostream& out, const MapLoader& source);
+    void operator = (const MapLoader& other);
+    friend std::ostream& operator << (std::ostream& out, const MapLoader& source);
 
     Map::FormatError load(const std::string& filepath, Map& destination, int& errorLine) const;
 };
