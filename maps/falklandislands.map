@@ -1,0 +1,101 @@
+; map: Falkland-Islands.map
+; map made with the map maker
+; yura.net Risk 1.0.9.7
+
+[files]
+pic Falkland-Islands_pic.png
+map Falkland-Islands_map.gif
+crd Falkland-Islands.cards
+
+[continents]
+Carcass_Island(s) 3 red
+NW_Falkland 4 #fffe80
+Central_West 3 #80ffea
+SW_Falkland 3 #c6ff80
+NE_Falkland 2 #80f1ff
+SE_Falkland 3 #80f3ff
+Sea_Lion_Island 1 #b0ff80
+
+[countries]
+1 Carcass_1 1 41 27
+2 Carcass_2 1 63 32
+3 Carcass_3 1 99 42
+4 Carcass_4 1 104 67
+5 Carcass_5 1 127 47
+6 Carcass_6 1 182 58
+7 Carcass_7 1 161 89
+8 Carcass_8 1 186 108
+9 Saunders_Island 2 240 101
+10 Pebble_Island 2 344 85
+11 Port_Howard 2 349 173
+12 West_Point_Island 2 135 112
+13 West_Point_Penensula_Tip 2 199 148
+14 West_Point_Penensula_Base 2 245 170
+15 Central_NW 2 290 174
+16 NW_Falkland_1 2 378 123
+17 Central_West_1 3 196 211
+18 Central_West 3 282 243
+19 Central_West_2 3 228 264
+20 Central_West_3 3 194 254
+21 New_Island 4 40 223
+22 S_New_Island_1 4 44 262
+23 S_New_Island_2 4 99 275
+24 SW_Penensula 4 144 323
+25 SW_Penensula_Base 4 200 314
+26 Mt_Pleasant 5 534 235
+27 Stanley 5 623 184
+28 NE_1 5 584 119
+29 NE_2 5 529 90
+30 NE_3 5 479 114
+31 NE_Central 5 487 160
+32 Goose_Green 6 422 240
+33 SE_1 6 462 279
+34 SE_2 6 366 304
+35 SE_3 6 409 326
+36 SE_4 6 367 352
+37 SE_Island_1 6 532 291
+38 SE_Island_2 6 468 344
+39 SE_Island_3 6 322 362
+40 Sea_Lion_Island 7 441 407
+
+[borders]
+1 2
+2 1 3
+3 2 4 5
+4 3 5 7
+5 3 6 4
+6 5 7
+7 4 6 8
+8 13 7 9
+9 15 8 14
+10 16 11
+11 16 15 10
+12 13
+13 14 8 12
+14 15 13 9
+15 11 14 9 18
+16 10 11 31 30
+17 18 20
+18 15 19 17 34
+19 18 20 25
+20 19 17 25
+21 22
+22 23 21
+23 24 22
+24 25 23
+25 19 24 39 20
+26 31 27 32 37
+27 31 28 26
+28 29 27
+29 30 28
+30 31 29 16
+31 26 27 30 16
+32 34 33 26
+33 32 37 38
+34 32 35 18 36
+35 34 38
+36 34 40 39
+37 33 26
+38 35 33 40
+39 36 25
+40 36 38

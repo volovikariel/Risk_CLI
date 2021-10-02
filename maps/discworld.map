@@ -1,0 +1,116 @@
+; DiskWorld for RISK 1.0.9.3
+; The Map - DiscWorld.map
+; Designed by renemuc
+
+[files]
+pic DiscWorld_pic.jpg
+map DiscWorld_map.gif
+crd DiscWorld.cards
+
+[continents]
+Counterweight 3 yellow
+Fourecks 2 red
+Central 4 blue
+Unnamed 5 orange
+Widdershins 4 green
+Klatch 4 magenta
+
+[countries]
+1 Tito-Desert 1 102 60
+2 W'ung-District 1 62 109
+3 Bes_Pelargic 1 121 143
+4 Nafooi 1 234 23
+5 Hunghung 1 129 102
+6 Sum_Dim 1 216 90
+7 Land_of_Fog 2 436 19
+8 Swamp_Region 2 547 63
+9 Mountain_Region 2 508 22
+10 Desert_Region 2 591 33
+11 Slakki 3 315 66
+12 Ice_Shield 3 359 113
+13 Vortex_Plains 3 428 138
+14 Ecalpon 3 297 125
+15 Hubland 3 360 157
+16 Godrim 3 224 174
+17 Llamedos 3 295 177
+18 Hergen 3 242 207
+19 Ramtop 4 357 201
+20 Trollbone_Mountains 4 432 187
+21 Chimeria 4 275 244
+22 Octarine_Gras_Country 4 310 227
+23 Lancre 4 364 234
+24 Ankh-Morpork 4 379 273
+25 Überwald 4 426 223
+26 Slobenia 4 445 269
+27 Brown_Islands 4 254 277
+28 Istanzia 6 415 304
+29 Klatshistan 6 459 308
+30 Klatch 6 290 325
+31 Omnia 6 361 335
+32 Ushistan 6 412 339
+33 Khanli 6 473 347
+34 Howondaland 6 251 365
+35 Laotan 6 302 372
+36 Great_Nef 6 356 384
+37 Tzumen_Empire 6 425 382
+38 Krull 6 189 392
+39 Rammerock_Mountains 5 502 148
+40 Blade_Mountains 5 576 145
+41 Vieux_River 5 505 199
+42 Kythia 5 609 183
+43 Genua 5 563 212
+44 Borogravia 5 501 259
+45 Brindisi 5 561 269
+46 Muntab 5 514 307
+47 Rehigreed 5 602 297
+48 Orohai 5 648 249
+
+[borders]
+1 2 5 4 6
+2 1 5 3
+3 2 5 6 30
+4 1 7
+5 1 2 3 6
+6 11 1 5 3
+7 9 4
+8 9 10 40
+9 7 8 10
+10 8 9
+11 14 12 6
+12 13 15 11 14
+13 12 15 39
+14 11 15 16 12 17
+15 12 13 14 17
+16 14 17 18
+17 15 16 14 18
+18 17 16 21
+19 22 20 25 23
+20 19 25
+21 18 22 27
+22 21 19 23 24
+23 22 19 24 25
+24 22 23 25 28
+25 19 20 23 24 26 44
+26 25 29
+27 21
+28 24 29 32 31
+29 28 33 32 26
+30 3 31 35 34
+31 28 30 32 36 35
+32 28 29 31 33 37 36
+33 29 32 37 46
+34 30 38 35
+35 30 31 34 36
+36 31 32 35 37
+37 32 33 36
+38 34
+39 13 40 41 42
+40 39 8 42
+41 39 42 43 44
+42 39 40 41 43
+43 41 42 45
+44 41 25 46
+45 43 46 47
+46 44 45 33 47
+47 45 46 48
+48 47

@@ -1,0 +1,10 @@
+[continents]
+Ontario_and_Quebec 4 cyan
+
+[countries]
+1 Quebec-North 1 430 261
+2 Quebec-Central 1 460 310
+
+[borders]
+; Territory ID isn't an integer
+bad 2

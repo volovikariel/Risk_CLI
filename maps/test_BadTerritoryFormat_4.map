@@ -1,0 +1,7 @@
+[continents]
+Ontario_and_Quebec 4 cyan
+
+[countries]
+1 Quebec-North 1 430 261
+; Territory's ID should be sequential (2 not 7)
+7 Quebec-Central 1 460 310

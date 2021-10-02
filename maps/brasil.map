@@ -1,0 +1,75 @@
+; map: brasil.map
+; map made with the map maker
+; yura.net Risk 1.0.9.5
+
+[files]
+pic brasil_pic.png
+map brasil_map.gif
+crd brasil.cards
+
+[continents]
+North 4 #ff3333
+Northeast 5 #0000cc
+Center-West 2 #009900
+Southeast 3 #00ccff
+South 2 yellow
+
+[countries]
+1 Acre 1 53 161
+2 Amazonas 1 119 103
+3 Rondonia 1 137 179
+4 Roraima 1 153 37
+5 Amapa 1 257 47
+6 Para 1 243 109
+7 Tocantins 1 290 171
+8 Maranhao 2 324 114
+9 Piaui 2 350 147
+10 Ceara 2 384 119
+11 Rio_Grande_do_Norte 2 414 124
+12 Paraiba 2 419 143
+13 Pernambuco 2 397 154
+14 Alagoas 2 420 171
+15 Sergipe 2 403 181
+16 Bahia 2 356 196
+17 Fernando_de_Noronha 2 454 114
+18 Mato_Grosso 3 211 200
+19 Mato_Grosso_do_Sul 3 221 276
+20 Goias 3 264 237
+21 Distrito_Federal 3 293 229
+22 Minas_Gerais 4 323 263
+23 Espirito_Santo 4 364 276
+24 Rio_de_Janeiro 4 340 304
+25 Sao_Paulo 4 282 300
+26 Santa_Catarina 5 261 349
+27 Parana 5 252 321
+28 Rio_Grande_do_Sul 5 233 375
+
+[borders]
+1 2 3
+2 6 4 1 3 18
+3 2 1 18
+4 6 2
+5 6
+6 7 8 5 18 2 4
+7 18 6 20 16 8 9
+8 7 9 6
+9 7 13 10 16 8
+10 13 11 9
+11 12 17 10
+12 13 17 11
+13 14 12 16 9 10
+14 15 13 16
+15 16 14
+16 22 23 7 20 15 13 14 9
+17 12 11
+18 19 7 6 3 2 20
+19 27 25 20 18
+20 19 25 22 21 7 16 18
+21 22 20
+22 25 24 23 21 20 16
+23 22 24 16
+24 25 22 23
+25 27 19 20 22 24
+26 28 27
+27 26 19 25
+28 26

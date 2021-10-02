@@ -1,0 +1,6 @@
+[continents]
+Ontario_and_Quebec 4 cyan
+
+[countries]
+; Territory's continent ID is not an integer
+1 Quebec-North bad 430 261

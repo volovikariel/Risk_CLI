@@ -1,0 +1,20 @@
+[continents]
+Ontario_and_Quebec 4 cyan
+
+[countries]
+1 Quebec-North 1 430 261
+2 Quebec-Central 1 460 310
+3 Quebec-South 1 439 348
+4 Ontario-South 1 391 363
+5 Ontario-West 1 345 337
+6 Ontario-North 1 353 303
+
+[borders]
+1 2
+2 3
+3 4
+4 5
+5 6
+
+; Territory 6 can't reach any other territories.
+; Therefore the map is not a connected graph.

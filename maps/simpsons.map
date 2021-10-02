@@ -1,0 +1,51 @@
+; map: Simpsons.map
+; map made with the map maker
+; yura.net Risk 1.0.9.2
+; The Simpsons Map by Bestel
+
+[files]
+pic Simpsons_pic.png
+map Simpsons_map.gif
+crd Simpsons.cards
+
+[continents]
+Rez_de_Chaussée 5 #cc0000
+1er_étage 5 white
+
+[countries]
+1 Entry 1 105 237
+2 Garage 1 206 312
+3 Laundry 1 230 219
+4 Rumpus_room 1 233 144
+5 Kitchen 1 149 109
+6 Dining_room 1 159 200
+7 Living_room 1 51 217
+8 TV_room 1 56 131
+9 Bart's_room 2 354 226
+10 Lisa's_room 2 505 233
+11 Homer_&_Marge's_room 2 610 221
+12 Homer_&_Marge's_closet 2 628 95
+13 Homer_et_Marge's_bathroom 2 543 76
+14 Maggie's_room 2 473 79
+15 Maggie's_closet 2 407 96
+16 Bathroom 2 347 104
+17 Hall 2 448 138
+
+[borders]
+1 7 6 17
+2 3
+3 2 4
+4 3 5
+5 4 6 8
+6 1 5
+7 1 8
+8 5 7
+9 17
+10 17
+11 17 12 13
+12 11
+13 11
+14 17 15
+15 14
+16 17
+17 1 9 10 11 14 16

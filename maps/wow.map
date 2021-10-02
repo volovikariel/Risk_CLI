@@ -1,0 +1,131 @@
+; map: WoW.map
+; map made with the map maker
+; yura.net Risk 1.0.9.2
+
+[files]
+pic WoW_pic.jpg
+map WoW_map.gif
+crd WoW.cards
+
+[continents]
+EASTERN_KINGDOMS 5 red
+KALIMDOR 5 yellow
+NORTHREND 5 blue
+
+[countries]
+1 Alterac_Mountains 1 514 176
+2 Arathi_Highlands 1 539 205
+3 Badlands 1 549 287
+4 Blasted_Lands 1 548 357
+5 Burning_Steps 1 526 303
+6 Dun_Morogh 1 502 261
+7 Duskwood 1 510 343
+8 Eastern_Plaguelands 1 565 149
+9 Elwynn_Forest 1 502 319
+10 Eversong_Woods 1 569 90
+11 Ghostlands 1 570 115
+12 The_Hinterlands 1 555 181
+13 Loch_Modan 1 555 267
+14 Redridge_Mountains 1 540 322
+15 Searing_Gorge 1 516 286
+16 Silverpine_Forest 1 485 182
+17 Stranglethorn_Vale 1 513 371
+18 Swamp_of_Sorrows 1 557 336
+19 Tirisfal_Glades 1 492 149
+20 Western_Plaguelands 1 529 152
+21 Westfall 1 481 343
+22 Wetlands 1 532 236
+23 Hilsbrad_Foothils 1 507 195
+24 Gilneas 1 475 218
+25 Ashenvale 2 155 219
+26 Azshara 2 222 206
+27 Azuremyst_Isle 2 59 170
+28 The_Barrens 2 177 261
+29 Bloodmyst_Isle 2 48 137
+30 Darkshore 2 148 151
+31 Desolace 2 116 277
+32 Durotar 2 213 246
+33 Dustwallow_Marsh 2 194 308
+34 Felwood 2 160 164
+35 Feralas 2 122 320
+36 Hyjal 2 180 181
+37 Moonglade 2 186 136
+38 Mulgore 2 152 287
+39 Silithus 2 133 361
+40 Stonetalon_Mountains 2 132 236
+41 Tanaris 2 198 383
+42 Teldrassil 2 124 106
+43 Thousand_Needles 2 180 338
+44 Un'Goro_Crater 2 162 370
+45 Winterspring 2 212 152
+46 Zandalar 1 369 343
+47 Borean_Tundra 3 304 65
+48 Coldarra 3 275 64
+49 Crystalsong_Forest 3 364 30
+50 Dragonblight 3 355 58
+51 Grizzly_Hills 3 405 59
+52 Howling_Fjord 3 429 82
+53 IceCrown_Glacier 3 336 21
+54 Sholazar_Basin 3 305 34
+55 The_Storm_Peaks 3 385 14
+56 Zul'Drak 3 398 39
+57 Grim_Batol 1 576 249
+
+[borders]
+1 19 16 20 23
+2 23 22
+3 13 15
+4 18
+5 15 14
+6 13 15 9
+7 9 21 17 18
+8 11 20 12
+9 14 7 21 6
+10 11 19
+11 10 8
+12 8 23
+13 22 6 3
+14 5 9
+15 3 6 5
+16 19 24 23 1
+17 7 46 32 19 28
+18 4 7
+19 52 16 1 20 32 10 17
+20 19 1 8
+21 9 7
+22 2 13 57 33 30
+23 16 12 2 1
+24 16
+25 30 34 26 28
+26 25
+27 30 29
+28 25 40 33 32 38 43 46 17
+29 27
+30 42 27 25 47 22
+31 40 35
+32 17 19 28
+33 28 22
+34 25 37 45
+35 31 43
+36 45
+37 34 45
+38 28
+39 44
+40 28 31
+41 43 44
+42 30
+43 28 35 41
+44 41 39
+45 34 36 37
+46 17 28
+47 48 54 50 30
+48 47
+49 53 50 55 56
+50 47 53 49 56 51
+51 50 56 52
+52 51 19
+53 54 50 49
+54 47 53
+55 49 56
+56 50 49 51 55
+57 22

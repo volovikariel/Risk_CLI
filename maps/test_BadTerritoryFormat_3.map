@@ -1,0 +1,6 @@
+[continents]
+Ontario_and_Quebec 4 cyan
+
+[countries]
+; Territory's continent ID is out of bounds
+1 Quebec-North 10 430 261

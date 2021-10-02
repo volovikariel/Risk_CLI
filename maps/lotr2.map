@@ -1,0 +1,107 @@
+; map: LOTR.map
+; map made with the map maker
+; yura.net Risk 1.0.9.3
+
+[files]
+pic LOTR2_pic.jpg
+map LOTR2_map.gif
+crd LOTR2.cards
+
+[continents]
+MORDOR 5 #666666
+RHOVANION 6 yellow
+RHûN 3 #00cc00
+GONDOR 5 red
+ROHAN 4 #0000cc
+ERIADOR 7 #00cccc
+ARNOR 5 #ff9999
+
+[countries]
+1 NURN 1 528 322
+2 Plateau_of_Gorogoth 1 514 285
+3 Orodruin 1 501 267
+4 Barad_Dûr 1 544 276
+5 Ered_Lithui 1 502 244
+6 Black_lake 1 596 315
+7 Anfalas 4 323 332
+8 Lebennin 4 410 336
+9 South_Ithilien 4 451 352
+10 North_Ithilien 4 432 258
+11 Mountains_of_Gondor 4 318 263
+12 The_Brown_Lands 2 440 216
+13 Dur_Guldur 2 439 170
+14 Mirkwood 2 438 132
+15 East_Bright 2 480 148
+16 Erareth_on_the_long_lake 2 495 89
+17 Erebor(the_lonely_mountain) 2 494 69
+18 Helmsdeep 5 376 236
+19 Fangorn 5 342 212
+20 Lorien 5 370 177
+21 Iron_Hills 3 575 32
+22 Ered_Mithrin 3 452 21
+23 Mount_Gunduband 3 387 41
+24 Angmar 3 347 22
+25 Enedwaight 5 230 244
+26 Isengard 5 277 220
+27 Dunland 5 273 190
+28 Eregion 5 296 173
+29 Forodwaight 7 277 16
+30 Hithaeglir 7 288 64
+31 Ereth_Luin 7 99 81
+32 Forlindon 7 22 104
+33 Ettenmoors 7 322 85
+34 Weather_Hills 7 307 111
+35 Ruhdaur 7 339 118
+36 Minhiriath 6 180 195
+37 Halindon 6 66 166
+38 Bleu_Mountains 6 148 158
+39 Arthedian 6 150 125
+40 The_shire 6 210 142
+41 Old_Forest 6 239 122
+42 Bree 6 285 136
+43 Sea_of_Rhûn 3 620 171
+
+[borders]
+1 2 4 6
+2 5 4 1 3
+3 5 2
+4 5 2 1 6
+5 10 2 4 3
+6 1 4
+7 11 8
+8 11 7 9
+9 11 8
+10 12 5 11
+11 10 18 26 7 8 9
+12 15 20 18 10
+13 15 14 20
+14 15 13 20
+15 16 14 13 12
+16 21 17 15
+17 21 22 16
+18 20 19 12 11
+19 20 18
+20 14 13 12 19 18
+21 17 43 16
+22 17 24
+23 24
+24 30 29 23 22
+25 26 36 27
+26 11 25 27 28
+27 25 26 28 42 41 40
+28 26 27
+29 30 24 31
+30 41 33 34 29 24
+31 29 32
+32 31
+33 30 34 35
+34 30 33 35
+35 33 34
+36 25 40 38 37
+37 36
+38 36 39 40
+39 38 40 41
+40 27 36 38 39 41
+41 27 40 39 30
+42 27
+43 21

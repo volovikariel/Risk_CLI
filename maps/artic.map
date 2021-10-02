@@ -1,0 +1,128 @@
+; map: artic.map
+; map made with the map maker
+; yura.net Risk 1.0.9.3
+
+[files]
+pic artic_pic.png
+map artic_map.gif
+crd artic.cards
+
+[continents]
+Artic 5 white
+Canada 5 green
+Russia 8 yellow
+Norway 2 blue
+United_States 4 orange
+Denmark 5 cyan
+
+[countries]
+1 Whitehorse 2 108 66
+2 Dawson 2 148 77
+3 Watson_Lake 2 74 83
+4 Inuvik 2 161 109
+5 Hay_River 2 43 115
+6 Echo_Bay 2 97 129
+7 Yellowknife 2 58 136
+8 Cambridge_Bay 2 110 176
+9 Resolute 2 162 206
+10 Alert 2 263 234
+11 Repulse_Bay 2 75 226
+12 Rankin_Inlet 2 39 209
+13 Iqaluit 2 67 279
+14 Prudhoe_Bay 5 223 94
+15 Barrow 5 258 89
+16 Nome 5 269 41
+17 Fairbanks 5 187 63
+18 Valdez 5 157 44
+19 Anchorage 5 179 37
+20 Bethel 5 207 14
+21 Kodiak 5 165 9
+22 Juneau 5 84 52
+23 Longyearbyen 4 366 292
+24 Tromso 4 411 346
+25 Oslo 4 396 414
+26 Narsarsuaq 6 110 360
+27 Tasiilaq 6 175 345
+28 Paamiut 6 101 340
+29 Nuuk 6 119 329
+30 Kangerlussuaq 6 141 316
+31 Ittoqqortoormiit 6 252 338
+32 Qaanaaq 6 208 248
+33 Nord 6 309 269
+34 Torshavn 6 301 410
+35 Murmansk 3 466 334
+36 Arkangelsk 3 517 349
+37 Saint_Petersburg 3 506 397
+38 Moscow 3 563 401
+39 NizHiniy_Novogorod 3 595 383
+40 Kazan 3 623 369
+41 Perm 3 629 338
+42 Dikson 3 521 230
+43 Norilsk 3 570 218
+44 Tiksi 3 495 132
+45 Verkhoyansk 3 518 101
+46 Cherskiy 3 412 68
+47 Provideniya 3 304 34
+48 Anadyr 3 355 35
+49 Magadan 3 497 22
+50 Oymyakon 3 514 63
+51 Yakustsk 3 581 87
+52 Okhotsk 3 540 41
+53 Pevek 3 370 69
+54 North_Pole 1 336 212
+
+[borders]
+1 2 3 6 22
+2 4 1 6
+3 1 5 6
+4 8 2 6 9 54
+5 3 6 12 7
+6 4 2 7 3 5 1 8 11
+7 6 5 12 11
+8 9 11 4 6
+9 10 8 11 13 4
+10 9 54
+11 9 13 12 8 6 7
+12 11 13 5 7
+13 11 12 9 28
+14 15 17 54
+15 14 16 17 54
+16 15 20 17 47
+17 14 16 20 19 18 15
+18 19 17 22 21
+19 20 17 18 21
+20 16 21 19 17
+21 20 19 22 18
+22 18 21 1
+23 24 25 54
+24 23 25
+25 23 24 34 37
+26 27 28 34 29
+27 26 29 31 32 30 33
+28 26 29 13
+29 28 30 27 26
+30 29 32 27
+31 27 34 33
+32 30 27 33
+33 27 31 32 54
+34 26 31 25
+35 37 36 42 54
+36 35 42 37 38 39 40 41 43
+37 35 36 38 25
+38 36 37 39
+39 36 38 40
+40 36 39 41
+41 36 40 43
+42 36 43 44 35 54
+43 42 36 41 51 45 44
+44 45 43 42 46 54
+45 51 50 44 43
+46 49 50 48 44 53
+47 48 53 16
+48 49 46 47 53
+49 52 48 46 50
+50 49 51 52 46 45
+51 43 52 50 45
+52 51 49 50
+53 46 47 48 54
+54
