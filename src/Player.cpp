@@ -4,14 +4,42 @@ using namespace std;
 
 //constructors
 //default constructor
-Player::Player() : playerTerritories(), playerCards(), playerOrderList(), playerArmies(0), playerID(0) {
+Player::Player() :
+
+    playerTerritories(),
+    playerCards(),
+    playerOrderList(),
+    playerArmies(0),
+    playerID(0),
+    territoriesToAttack(),
+    territoriesToDefend()
+{
+
 }
 
 //parametrized constructor
-Player::Player(vector<Territory*> playerTerritories_, Hand* playerCards_, OrdersList* playerOrders_, int playerArmies_, int playerID_) : playerTerritories(playerTerritories_), playerCards(playerCards_), playerOrderList(playerOrders_), playerArmies(playerArmies_), playerID(playerID_) {
+Player::Player(vector<Territory*> playerTerritories_, Hand* playerCards_, OrdersList* playerOrders_, int playerArmies_, int playerID_, vector<Territory*> territoriesToAttack_, vector<Territory*> territoriesToDefend_) :
+    playerTerritories(playerTerritories_),
+    playerCards(playerCards_),
+    playerOrderList(playerOrders_),
+    playerArmies(playerArmies_),
+    playerID(playerID_),
+    territoriesToAttack(territoriesToAttack_),
+    territoriesToDefend(territoriesToDefend_)
+{
+
 }
 //copy constructor
-Player::Player(const Player& p) : playerTerritories(p.playerTerritories), playerCards(new Hand(*(p.playerCards))), playerOrderList(new OrdersList(*(p.playerOrderList))), playerArmies(p.playerArmies), playerID(p.playerID) {
+Player::Player(const Player& p) :
+    playerTerritories(p.playerTerritories),
+    playerCards(new Hand(*(p.playerCards))),
+    playerOrderList(new OrdersList(*(p.playerOrderList))),
+    playerArmies(p.playerArmies),
+    playerID(p.playerID),
+    territoriesToAttack(p.territoriesToAttack),
+    territoriesToDefend(p.territoriesToDefend)
+{
+
 }
 
 //destructor
@@ -28,6 +56,24 @@ Player::~Player() {
 
     playerArmies = 0;
     playerID = 0;
+
+    for (Territory* t : territoriesToAttack) {
+        if (t->continent != nullptr){
+            delete t->continent;
+            t->continent = nullptr;
+        }
+        delete t;
+        t = nullptr;
+    }
+
+    for (Territory* t : territoriesToDefend) {
+        if (t->continent != nullptr){
+            delete t->continent;
+            t->continent = nullptr;
+        }
+        delete t;
+        t = nullptr;
+    }
 }
 
 //accessors
@@ -58,7 +104,7 @@ void Player::setPlayerCards(Hand* playerCards_) {
     playerCards = playerCards_;
 }
 
-void Player::setPlayerOrders(Order* playerOrders_) {
+void Player::addPlayerOrder(Order* playerOrderList_) {
     if (playerOrderList == nullptr) {
         playerOrderList = new OrdersList();
     }
@@ -69,6 +115,18 @@ void Player::setPlayerArmies(int playerArmies_) {
     playerArmies = playerArmies_;
 }
 
+void Player::setTerritoriesToAttack(vector<Territory*> territoriesToAttack_) {
+    for (Territory* t : territoriesToAttack_) {
+        this->territoriesToAttack.push_back(t);
+    }
+}
+
+void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend_) {
+    for (Territory* t : territoriesToDefend_) {
+        this->territoriesToDefend.push_back(t);
+    }
+}
+
 //operator overloading
 //assignment operator overloading
 void Player::operator=(const Player& p) {
@@ -77,6 +135,8 @@ void Player::operator=(const Player& p) {
     playerOrderList = new OrdersList(*(p.playerOrderList));
     playerArmies = p.playerArmies;
     playerID = p.playerID;
+    territoriesToAttack = p.territoriesToAttack;
+    territoriesToDefend = p.territoriesToDefend;
 }
 
 //stream insertion operator overloading
@@ -121,21 +181,13 @@ istream& operator>>(istream& in, Player& p) {
 
 //required methods
 void Player::issueOrder(Order* order) {
-    this->setPlayerOrders(order);
+    this->addPlayerOrder(order);
 }
 
 vector<Territory*> Player::toDefend() {
-    Continent* c = new Continent(1, "North America", "Red", 100);
-    Territory* t1 = new Territory(1, "Canada", c, 50, 100);
-    Territory* t2 = new Territory(2, "United States", c, 100, 100);
-    vector<Territory*> toDefend{ t1, t2 };
-    return toDefend;
+    return territoriesToDefend;
 }
 
 vector<Territory*> Player::toAttack() {
-    Continent* c = new Continent(1, "Asia", "Red", 100);
-    Territory* t1 = new Territory(1, "Russia", c, 1000, 100);
-    Territory* t2 = new Territory(2, "China", c, 100, 50);
-    vector<Territory*> toAttack{ t1, t2 };
-    return toAttack;
+    return territoriesToAttack;
 }

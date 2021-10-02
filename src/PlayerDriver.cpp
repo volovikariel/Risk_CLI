@@ -5,9 +5,14 @@ int main(int argc, char *argv[])
 {
     Player* p = new Player();
     vector<Territory*> territories;
-    Continent* c = new Continent(1, "North America", "Red", 100);
-    Territory* t1 = new Territory(1, "Canada", c, 50, 100);
-    Territory* t2 = new Territory(2, "United States", c, 100, 100);
+    vector<Territory*> territoriesToDefend;
+    vector<Territory*> territoriesToAttack;
+    Continent* c1 = new Continent(1, "North America", "Red", 100);
+    Territory* t1 = new Territory(1, "Canada", c1, 50, 100);
+    Territory* t2 = new Territory(2, "United States", c1, 100, 100);
+    Continent* c2 = new Continent(1, "Asia", "Red", 100);
+    Territory* t3 = new Territory(1, "Russia", c2, 1000, 100);
+    Territory* t4 = new Territory(2, "China", c2, 100, 50);
     /*Order* order = new Order();
     Deck* deck = new Deck();
     deck->push_card(CardType::SPY);
@@ -31,18 +36,21 @@ int main(int argc, char *argv[])
     //3) Verifying that players have a collection of territories returned by .toDefend()
 
     cout << "\n===3) Verifying that players have a collection of territories returned by .toDefend()===" << endl;
-    vector<Territory*> territoriesToDefend = p->toDefend();
+    territoriesToDefend = territories;
+    p->setTerritoriesToDefend(territoriesToDefend);
     cout << "\nTerritories to defend: " << endl;
-    for (Territory* t : territoriesToDefend) {
+    for (Territory* t : p->toDefend()) {
         cout << *t << endl;
     }
 
     //4) Verifying that players have a collection of territories returned by .toAttack()
 
     cout << "\n===4) Verifying that players have a collection of territories returned by .toAttack()===" << endl;
-    vector<Territory*> territoriesToAttack = p->toAttack();
+    territoriesToAttack.push_back(t3);
+    territoriesToAttack.push_back(t4);
+    p->setTerritoriesToAttack(territoriesToAttack);
     cout << "\nTerritories to attack: " << endl;
-    for (Territory* t : territoriesToAttack) {
+    for (Territory* t : p->toAttack()) {
         cout << *t << endl;
     }
 
