@@ -15,14 +15,12 @@ class Card
 {
     public:
         // The different card types which issue various orders
-        // The last property ENUM_SIZE is used to randomly generate cards to fill a deck (currently unused)
         enum Card_Type {
             bomb,
             reinforcement,
             blockade,
             airlift,
-            diplomacy,
-            ENUM_SIZE
+            diplomacy
         };
         // Default constructor
         Card();
