@@ -20,7 +20,7 @@ int main()
     cout << "[HAND] Before adding any cards: " << hand << endl;
     // Draw all the cards in the deck
     while (main_deck.getCards().size() > 0) {
-        hand.addCard(*main_deck.drawCard());
+        hand.addCard(*main_deck.draw());
         cout << "[HAND] Right after adding a card: " << hand << endl;
     }
     cout << "[DECK] After drawing all cards: " << main_deck << "\n" << endl;

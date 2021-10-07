@@ -137,7 +137,7 @@ void Deck::addCard(Card& card)
 
 // Removes and returns a card at random from the deck
 // Returns NULL if trying to draw a card when the deck is empty
-Card* Deck::drawCard()
+Card* Deck::draw()
 {
     vector<Card*>& cards = main_deck.getCards();
     int deck_size = cards.size();

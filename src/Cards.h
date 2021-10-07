@@ -68,7 +68,7 @@ class Deck
         // Adds a card to the deck given its reference (adds the card to main_deck.all_cards as well if it's not already present)
         void addCard(Card&);
         // Removes and returns a card at random from the deck (returns NULL if trying to draw a card when the deck is empty)
-        Card* drawCard();
+        Card* draw();
         // Returns a reference to the deck's cards
         vector<Card*>& getCards();
     private:
