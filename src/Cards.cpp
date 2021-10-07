@@ -170,7 +170,7 @@ void Deck::deepCopy(const Deck& other) {
         // We copy all instances of this card to all_cards for future cleanup
         this->all_cards.push_back(copied_card);
         // We copy all the cards actually currently in the deck (as opposed to all_cards which includes cards in hands) into the current deck
-        if (find(other.cards.begin(), other.cards.end(), card) != other.cards.end()) {
+        if (find(other.cards.begin(), other.cards.end(), &card) != other.cards.end()) {
             this->cards.push_back(copied_card);
         }
     }
