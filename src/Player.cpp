@@ -143,8 +143,15 @@ void Player::operator=(const Player& p) {
 ostream& operator<<(ostream& out, const Player& p) {
     out << "\nPlayer ID: " << p.playerID << endl;
 
-    for (Territory* t : p.playerTerritories) {
-        out << "Territories: " << *t << endl;
+    if (!p.playerTerritories.empty()) {
+        out << "\nPlayer's territories:\n";
+        for (Territory *t : p.playerTerritories) {
+            out << *t << endl;
+        }
+    }
+
+    else {
+        out << "\nTerritories not initialized!\n";
     }
 
     /*if (p.playerOrderList != nullptr) {
@@ -155,17 +162,18 @@ ostream& operator<<(ostream& out, const Player& p) {
     }
 
     else {
-        out << "\nOrders not initialized";
+        out << "\nOrders not initialized!\n";
     }*/
 
     if (p.playerCards != nullptr) {
+        out << "\nPlayer's Hand:\n";
         for (Card* c : p.playerCards->getCards()) {
-            out << "\nCard: " << *c << endl;
+            out << *c << endl;
         }
     }
 
     else {
-        out << "\nHand not initialized";
+        out << "\nHand not initialized!\n";
     }
 
     return out;
