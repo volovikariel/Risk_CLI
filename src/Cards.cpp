@@ -27,11 +27,10 @@ Card::Card(const Card& other):
 
 }
 
-// Destructor which deletes the references to hands
-// This destructor is called when the card gets "delete"ed from the Deck
+// Card destructor
 Card::~Card()
 {
-    delete this->getHand();
+
 }
 
 // Assignment operator for card
