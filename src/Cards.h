@@ -32,7 +32,7 @@ class Card
         ~Card();
         // Assignment operator
         void operator = (const Card&);
-        // Stream output operator
+        // Stream insertion operator
         friend std::ostream& operator << (std::ostream&, Card&);
         // Adds an order to the player's order's list based on the type of card
         void play();
@@ -61,7 +61,7 @@ class Deck
         ~Deck();
         // Assignment operator
         void operator = (const Deck&);
-        // Stream output operator
+        // Stream insertion operator
         friend std::ostream& operator << (std::ostream&, Deck&);
         // Adds a card to the deck given its reference (adds the card to main_deck.all_cards as well if it's not already present)
         void addCard(Card&);
@@ -91,7 +91,7 @@ class Hand
         ~Hand();
         // Assignment operator
         void operator = (const Hand&);
-        // Stream output operator
+        // Stream insertion operator
         friend std::ostream& operator << (std::ostream&, Hand&);
         // Adds a card to the hand and sets the Hand of the card to this
         void addCard(Card&);

@@ -40,7 +40,7 @@ void Card::operator = (const Card& other)
     this->hand = other.hand;
 }
 
-// Stream output operator for a card
+// Stream insertion operator for a card
 std::ostream& operator << (std::ostream& out, Card& source)
 {
     int type_index = source.type;
@@ -115,7 +115,7 @@ void Deck::operator = (const Deck& other)
     deepCopy(other);
 }
 
-// Strema output operator for the deck
+// Strema insertion operator for the deck
 std::ostream& operator << (std::ostream& out, Deck& source)
 {
     out << "Deck[";
@@ -209,7 +209,7 @@ void Hand::operator = (const Hand& other)
     this->cards = other.cards;
 }
 
-// Stream output operator for a hand
+// Stream insertion operator for a hand
 std::ostream& operator << (std::ostream& out, Hand& source)
 {
     out << "Hand[";
