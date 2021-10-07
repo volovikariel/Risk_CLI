@@ -69,6 +69,8 @@ class Deck
         Card* draw();
         // Returns a reference to the deck's cards
         vector<Card*>& getCards();
+        // Replaces deck with a deepy copy of the deck provided
+        void deepCopy(const Deck&);
     private:
         // The cards currently present in the deck
         vector<Card*> cards;

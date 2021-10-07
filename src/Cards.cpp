@@ -43,7 +43,9 @@ void Card::operator = (const Card& other)
 // Stream output operator for a card
 std::ostream& operator << (std::ostream& out, Card& source)
 {
-    out << "Card[TYPE=" << source.type << "]";
+    int type_index = source.type;
+    vector<std::string> types{"bomb", "reinforcement", "blockade", "airlift", "diplomacy"};
+    out << "Card[TYPE=" << types[type_index] << "]";
     return out;
 }
 
@@ -94,10 +96,9 @@ Deck::Deck()
 }
 
 // Deck copy constructor
-Deck::Deck(const Deck& other):
-    cards(other.cards)
+Deck::Deck(const Deck& other)
 {
-
+    deepCopy(other);
 }
 
 // Deck destructor which deletes all cards
@@ -111,7 +112,7 @@ Deck::~Deck()
 // Assignment operator for the deck
 void Deck::operator = (const Deck& other)
 {
-    this->cards = other.cards;
+    deepCopy(other);
 }
 
 // Strema output operator for the deck
@@ -156,6 +157,23 @@ Card* Deck::draw()
 vector<Card*>& Deck::getCards()
 {
     return this->cards;
+}
+
+// Replaces deck with a deepy copy of the deck provided
+void Deck::deepCopy(const Deck& other) {
+    // We'll be replacing the deck so delete all the references to the cards
+    for(const Card* card : main_deck.all_cards) {
+        delete card;
+    }
+    for(const Card* card : other.all_cards) {
+        Card* copied_card = new Card(*card);
+        // We copy all instances of this card to all_cards for future cleanup
+        this->all_cards.push_back(copied_card);
+        // We copy all the cards actually currently in the deck (as opposed to all_cards which includes cards in hands) into the current deck
+        if (find(other.cards.begin(), other.cards.end(), &card) != other.cards.end()) {
+            this->cards.push_back(copied_card);
+        }
+    }
 }
 
 // Hand
