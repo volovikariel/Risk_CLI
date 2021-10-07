@@ -1,7 +1,7 @@
 #include "Orders.h"
 #include <stdlib.h>
-#include <vector>
 #include <assert.h>
+#include <vector>
 #include <ostream>
 using std::vector;
 
@@ -20,15 +20,15 @@ class Card
         };
         Card(enum Card_Type);
         // Copy constructor
-        Card(const Card* other);
+        Card(const Card&);
         // Assignment operator
-        void operator = (const Card* other);
+        void operator = (const Card&);
         // Stream output operator
-        friend std::ostream& operator << (std::ostream& out, const Card* source);
+        friend std::ostream& operator << (std::ostream&, Card&);
         ~Card();
         Order* play();
-        Card_Type getType();
-        Hand* getHand();
+        Card_Type getType() const;
+        Hand* getHand() const;
     private:
         Card_Type type;
         Hand* hand;
@@ -39,17 +39,19 @@ class Deck
     public:
         Deck();
         // Copy constructor
-        Deck(const Deck* other);
+        Deck(const Deck&);
         ~Deck();
         // Assignment operator
-        void operator = (const Deck* other);
+        void operator = (const Deck&);
         // Stream output operator
-        friend std::ostream& operator << (std::ostream& out, const Deck* source);
-        vector<Card*>* getCards();
-        void addCard(Card* card);
+        friend std::ostream& operator << (std::ostream&, Deck&);
+        vector<Card*>& getCards();
+        void addCard(Card&);
         Card* drawCard();
     private:
         vector<Card*> cards;
+        // TODO: Use this
+        vector<Card*> all_cards;
 };
 
 class Hand
@@ -57,17 +59,17 @@ class Hand
     public:
         Hand();
         // Copy constructor
-        Hand(const Hand* other);
+        Hand(const Hand&);
         // Assignment operator
-        void operator = (const Hand* other);
+        void operator = (const Hand&);
         // Stream output operator
-        friend std::ostream& operator << (std::ostream& out, const Hand* source);
+        friend std::ostream& operator << (std::ostream&, Hand&);
         ~Hand();
-        void addCard(Card*);
+        void addCard(Card&);
         void removeCard(int);
-        void removeCard(Card*);
+        void removeCard(Card&);
         Card* getCard(int);
-        vector<Card*>* getCards();
+        vector<Card*>& getCards();
     private:
         vector<Card*> cards;
 };
