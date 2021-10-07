@@ -156,17 +156,17 @@ ostream& operator<<(ostream& out, const Player& p) {
 
     else {
         out << "\nOrders not initialized";
-    }
+    }*/
 
     if (p.playerCards != nullptr) {
-        for (Card* c : p.playerCards->get_hand()) {
+        for (Card* c : p.playerCards->getCards()) {
             out << "\nCard: " << *c << endl;
         }
     }
 
     else {
         out << "\nHand not initialized";
-    }*/
+    }
 
     return out;
 }

@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
     Continent* c2 = new Continent(1, "Asia", "Red", 100);
     Territory* t3 = new Territory(1, "Russia", c2, 1000, 100);
     Territory* t4 = new Territory(2, "China", c2, 100, 50);
-    /*Order* order = new Order();
-    Deck* deck = new Deck();
-    deck->push_card(CardType::SPY);
-    Hand* h = new Hand(deck);*/
+    //Order* order = new Order();
+    Hand* h = new Hand(*p);
+    h->addCard(*new Card(Card::Card_Type::bomb));
+    h->addCard(*new Card(Card::Card_Type::airlift));
 
     //1) Verifying that players have a collection of territories
 
@@ -26,12 +26,12 @@ int main(int argc, char *argv[])
     p->setPlayerTerritories(territories);
     cout << *p;
 
-    /*
+
     //2) Verifying that players have a collection of cards (i.e a hand of cards)
 
     cout << "\n===2) Verifying that players have a collection of cards (i.e a hand of cards)===" << endl;
     p->setPlayerCards(h);
-    cout << *p;*/
+    cout << *p;
 
     //3) Verifying that players have a collection of territories returned by .toDefend()
 
