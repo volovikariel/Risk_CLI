@@ -3,9 +3,6 @@
 using std::cout;
 using std::endl;
 
-// The one true deck, declared as extern in Cards.h
-Deck main_deck;
-
 int main()
 {
     // Filling the deck with cards of all types

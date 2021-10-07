@@ -2,6 +2,9 @@
 #include "Cards.h"
 #include <algorithm>
 
+// The one true deck, declared as extern in Cards.h
+Deck main_deck = Deck();
+
 // CARD
 // Card Default constructor
 Card::Card()
