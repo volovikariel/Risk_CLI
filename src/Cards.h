@@ -1,4 +1,4 @@
-#include "Orders.h"
+#pragma once
 #include <stdlib.h>
 #include <assert.h>
 #include <vector>
@@ -7,6 +7,8 @@ using std::vector;
 
 // mini-declaring Hand so as to be able to use it in Card before Hand was fully declared
 class Hand;
+class Player;
+class Order;
 
 // Card class that represents the cards which, depending on their type, allow the player to issue special orders
 class Card
@@ -35,7 +37,7 @@ class Card
         // Stream output operator
         friend std::ostream& operator << (std::ostream&, Card&);
         // TODO: Provide a comment once we know what happens in the function
-        Order* play();
+        void play();
         // Returns the type of the card
         Card_Type getType() const;
         // Returns the hand which the card is part of
@@ -81,8 +83,8 @@ class Deck
 class Hand
 {
     public:
-        // Default constructor
-        Hand();
+        // Constructor which associates a Player with a Hand
+        Hand(Player&);
         // Copy constructor
         Hand(const Hand&);
         // Unused hand destructor because the cards in the hands are already all referenced in deck.all_cards
@@ -99,11 +101,17 @@ class Hand
         void removeCard(Card&);
         // Gets a card from the hand given the card's index
         Card* getCard(int);
+        // Returns the Player who's hand has this card
+        Player* getPlayer() const;
         // Returns a reference to the cards in the hand
         vector<Card*>& getCards();
     private:
+        // Default constructor isn't allowed. A hand must always be attached to a Player
+        Hand();
         // The cards present in the hand
         vector<Card*> cards;
+        // The player which has this hand
+        Player* player;
 };
 
 // Seeing as there's a single deck, we define the deck as extern and use it everywhere else.

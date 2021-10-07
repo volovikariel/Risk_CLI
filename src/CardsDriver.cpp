@@ -1,4 +1,4 @@
-#include "Cards.h"
+#include "Player.h"
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -15,7 +15,7 @@ int main()
     main_deck.addCard(*new Card(Card::Card_Type::diplomacy));
     main_deck.addCard(*new Card(Card::Card_Type::reinforcement));
     // Declaring a test hand to demonstrate drawing/playing cards
-    Hand hand;
+    Hand hand(*new Player());
     cout << "[DECK] Before drawing any cards: " << main_deck << endl;
     cout << "[HAND] Before adding any cards: " << hand << endl;
     // Draw all the cards in the deck

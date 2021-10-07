@@ -1,3 +1,4 @@
+#include "Player.h"
 #include "Cards.h"
 #include <algorithm>
 
@@ -45,14 +46,16 @@ std::ostream& operator << (std::ostream& out, Card& source)
 }
 
 // TODO: Write comment once we know what exactly happens in this function
-Order* Card::play()
+void Card::play()
 {
+    // Removes the card from the hand
     this->getHand()->removeCard(*this);
+    // This card is now not attached to any hand, so set its hand property to NULL
     this->hand = NULL;
+    // Add the card back to the deck
     main_deck.addCard(*this);
-    // TODO: Provide an order type. Use Player, Order, OrderList
-    //return new Order(this->type);
-    return new Order();
+    // TODO: Issue the order for this card based on its type
+    this->getHand()->getPlayer()->addPlayerOrder(new Order());
 }
 
 // Returns the type of the card
@@ -65,6 +68,12 @@ Card::Card_Type Card::getType() const
 Hand* Card::getHand() const
 {
     return this->hand;
+}
+
+// Returns the Player who's hand has this card
+Player* Hand::getPlayer() const
+{
+    return this->player;
 }
 
 // Sets the hand to a provided hand for a card
@@ -148,8 +157,15 @@ vector<Card*>& Deck::getCards()
 }
 
 // Hand
-// Default constructor
+// Default constructor (UNUSED)
 Hand::Hand()
+{
+
+}
+
+// Constructor which associates a Player with a Hand
+Hand::Hand(Player& player):
+    player(&player)
 {
 
 }
