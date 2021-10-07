@@ -45,7 +45,7 @@ std::ostream& operator << (std::ostream& out, Card& source)
     return out;
 }
 
-// TODO: Write comment once we know what exactly happens in this function
+// Adds an order to the player's order's list based on the type of card
 void Card::play()
 {
     // Removes the card from the hand

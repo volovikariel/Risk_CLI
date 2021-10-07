@@ -34,7 +34,7 @@ class Card
         void operator = (const Card&);
         // Stream output operator
         friend std::ostream& operator << (std::ostream&, Card&);
-        // TODO: Provide a comment once we know what happens in the function
+        // Adds an order to the player's order's list based on the type of card
         void play();
         // Returns the type of the card
         Card_Type getType() const;
