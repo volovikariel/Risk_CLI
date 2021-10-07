@@ -1,21 +1,21 @@
 #include "Cards.h"
-
-#include <stdlib.h>
-#include <vector>
-#include <time.h>
-#include <assert.h>
-#include <iostream>
 #include <algorithm>
 
 // CARD
-// TODO: This returns an Order* with the card type, etc.
-// TODO: Remove card from hand...somehow?
+// Card Default constructor
+Card::Card()
+{
+
+}
+
+// Card constructor which allows it to be instantiated with a type
 Card::Card(enum Card_Type type):
     type(type)
 {
 
 }
 
+// Card copy constructor
 Card::Card(const Card& other):
     type(other.type),
     hand(other.hand)
@@ -23,68 +23,87 @@ Card::Card(const Card& other):
 
 }
 
-
+// Destructor which deletes the references to hands
+// This destructor is called when the card gets "delete"ed from the Deck
 Card::~Card()
 {
-
+    delete this->getHand();
 }
 
+// Assignment operator for card
 void Card::operator = (const Card& other)
 {
     this->type = other.type;
     this->hand = other.hand;
 }
 
+// Stream output operator for a card
 std::ostream& operator << (std::ostream& out, Card& source)
 {
     out << "Card[TYPE=" << source.type << "]";
     return out;
 }
 
+// TODO: Write comment once we know what exactly happens in this function
 Order* Card::play()
 {
     this->getHand()->removeCard(*this);
-    delete this->getHand();
+    this->hand = NULL;
     main_deck.addCard(*this);
-    // TODO: Provide an order type
+    // TODO: Provide an order type. Use Player, Order, OrderList
     //return new Order(this->type);
     return new Order();
 }
 
+// Returns the type of the card
 Card::Card_Type Card::getType() const
 {
     return this->type;
 }
 
+// Returns the hand which the card is part of
 Hand* Card::getHand() const
 {
     return this->hand;
 }
 
+// Sets the hand to a provided hand for a card
+// This is called when adding a card to a hand. We need a public setter because we can't access the
+// Hand object in Card from inside of Hand directly
+void Card::setHand(Hand& hand)
+{
+    this->hand = &hand;
+}
+
 // DECK
+// Deck default constructor
 Deck::Deck()
 {
 
 }
 
+// Deck copy constructor
 Deck::Deck(const Deck& other):
     cards(other.cards)
 {
 
 }
 
+// Deck destructor which deletes all cards
 Deck::~Deck()
 {
-    for(const Card* card: main_deck.getCards()) {
+    for(const Card* card: main_deck.all_cards) {
         delete card;
     }
 }
 
+// Assignment operator for the deck
 void Deck::operator = (const Deck& other)
 {
     this->cards = other.cards;
 }
 
+// Strema output operator for the deck
 std::ostream& operator << (std::ostream& out, Deck& source)
 {
     out << "Deck[";
@@ -95,12 +114,20 @@ std::ostream& operator << (std::ostream& out, Deck& source)
     return out;
 }
 
+// Adds a card to the deck given its reference
+// Adds the card to main_deck.all_cards as well if it's not already present
+// This allows us to later call a single destructor for all the cards
 void Deck::addCard(Card& card)
 {
     main_deck.getCards().push_back(&card);
+    // Add all cards to the all_cards if they're not there already, to then free its memory
+    if(find(main_deck.all_cards.begin(), main_deck.all_cards.end(), &card) == main_deck.all_cards.end()) {
+        main_deck.all_cards.push_back(&card);
+    }
 }
 
 // Removes and returns a card at random from the deck
+// Returns NULL if trying to draw a card when the deck is empty
 Card* Deck::drawCard()
 {
     vector<Card*>& cards = main_deck.getCards();
@@ -114,33 +141,39 @@ Card* Deck::drawCard()
     return drawn_card;
 }
 
+// Returns a reference to the deck's cards
 vector<Card*>& Deck::getCards()
 {
     return this->cards;
 }
 
 // Hand
+// Default constructor
 Hand::Hand()
 {
 
 }
 
+// Copy constructor
 Hand::Hand(const Hand& other):
     cards(other.cards)
 {
 
 }
 
+// Unused hand destructor because the cards in the hands are already all referenced in deck.all_cards
 Hand::~Hand()
 {
 
 }
 
+// Assignment operator for a hand
 void Hand::operator = (const Hand& other)
 {
     this->cards = other.cards;
 }
 
+// Stream output operator for a hand
 std::ostream& operator << (std::ostream& out, Hand& source)
 {
     out << "Hand[";
@@ -151,20 +184,14 @@ std::ostream& operator << (std::ostream& out, Hand& source)
     return out;
 }
 
+// Adds a card to the hand and sets the Hand of the card to this
 void Hand::addCard(Card& card)
 {
     this->getCards().push_back(&card);
+    card.setHand(*this);
 }
 
-Card* Hand::getCard(int card_index)
-{
-    vector<Card*>& hand = this->getCards();
-    if (card_index < 0 || card_index >= hand.size()) {
-        return nullptr;
-    }
-    return hand[card_index];
-}
-
+// Removes a card in the hand given the card's index in the hand vector
 void Hand::removeCard(int card_index)
 {
     vector<Card*>& hand = this->getCards();
@@ -174,12 +201,11 @@ void Hand::removeCard(int card_index)
     hand.erase(hand.begin() + card_index);
 }
 
+// Removes a card in the hand given a card's reference
 void Hand::removeCard(Card& card)
 {
-    std::cout << &card << std::endl;
     vector<Card*>& hand = this->getCards();
     auto card_to_erase = std::find(hand.begin(), hand.end(), &card);
-    std::cout << &card << std::endl;
     // If the card to be removed was not found in the Hand, we've got a problem
     assert(card_to_erase != hand.end());
     if (card_to_erase == hand.end()) {
@@ -188,7 +214,17 @@ void Hand::removeCard(Card& card)
     hand.erase(card_to_erase);
 }
 
+// Gets a card from the hand given the card's index
+Card* Hand::getCard(int card_index)
+{
+    vector<Card*>& hand = this->getCards();
+    if (card_index < 0 || card_index >= hand.size()) {
+        return nullptr;
+    }
+    return hand[card_index];
+}
 
+// Returns a reference to the cards in the hand
 vector<Card*>& Hand::getCards()
 {
     return this->cards;
