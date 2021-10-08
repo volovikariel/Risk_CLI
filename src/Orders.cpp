@@ -57,14 +57,22 @@ Order::~Order() { }
 //Input stream operator
 ostream& operator<<(ostream& os, Order& order){
     return os << "Order type: " << order.getType() << endl;
-
-    //TODO check if executed, then print description
 }
 
 //Assignment Operator
 Order& Order::operator=(const Order& order) {
     this->orderType = order.orderType;
     return *this;
+}
+
+bool Order::execute()
+{
+    return true;
+}
+
+bool Order::validate()
+{
+    return true;
 }
 
 

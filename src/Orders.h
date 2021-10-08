@@ -28,6 +28,8 @@ public:
     Order_Type getType() const;                                         // Getter for the order type
     Order & operator=(const Order& order);                              // Assignment operator overloading
     friend ostream& operator <<(ostream& os, Order& order);             // Input stream operator
+    virtual bool execute();                                             // First validates the order, and if valid executes its action
+    virtual bool validate();                                            // Checks if the order is valid
 private:
     Order_Type orderType;
 protected:
