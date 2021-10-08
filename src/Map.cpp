@@ -220,10 +220,8 @@ Territory* Map::getTerritoryByID(int ID) const
     }
 }
 
-// Modified DFS: only explores neighbors which are included in the territories argument
-// (this is done to support validation case 2, where we must limit ourselves to territories
-// of a specific continent).
-void DFS(const std::vector<Territory*>& territories, const Territory* const node, std::vector<bool>& visited)
+// Traditional DFS implementation
+void DFS(const Territory* const node, std::vector<bool>& visited)
 {
     int territoryIndex = node->ID - 1;
     visited[territoryIndex] = true;
@@ -232,12 +230,26 @@ void DFS(const std::vector<Territory*>& territories, const Territory* const node
     {
         int neighborIndex = neighbor->ID - 1;
 
-        if (find(territories.begin(), territories.end(), neighbor) != territories.end())
+        if (!visited.at(neighborIndex))
         {
-            if (!visited.at(neighborIndex))
-            {
-                DFS(territories, neighbor, visited);
-            }
+            DFS(neighbor, visited);
+        }
+    }
+}
+
+// Modified DFS implementation: only explores neighbors that belong to the same continent
+void DFSContinent(const Territory* const node, std::vector<bool>& visited)
+{
+    int territoryIndex = node->ID - 1;
+    visited[territoryIndex] = true;
+
+    for (const Territory* const neighbor : node->neighbors)
+    {
+        int neighborIndex = neighbor->ID - 1;
+
+        if (node->continentID == neighbor->continentID && !visited.at(neighborIndex))
+        {
+            DFSContinent(neighbor, visited);
         }
     }
 }
@@ -252,7 +264,7 @@ Map::FormatError Map::validate() const
     {
         std::vector<bool> visited(numTerritories);
 
-        DFS(territories, territory, visited);
+        DFS(territory, visited);
 
         if (find(visited.begin(), visited.end(), false) != visited.end())
         {
@@ -270,7 +282,7 @@ Map::FormatError Map::validate() const
         {
             std::vector<bool> visited(numTerritories);
 
-            DFS(continent->territories, territory, visited);
+            DFSContinent(territory, visited);
 
             // Check that every territory in this continent was reached
             for (const Territory* const territoryCheck : continent->territories)
