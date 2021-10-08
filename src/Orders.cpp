@@ -5,6 +5,24 @@ using namespace std;
 
 //==================== Order Class ====================
 
+// Stream output operator of Order_Type
+std::ostream& operator << (std::ostream& out, const Order::Order_Type order)
+{
+    static const char* names[9] =
+    {
+        "Order",
+        "Deploy",
+        "Advance",
+        "Bomb",
+        "Blockade",
+        "Airlift",
+        "Negotiate"
+    };
+
+    out << names[static_cast<size_t>(order)];
+    return out;
+}
+
 //Default Constructor
 Order::Order() {
     this->orderType = Order_Type::order;
@@ -38,10 +56,7 @@ Order::~Order() { }
 
 //Input stream operator
 ostream& operator<<(ostream& os, Order& order){
-    static const vector<std::string> types{ "order", "deploy", "advance", "bomb", "blockade", "airlift", "negotiate" };
-    int type_index = order.getType();
-
-    return os << "Order type: " << types[type_index] << endl;
+    return os << "Order type: " << order.getType() << endl;
 
     //TODO check if executed, then print description
 }
@@ -123,11 +138,8 @@ OrdersList &OrdersList::operator=(const OrdersList &ordersList) {
 
 //Stream insertion
 ostream &operator<<(ostream &os, OrdersList &ordersList) {
-
-    static const vector<std::string> types{ "Order", "Deploy", "Advance", "Bomb", "Blockade", "Airlift", "Negotiate" };
-
     for(int i = 0; i < ordersList.orderList.size(); i++){
-        os << "[Order " + to_string(i) << "] " << types[ordersList.getOrdersList()[i]->getType()] << endl;
+        os << "[Order " + to_string(i) << "] " << ordersList.getOrdersList()[i]->getType() << endl;
     }
     return os;
 }

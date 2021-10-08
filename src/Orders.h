@@ -18,6 +18,9 @@ public:
         negotiate
     };
 
+    // Stream output operator of Order_Type
+    friend std::ostream& operator << (std::ostream& out, const Order_Type source);
+
     Order();                                                            // Default Constructor
     Order(const Order& copy);                                           // Copy Constructor
     ~Order();                                                           // Destructor
