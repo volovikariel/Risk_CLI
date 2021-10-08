@@ -30,10 +30,13 @@ public:
     friend ostream& operator <<(ostream& os, Order& order);             // Input stream operator
     virtual bool execute();                                             // First validates the order, and if valid executes its action
     virtual bool validate();                                            // Checks if the order is valid
+    bool getExecuted();                                                 // Getter for executed boolean
+    bool setExecuted(const bool& value);                                // Setter for executed boolean
 private:
     Order_Type orderType;
 protected:
     void setType(const Order_Type& orderType);                          // Setter for the order type
+    bool executed;                                                      // Boolean to check if order has been executed or not
 };
 
 
