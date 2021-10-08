@@ -113,12 +113,7 @@ void OrdersList::removeOrder(int index) {
 
 //Move the order from index x (from) to index y (to)
 void OrdersList::move(int from, int to) {
-    //Save the element at index from as temp
-    Order *temporaryOrder = orderList[from];
-    //Remove the element at that the from index
-    orderList.erase(orderList.begin() + from);
-    //Insert the element that was at the from index (now saved in temp)
-    orderList.insert(orderList.begin() + to, temporaryOrder);
+    std::swap(*orderList[from], *orderList[to]);
     cout << "Moved order from index " << from << " to the index " << to << "." << endl << endl;
 }
 
