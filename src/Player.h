@@ -49,7 +49,6 @@ public:
     void operator=(const Player& p);
     //stream insertion operator overloading
     friend ostream& operator<<(ostream& out, const Player& p);
-    friend istream& operator>>(istream& in, Player& p);
 
     //required methods
     void issueOrder(Order* order); //creates an Order object and adds it to playerOrdersList

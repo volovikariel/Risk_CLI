@@ -32,49 +32,21 @@ Player::Player(vector<Territory*> playerTerritories_, Hand* playerCards_, Orders
 //copy constructor
 Player::Player(const Player& p) :
         playerTerritories(p.playerTerritories),
-        playerCards(new Hand(*(p.playerCards))),
-        playerOrdersList(new OrdersList(*(p.playerOrdersList))),
         playerArmies(p.playerArmies),
         playerID(p.playerID),
         territoriesToAttack(p.territoriesToAttack),
         territoriesToDefend(p.territoriesToDefend)
 {
-
+    delete this->playerCards;
+    delete this->playerOrdersList;
+    this->playerCards = new Hand(*(p.playerCards));
+    this->playerOrdersList = new OrdersList(*(p.playerOrdersList));
 }
 
 //destructor
 Player::~Player() {
-    for (Territory* t : playerTerritories) {
-        delete t;
-        t = nullptr;
-    }
-
     delete playerCards;
-    playerCards = nullptr;
-
     delete playerOrdersList;
-    playerOrdersList = nullptr;
-
-    playerArmies = 0;
-    playerID = 0;
-
-    for (Territory* t : territoriesToAttack) {
-        if (t->continent != nullptr){
-            delete t->continent;
-            t->continent = nullptr;
-        }
-        delete t;
-        t = nullptr;
-    }
-
-    for (Territory* t : territoriesToDefend) {
-        if (t->continent != nullptr){
-            delete t->continent;
-            t->continent = nullptr;
-        }
-        delete t;
-        t = nullptr;
-    }
 }
 
 //accessors
@@ -131,6 +103,9 @@ void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend_) {
 //operator overloading
 //assignment operator overloading
 void Player::operator=(const Player& p) {
+    delete playerCards;
+    delete playerOrdersList;
+
     playerTerritories = p.playerTerritories;
     playerCards = new Hand(*(p.playerCards));
     playerOrdersList = new OrdersList(*(p.playerOrdersList));
