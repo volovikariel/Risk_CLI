@@ -59,19 +59,19 @@ void Card::play()
     switch (type)
     {
     case Card::bomb:
-        hand->getPlayer()->addPlayerOrder(new Bomb());
+        hand->getPlayer()->issueOrder(new Bomb());
         break;
     case Card::reinforcement:
         // This card doesn't create an order
         break;
     case Card::blockade:
-        hand->getPlayer()->addPlayerOrder(new Blockade());
+        hand->getPlayer()->issueOrder(new Blockade());
         break;
     case Card::airlift:
-        hand->getPlayer()->addPlayerOrder(new Airlift());
+        hand->getPlayer()->issueOrder(new Airlift());
         break;
     case Card::diplomacy:
-        hand->getPlayer()->addPlayerOrder(new Negotiate());
+        hand->getPlayer()->issueOrder(new Negotiate());
         break;
     default:
         break;
