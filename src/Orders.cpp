@@ -104,6 +104,15 @@ void OrdersList::addOrder(Order *order) {
     orderList.push_back(order);
 }
 
+//Assignment operator
+OrdersList &OrdersList::operator=(const OrdersList &ordersList) {
+    for (const Order* order : orderList) {
+        delete order;
+    }
+    orderList = ordersList.orderList;
+    return *this;
+}
+
 //Stream insertion
 ostream &operator<<(ostream &os, OrdersList &ordersList) {
     for(int i = 0; i < ordersList.orderList.size(); i++){
