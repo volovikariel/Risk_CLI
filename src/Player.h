@@ -24,7 +24,7 @@ private:
 public:
     //constructor(s) and destructor
     Player();
-    Player(vector<Territory*> playerTerritories_, Hand* playerCards_, OrdersList* playerOrderList_, int playerArmies_, int playerID_, vector<Territory*> territoriesToAttack_, vector<Territory*> territoriesToDefend_);
+    Player(vector<Territory*> playerTerritories_, int playerArmies_, int playerID_, vector<Territory*> territoriesToAttack_, vector<Territory*> territoriesToDefend_);
     Player(const Player& p);
     ~Player();
 

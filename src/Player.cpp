@@ -7,8 +7,8 @@ using namespace std;
 Player::Player() :
 
         playerTerritories(),
-        playerCards(),
-        playerOrdersList(),
+        playerCards(new Hand(*this)),
+        playerOrdersList(new OrdersList()),
         playerArmies(0),
         playerID(0),
         territoriesToAttack(),
@@ -18,10 +18,10 @@ Player::Player() :
 }
 
 //parametrized constructor
-Player::Player(vector<Territory*> playerTerritories_, Hand* playerCards_, OrdersList* playerOrders_, int playerArmies_, int playerID_, vector<Territory*> territoriesToAttack_, vector<Territory*> territoriesToDefend_) :
+Player::Player(vector<Territory*> playerTerritories_, int playerArmies_, int playerID_, vector<Territory*> territoriesToAttack_, vector<Territory*> territoriesToDefend_) :
         playerTerritories(playerTerritories_),
-        playerCards(playerCards_),
-        playerOrdersList(playerOrders_),
+        playerCards(new Hand(*this)),
+        playerOrdersList(new OrdersList()),
         playerArmies(playerArmies_),
         playerID(playerID_),
         territoriesToAttack(territoriesToAttack_),
@@ -83,9 +83,6 @@ void Player::setPlayerOrders(OrdersList* playerOrderList_)
 }
 
 void Player::addPlayerOrder(Order* playerOrder_) {
-    if (playerOrdersList == nullptr) {
-        playerOrdersList = new OrdersList();
-    }
     playerOrdersList->addOrder(playerOrder_);
 }
 

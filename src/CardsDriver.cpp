@@ -14,14 +14,10 @@ int main()
     // Declaring a test hand to demonstrate drawing/playing cards
     Player p1;
     Player p2;
-    Hand hand1(p1);
-    Hand hand2(p2);
-    OrdersList orders1;
-    OrdersList orders2;
-    p1.setPlayerCards(&hand1);
-    p2.setPlayerCards(&hand2);
-    p1.setPlayerOrders(&orders1);
-    p2.setPlayerOrders(&orders2);
+    Hand& hand1 = *p1.getPlayerCards();
+    Hand& hand2 = *p2.getPlayerCards();
+    OrdersList& orders1 = *p1.getPlayerOrders();
+    OrdersList& orders2 = *p2.getPlayerOrders();
     cout << "[DECK] Before drawing any cards: " << main_deck << endl;
     cout << "[HAND1] Before adding any cards: " << hand1 << endl;
     cout << "[HAND2] Before adding any cards: " << hand2 << endl;
@@ -49,12 +45,12 @@ int main()
         Card* card = hand1.getCard(0);
         cout << "[DECK] Deck BEFORE playing a card and putting it back in the deck: " << main_deck << endl;
         cout << "[HAND1] Hand BEFORE playing a card, thus removing it from hand: " << hand1 << endl;
-        cout << "[ORDERLIST1] OrderList BEFORE playing a card, thus adding it to order list: " << endl << (*p1.getPlayerOrders());
+        cout << "[ORDERLIST1] OrderList BEFORE playing a card, thus adding it to order list: " << endl << orders1;
         cout << "Card played from hand: " << *card << endl;
         card->play();
         cout << "[HAND1] Hand AFTER playing a card, thus removing it from hand: " << hand1 << endl;
         cout << "[DECK] Deck AFTER playing a card and putting it back in the deck: " << main_deck << endl;
-        cout << "[ORDERLIST1] OrderList AFTER playing a card, and adding it to order list: " << endl << (*p1.getPlayerOrders()) << endl;
+        cout << "[ORDERLIST1] OrderList AFTER playing a card, and adding it to order list: " << endl << orders1 << endl;
     }
     cout << endl;
     cout << endl;
@@ -66,12 +62,13 @@ int main()
         Card* card = hand2.getCard(0);
         cout << "[DECK] Deck BEFORE playing a card and putting it back in the deck: " << main_deck << endl;
         cout << "[HAND2] Hand BEFORE playing a card, thus removing it from hand: " << hand2 << endl;
-        cout << "[ORDERLIST2] OrderList BEFORE playing a card, thus adding it to order list: " << endl << (*p2.getPlayerOrders());
+        cout << "[ORDERLIST2] OrderList BEFORE playing a card, thus adding it to order list: " << endl << orders2;
         cout << "Card played from hand: " << *card << endl;
         card->play();
         cout << "[HAND2] Hand AFTER playing a card, thus removing it from hand: " << hand2 << endl;
         cout << "[DECK] Deck AFTER playing a card and putting it back in the deck: " << main_deck << endl;
-        cout << "[ORDERLIST2] OrderList AFTER playing a card, and adding it to order list: " << endl << (*p2.getPlayerOrders()) << endl;
+        cout << "[ORDERLIST2] OrderList AFTER playing a card, and adding it to order list: " << endl << orders2 << endl;
     }
+
     return 0;
 }
