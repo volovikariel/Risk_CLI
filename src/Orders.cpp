@@ -60,29 +60,32 @@ Order& Order::operator=(const Order& order) {
 OrdersList::OrdersList() { }
 
 //Copy Constructor
-OrdersList::OrdersList(const OrdersList& ordersList) {
-    for(int i = 0; i < ordersList.orderList.size(); i++){
-        this->orderList.push_back(ordersList.orderList[i]);
-    }
+OrdersList::OrdersList(const OrdersList& ordersList):
+    orderList(ordersList.orderList)
+{
+
 }
 
 //Parameterized Constructor
-OrdersList::OrdersList(vector<Order *> orderList) {
-    this->orderList = orderList;
+OrdersList::OrdersList(vector<Order*>& orderList):
+    orderList(orderList)
+{
+
 }
 
 //Destructor
 OrdersList::~OrdersList() {
     for(Order* o : orderList){
         delete o;
-        o = nullptr;
     }
 }
 
 //Removes an order from the specified index
 void OrdersList::removeOrder(int index) {
+    Order* order = orderList.at(index);
     orderList.erase(orderList.begin() + index);
     cout << "Deleted Order at index: " << index << endl << endl;
+    delete order;
 }
 
 //Move the order from index x (from) to index y (to)
@@ -110,7 +113,7 @@ ostream &operator<<(ostream &os, OrdersList &ordersList) {
 }
 
 //Getter for orderList
-vector<Order *> OrdersList::getOrdersList() {
+vector<Order *>& OrdersList::getOrdersList() {
     return orderList;
 }
 

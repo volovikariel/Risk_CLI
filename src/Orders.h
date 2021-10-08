@@ -29,13 +29,13 @@ private:
 public:
     OrdersList();                                                       // Default Constructor
     OrdersList(const OrdersList& copy);                                 // Copy Constructor
-    explicit OrdersList(vector<Order*> orderList);
+    explicit OrdersList(vector<Order*>& orderList);
     ~OrdersList();                                                      // Destructor
     void removeOrder(int index);                                        // Removes the order from the list at specified index
     void move(int from, int to);                                        // Moves an order from position x (from) to position y (to)
     void addOrder(Order* order);                                        // Adds an order to the list
     friend ostream& operator<<(ostream& os, OrdersList &ordersList);    // Stream insertion operator
-    vector<Order*> getOrdersList();                                     // Getter for orders list
+    vector<Order*>& getOrdersList();                                     // Getter for orders list
 };
 
 
