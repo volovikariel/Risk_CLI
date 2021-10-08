@@ -13,7 +13,7 @@ private:
     //required attributes
     vector<Territory*> playerTerritories; //represents the collection of territories of the player
     Hand* playerCards; //represents the collection of cards of the player
-    OrdersList* playerOrderList; //represents the OrderList queued by the player
+    OrdersList* playerOrdersList; //represents the OrderList queued by the player
     vector<Territory*> territoriesToAttack; //represents the collection of territories to attack
     vector<Territory*> territoriesToDefend; //represents the collection of territories to defend
 
@@ -52,5 +52,5 @@ public:
     friend istream& operator>>(istream& in, Player& p);
 
     //required methods
-    void issueOrder(Order* order); //creates an Order object and adds it to playerOrderList
+    void issueOrder(Order* order); //creates an Order object and adds it to playerOrdersList
 };

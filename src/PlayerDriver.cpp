@@ -13,7 +13,8 @@ int main(int argc, char *argv[])
     Continent* c2 = new Continent(1, "Asia", "Red", 100);
     Territory* t3 = new Territory(1, "Russia", c2, 1000, 100);
     Territory* t4 = new Territory(2, "China", c2, 100, 50);
-    //Order* order = new Order();
+    Order* o1 = new Order("Deploy");
+    Order* o2 = new Order("Advance");
     Hand* h = new Hand(*p);
     h->addCard(*new Card(Card::Card_Type::bomb));
     h->addCard(*new Card(Card::Card_Type::airlift));
@@ -54,10 +55,11 @@ int main(int argc, char *argv[])
         cout << *t << endl;
     }
 
-    /*
+
     //5) Verifying that players can use the method .issueOrder() to add an order to their list of orders
 
     cout << "\n===5) Verifying that players can use the method .issueOrder() to add an order to their list of orders===" << endl;
-    p->issueOrder(order);
-    cout << *p;*/
+    p->issueOrder(o1);
+    p->issueOrder(o2);
+    cout << *p;
 }
