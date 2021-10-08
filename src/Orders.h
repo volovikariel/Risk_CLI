@@ -21,13 +21,14 @@ public:
     Order();                                                            // Default Constructor
     Order(const Order& copy);                                           // Copy Constructor
     ~Order();                                                           // Destructor
-    explicit Order(const Order_Type& orderType);                            // Parameterized Constructor to define the type of Order
+    explicit Order(const Order_Type& orderType);                        // Parameterized Constructor to define the type of Order
     Order_Type getType() const;                                         // Getter for the order type
-    void setType(const Order_Type& orderType);                          // Setter for the order type
     Order & operator=(const Order& order);                              // Assignment operator overloading
     friend ostream& operator <<(ostream& os, Order& order);             // Input stream operator
 private:
     Order_Type orderType;
+protected:
+    void setType(const Order_Type& orderType);                          // Setter for the order type
 };
 
 
@@ -35,11 +36,12 @@ private:
 class OrdersList {
 private:
     vector<Order*> orderList;                                           // List (vector) of orders
+    void deepCopy(const vector<Order*>& orderList);                     // Deep copy a list of orders
 
 public:
     OrdersList();                                                       // Default Constructor
     OrdersList(const OrdersList& copy);                                 // Copy Constructor
-    explicit OrdersList(vector<Order*>& orderList);
+    explicit OrdersList(const vector<Order*>& orderList);
     ~OrdersList();                                                      // Destructor
     void removeOrder(int index);                                        // Removes the order from the list at specified index
     void move(int from, int to);                                        // Moves an order from position x (from) to position y (to)

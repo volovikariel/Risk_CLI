@@ -11,13 +11,16 @@ Order::Order() {
 }
 
 //Copy Constructor
-Order::Order(const Order& copy) {
-    this->orderType = copy.orderType;
+Order::Order(const Order& copy):
+    orderType(copy.orderType)
+{
 }
 
 //Parameterized Constructor
-Order::Order(const Order_Type &orderType) {
-    this->orderType = orderType;
+Order::Order(const Order_Type &orderType):
+    orderType(orderType)
+{
+
 }
 
 //Getter for the order type
@@ -25,17 +28,15 @@ Order::Order_Type Order::getType() const {
     return orderType;
 }
 
-//Setter for order name
-void Order::setType(const Order::Order_Type &orderType) {
-    this->orderType = orderType;
-}
-
 //Destructor
 Order::~Order() { }
 
 //Input stream operator
 ostream& operator<<(ostream& os, Order& order){
-    return os << "Order type: " << order.getType() << endl;
+    static const vector<std::string> types{ "order", "deploy", "advance", "bomb", "blockade", "airlift", "negotiate" };
+    int type_index = order.getType();
+
+    return os << "Order type: " << types[type_index] << endl;
 
     //TODO check if executed, then print description
 }
@@ -57,58 +58,22 @@ Order& Order::operator=(const Order& order) {
 //==================== OrderList Class ====================
 
 //Default Constructor
-OrdersList::OrdersList() { }
+OrdersList::OrdersList():
+    orderList()
+{
+
+}
 
 //Copy Constructor
-OrdersList::OrdersList(const OrdersList& ordersList):
-    orderList(ordersList.orderList)
+OrdersList::OrdersList(const OrdersList& ordersList)
 {
-    for(int i = 0; i < ordersList.orderList.size(); i++){
-        switch (ordersList.orderList[i]->getType()) {
-            case (Order::Order_Type::order):
-            {
-                this->orderList.push_back(new Order());
-                break;
-            }
-            case (Order::Order_Type::deploy):
-            {
-                this->orderList.push_back(new Deploy());
-                break;
-            }
-            case (Order::Order_Type::advance):
-            {
-                this->orderList.push_back(new Advance());
-                break;
-            }
-            case (Order::Order_Type::bomb):
-            {
-                this->orderList.push_back(new Bomb());
-                break;
-            }
-            case (Order::Order_Type::blockade):
-            {
-                this->orderList.push_back(new Blockade());
-                break;
-            }
-            case (Order::Order_Type::airlift):
-            {
-                this->orderList.push_back(new Airlift());
-                break;
-            }
-            case (Order::Order_Type::negotiate):
-            {
-                this->orderList.push_back(new Negotiate());
-                break;
-            }
-        }
-    }
+    deepCopy(ordersList.orderList);
 }
 
 //Parameterized Constructor
-OrdersList::OrdersList(vector<Order*>& orderList):
-    orderList(orderList)
+OrdersList::OrdersList(const vector<Order*>& orderList)
 {
-
+    deepCopy(orderList);
 }
 
 //Destructor
@@ -147,7 +112,7 @@ OrdersList &OrdersList::operator=(const OrdersList &ordersList) {
     for (const Order* order : orderList) {
         delete order;
     }
-    orderList = ordersList.orderList;
+    deepCopy(ordersList.orderList);
     return *this;
 }
 
@@ -165,6 +130,49 @@ ostream &operator<<(ostream &os, OrdersList &ordersList) {
 //Getter for orderList
 vector<Order *>& OrdersList::getOrdersList() {
     return orderList;
+}
+
+void OrdersList::deepCopy(const vector<Order*>& orderList)
+{
+    for(const Order* order : orderList){
+        switch (order->getType()) {
+            case (Order::Order_Type::order):
+            {
+                this->orderList.push_back(new Order(*order));
+                break;
+            }
+            case (Order::Order_Type::deploy):
+            {
+                this->orderList.push_back(new Deploy(*static_cast<const Deploy*>(order)));
+                break;
+            }
+            case (Order::Order_Type::advance):
+            {
+                this->orderList.push_back(new Advance(*static_cast<const Advance*>(order)));
+                break;
+            }
+            case (Order::Order_Type::bomb):
+            {
+                this->orderList.push_back(new Bomb(*static_cast<const Bomb*>(order)));
+                break;
+            }
+            case (Order::Order_Type::blockade):
+            {
+                this->orderList.push_back(new Blockade(*static_cast<const Blockade*>(order)));
+                break;
+            }
+            case (Order::Order_Type::airlift):
+            {
+                this->orderList.push_back(new Airlift(*static_cast<const Airlift*>(order)));
+                break;
+            }
+            case (Order::Order_Type::negotiate):
+            {
+                this->orderList.push_back(new Negotiate(*static_cast<const Negotiate*>(order)));
+                break;
+            }
+        }
+    }
 }
 
 
