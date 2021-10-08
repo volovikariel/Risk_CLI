@@ -82,7 +82,7 @@ OrdersList::~OrdersList() {
 //Removes an order from the specified index
 void OrdersList::removeOrder(int index) {
     orderList.erase(orderList.begin() + index);
-    cout << "Deleted Order at index: " << index << endl;
+    cout << "Deleted Order at index: " << index << endl << endl;
 }
 
 //Move the order from index x (from) to index y (to)
@@ -93,7 +93,7 @@ void OrdersList::move(int from, int to) {
     orderList.erase(orderList.begin() + from);
     //Insert the element that was at the from index (now saved in temp)
     orderList.insert(orderList.begin() + to, temporaryOrder);
-    cout << "Moved order from index " << from << " to the index " << to << "." << endl;
+    cout << "Moved order from index " << from << " to the index " << to << "." << endl << endl;
 }
 
 //Add an order to the orders list

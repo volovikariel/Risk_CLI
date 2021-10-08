@@ -23,5 +23,36 @@ int main()
     list.addOrder(negotiate);
 
     //Print the elements of the list
+    cout << "========== Order list contents ==========" << endl;
     cout << list << endl;
+
+    list.removeOrder(2);
+
+    //Print the elements of the list
+    cout << "========== Order list after removing index 2 ==========" << endl;
+    cout << list << endl;
+
+    list.move(1, 3);
+
+    //Print the elements of the list
+    cout << "========== Order list after moving index 1 to index 3 ==========" << endl;
+    cout << list << endl;
+
+
+    Order *order = new Order("randomOrder");
+
+    list.addOrder(order);
+
+    cout << "Adding a new random order" << endl << endl;
+
+    //Print the elements of the list
+    cout << "========== Order list after adding a new order ==========" << endl;
+    cout << list << endl;
+
+
+    OrdersList list2 = list;
+
+    //Print the elements of the list
+    cout << "========== Order list after adding a new order ==========" << endl;
+    cout << list2 << endl;
 }
