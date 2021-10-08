@@ -43,6 +43,7 @@ ostream& operator<<(ostream& os, Order& order){
 //Assignment Operator
 Order& Order::operator=(const Order& order) {
     this->orderName = order.orderName;
+    return *this;
 }
 
 
