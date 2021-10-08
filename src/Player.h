@@ -40,7 +40,6 @@ public:
     void setPlayerTerritories(vector<Territory*> playerTerritories_);
     void setPlayerCards(Hand* playerCards_);
     void setPlayerOrders(OrdersList* playerOrderList_);
-    void addPlayerOrder(Order* playerOrder_);
     void setPlayerArmies(int playerArmies_);
     void setTerritoriesToAttack(vector<Territory*> territoriesToAttack_);
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend_);
