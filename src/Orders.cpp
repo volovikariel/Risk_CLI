@@ -100,6 +100,19 @@ void OrdersList::addOrder(Order *order) {
     orderList.push_back(order);
 }
 
+//Stream insertion
+ostream &operator<<(ostream &os, OrdersList &ordersList) {
+    for(int i = 0; i < ordersList.orderList.size(); i++){
+        os << "[Order " + to_string(i) << "] " << ordersList.getOrdersList()[i]->getName() << endl;
+    }
+    return os;
+}
+
+//Getter for orderList
+vector<Order *> OrdersList::getOrdersList() {
+    return orderList;
+}
+
 
 
 
@@ -107,7 +120,7 @@ void OrdersList::addOrder(Order *order) {
 
 //Default Constructor
 Deploy::Deploy() {
-    this->orderName = "Deploy";
+    this->setName("Deploy");
 }
 
 //Copy Constructor
@@ -151,7 +164,7 @@ ostream &operator<<(ostream &os, Deploy &deploy) {
 // ==================== Advance Class ====================
 
 Advance::Advance() {
-    this->orderName = "Advance";
+    this->setName("Advance");
 }
 
 Advance::Advance(const Advance &advance) : Order(advance) {
@@ -192,7 +205,7 @@ ostream &operator<<(ostream &os, Advance &advance) {
 
 
 Bomb::Bomb() {
-    this->orderName = "Bomb";
+    this->setName("Bomb");
 }
 
 Bomb::Bomb(const Bomb &bomb) : Order(bomb) {
@@ -230,7 +243,7 @@ ostream &operator<<(ostream &os, Bomb &bomb) {
 
 
 Blockade::Blockade() {
-    this->orderName = "Blockade";
+    this->setName("Blockade");
 }
 
 Blockade::Blockade(const Blockade &blockade) : Order(blockade){
@@ -270,7 +283,7 @@ ostream &operator<<(ostream &os, Blockade &blockade) {
 
 
 Airlift::Airlift() {
-    this->orderName = "Airlift";
+    this->setName("Airlift");
 }
 
 Airlift::Airlift(const Airlift &airlift) : Order(airlift){
@@ -314,7 +327,7 @@ ostream &operator<<(ostream &os, Airlift &airlift) {
 
 
 Negotiate::Negotiate() {
-    this->orderName = "Negotiate";
+    this->setName("Negotiate");
 }
 
 Negotiate::Negotiate(const Negotiate &negotiate) : Order(negotiate){

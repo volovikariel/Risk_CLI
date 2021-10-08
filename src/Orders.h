@@ -32,7 +32,9 @@ public:
     ~OrdersList();                                                      // Destructor
     void removeOrder(int index);                                        // Removes the order from the list at specified index
     void move(int from, int to);                                        // Moves an order from position x (from) to position y (to)
-    void addOrder(Order* order);
+    void addOrder(Order* order);                                        // Adds an order to the list
+    friend ostream& operator<<(ostream& os, OrdersList &ordersList);    // Stream insertion operator
+    vector<Order*> getOrdersList();
 };
 
 
