@@ -5,7 +5,7 @@
 #include <ostream>
 using std::vector;
 
-// mini-declaring Hand so as to be able to use it in Card before Hand was fully declared
+// Forward declarations
 class Hand;
 class Player;
 class Order;
@@ -33,15 +33,15 @@ class Card
         // Assignment operator
         void operator = (const Card&);
         // Stream insertion operator
-        friend std::ostream& operator << (std::ostream&, Card&);
+        friend std::ostream& operator << (std::ostream&, const Card&);
         // Adds an order to the player's order's list based on the type of card
         void play();
         // Returns the type of the card
         Card_Type getType() const;
         // Returns the hand which the card is part of
         Hand* getHand() const;
-        // Sets the hand to a provided hand for a card
-        void setHand(Hand&);
+        // Sets the hand to a provided hand for a card. Provide nullptr to clear.
+        void setHand(Hand*);
     private:
         // The type of the card which influences what happens when it's played
         Card_Type type;
@@ -62,16 +62,19 @@ class Deck
         // Assignment operator
         void operator = (const Deck&);
         // Stream insertion operator
-        friend std::ostream& operator << (std::ostream&, Deck&);
+        friend std::ostream& operator << (std::ostream&, const Deck&);
         // Adds a card to the deck given its reference (adds the card to main_deck.all_cards as well if it's not already present)
         void addCard(Card&);
         // Removes and returns a card at random from the deck (returns NULL if trying to draw a card when the deck is empty)
         Card* draw();
         // Returns a reference to the deck's cards
         vector<Card*>& getCards();
+        // Const version
+        const vector<Card*>& getCards() const;
+    private:
         // Replaces deck with a deepy copy of the deck provided
         void deepCopy(const Deck&);
-    private:
+
         // The cards currently present in the deck
         vector<Card*> cards;
         // All the cards that were ever instantiated, be they in the deck or in a player's hand
@@ -92,7 +95,7 @@ class Hand
         // Assignment operator
         void operator = (const Hand&);
         // Stream insertion operator
-        friend std::ostream& operator << (std::ostream&, Hand&);
+        friend std::ostream& operator << (std::ostream&, const Hand&);
         // Adds a card to the hand and sets the Hand of the card to this
         void addCard(Card&);
         // Removes a card in the hand given the card's index in the hand vector
@@ -105,6 +108,8 @@ class Hand
         Player* getPlayer() const;
         // Returns a reference to the cards in the hand
         vector<Card*>& getCards();
+        // Const version
+        const vector<Card*>& getCards() const;
     private:
         // Default constructor isn't allowed. A hand must always be attached to a Player
         Hand();
