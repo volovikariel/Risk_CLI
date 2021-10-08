@@ -39,7 +39,7 @@ int main()
     cout << list << endl;
 
 
-    Order *order = new Order("randomOrder");
+    Order *order = new Order();
 
     list.addOrder(order);
 

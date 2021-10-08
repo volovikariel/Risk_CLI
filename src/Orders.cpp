@@ -7,27 +7,27 @@ using namespace std;
 
 //Default Constructor
 Order::Order() {
-    this->orderName = "Order";
+    this->orderType = Order_Type::order;
 }
 
 //Copy Constructor
 Order::Order(const Order& copy) {
-    this->orderName = copy.orderName;
+    this->orderType = copy.orderType;
 }
 
 //Parameterized Constructor
-Order::Order(const string &orderName) {
-    this->orderName = orderName;
+Order::Order(const Order_Type &orderType) {
+    this->orderType = orderType;
 }
 
-//Getter for order name
-string Order::getName() {
-    return this->orderName;
+//Getter for the order type
+Order::Order_Type Order::getType() const {
+    return orderType;
 }
 
 //Setter for order name
-void Order::setName(const string& name) {
-    this->orderName = name;
+void Order::setType(const Order::Order_Type &orderType) {
+    this->orderType = orderType;
 }
 
 //Destructor
@@ -35,14 +35,14 @@ Order::~Order() { }
 
 //Input stream operator
 ostream& operator<<(ostream& os, Order& order){
-    return os << "Order type: " << order.getName() << endl;
+    return os << "Order type: " << order.getType() << endl;
 
     //TODO check if executed, then print description
 }
 
 //Assignment Operator
 Order& Order::operator=(const Order& order) {
-    this->orderName = order.orderName;
+    this->orderType = order.orderType;
     return *this;
 }
 
@@ -63,7 +63,45 @@ OrdersList::OrdersList() { }
 OrdersList::OrdersList(const OrdersList& ordersList):
     orderList(ordersList.orderList)
 {
-
+    for(int i = 0; i < ordersList.orderList.size(); i++){
+        switch (ordersList.orderList[i]->getType()) {
+            case (Order::Order_Type::order):
+            {
+                this->orderList.push_back(new Order());
+                break;
+            }
+            case (Order::Order_Type::deploy):
+            {
+                this->orderList.push_back(new Deploy());
+                break;
+            }
+            case (Order::Order_Type::advance):
+            {
+                this->orderList.push_back(new Advance());
+                break;
+            }
+            case (Order::Order_Type::bomb):
+            {
+                this->orderList.push_back(new Bomb());
+                break;
+            }
+            case (Order::Order_Type::blockade):
+            {
+                this->orderList.push_back(new Blockade());
+                break;
+            }
+            case (Order::Order_Type::airlift):
+            {
+                this->orderList.push_back(new Airlift());
+                break;
+            }
+            case (Order::Order_Type::negotiate):
+            {
+                this->orderList.push_back(new Negotiate());
+                break;
+            }
+        }
+    }
 }
 
 //Parameterized Constructor
@@ -115,8 +153,11 @@ OrdersList &OrdersList::operator=(const OrdersList &ordersList) {
 
 //Stream insertion
 ostream &operator<<(ostream &os, OrdersList &ordersList) {
+
+    static const vector<std::string> types{ "Order", "Deploy", "Advance", "Bomb", "Blockade", "Airlift", "Negotiate" };
+
     for(int i = 0; i < ordersList.orderList.size(); i++){
-        os << "[Order " + to_string(i) << "] " << ordersList.getOrdersList()[i]->getName() << endl;
+        os << "[Order " + to_string(i) << "] " << types[ordersList.getOrdersList()[i]->getType()] << endl;
     }
     return os;
 }
@@ -133,7 +174,7 @@ vector<Order *>& OrdersList::getOrdersList() {
 
 //Default Constructor
 Deploy::Deploy() {
-    this->setName("Deploy");
+    this->setType(Order_Type::deploy);
 }
 
 //Copy Constructor
@@ -166,7 +207,7 @@ Deploy &Deploy::operator=(const Deploy &order) {
 }
 
 ostream &operator<<(ostream &os, Deploy &deploy) {
-    return os << "Order name: " << deploy.getName();
+    return os << "Order name: " << deploy.getType();
 }
 
 
@@ -177,7 +218,7 @@ ostream &operator<<(ostream &os, Deploy &deploy) {
 // ==================== Advance Class ====================
 
 Advance::Advance() {
-    this->setName("Advance");
+    this->setType(Order_Type::advance);
 }
 
 Advance::Advance(const Advance &advance) : Order(advance) {
@@ -205,7 +246,7 @@ Advance &Advance::operator=(const Advance &advance) {
 }
 
 ostream &operator<<(ostream &os, Advance &advance) {
-    return os << "Order name: " << advance.getName();
+    return os << "Order name: " << advance.getType();
 }
 
 
@@ -218,7 +259,7 @@ ostream &operator<<(ostream &os, Advance &advance) {
 
 
 Bomb::Bomb() {
-    this->setName("Bomb");
+    this->setType(Order_Type::bomb);
 }
 
 Bomb::Bomb(const Bomb &bomb) : Order(bomb) {
@@ -246,7 +287,7 @@ Bomb &Bomb::operator=(const Bomb &bomb) {
 }
 
 ostream &operator<<(ostream &os, Bomb &bomb) {
-    return os << "Order name: " << bomb.getName();
+    return os << "Order name: " << bomb.getType();
 }
 
 
@@ -256,7 +297,7 @@ ostream &operator<<(ostream &os, Bomb &bomb) {
 
 
 Blockade::Blockade() {
-    this->setName("Blockade");
+    this->setType(Order_Type::blockade);
 }
 
 Blockade::Blockade(const Blockade &blockade) : Order(blockade){
@@ -284,7 +325,7 @@ Blockade &Blockade::operator=(const Blockade &blockade) {
 }
 
 ostream &operator<<(ostream &os, Blockade &blockade) {
-    return os << "Order name: " << blockade.getName();
+    return os << "Order name: " << blockade.getType();
 }
 
 
@@ -296,7 +337,7 @@ ostream &operator<<(ostream &os, Blockade &blockade) {
 
 
 Airlift::Airlift() {
-    this->setName("Airlift");
+    this->setType(Order_Type::airlift);
 }
 
 Airlift::Airlift(const Airlift &airlift) : Order(airlift){
@@ -324,7 +365,7 @@ Airlift &Airlift::operator=(const Airlift &airlift) {
 }
 
 ostream &operator<<(ostream &os, Airlift &airlift) {
-    return os << "Order name: " << airlift.getName();
+    return os << "Order name: " << airlift.getType();
 }
 
 
@@ -340,7 +381,7 @@ ostream &operator<<(ostream &os, Airlift &airlift) {
 
 
 Negotiate::Negotiate() {
-    this->setName("Negotiate");
+    this->setType(Order_Type::negotiate);
 }
 
 Negotiate::Negotiate(const Negotiate &negotiate) : Order(negotiate){
@@ -368,7 +409,7 @@ Negotiate &Negotiate::operator=(const Negotiate &negotiate) {
 }
 
 ostream &operator<<(ostream &os, Negotiate &negotiate) {
-    return os << "Order name: " << negotiate.getName();
+    return os << "Order name: " << negotiate.getType();
 }
 
 

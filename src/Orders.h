@@ -7,17 +7,27 @@ using namespace std;
 
 // ==================== Order Class ====================
 class Order {
-private:
-    string orderName;
 public:
+    enum Order_Type {
+        order,
+        deploy,
+        advance,
+        bomb,
+        blockade,
+        airlift,
+        negotiate
+    };
+
     Order();                                                            // Default Constructor
     Order(const Order& copy);                                           // Copy Constructor
     ~Order();                                                           // Destructor
-    explicit Order(const string& orderName);                            // Parameterized Constructor to define the type of Order
-    string getName();                                                   // Getter for the order name
-    void setName(const string& orderName);                              // Setter for the order name
+    explicit Order(const Order_Type& orderType);                            // Parameterized Constructor to define the type of Order
+    Order_Type getType() const;                                         // Getter for the order type
+    void setType(const Order_Type& orderType);                          // Setter for the order type
     Order & operator=(const Order& order);                              // Assignment operator overloading
     friend ostream& operator <<(ostream& os, Order& order);             // Input stream operator
+private:
+    Order_Type orderType;
 };
 
 
