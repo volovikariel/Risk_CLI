@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     Continent c2(1, "Asia", "Red", 100);
     Territory t3(1, "Russia", &c2, 1000, 100);
     Territory t4(2, "China", &c2, 100, 50);
-    Order* o1 = new Order("Deploy");
-    Order* o2 = new Order("Advance");
+    Order* o1 = new Order(Order::Order_Type::bomb);
+    Order* o2 = new Order(Order::Order_Type::advance);
     Hand* h = new Hand(*p);
     h->addCard(*new Card(Card::Card_Type::bomb));
     h->addCard(*new Card(Card::Card_Type::airlift));
