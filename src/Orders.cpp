@@ -28,6 +28,11 @@ Order::Order_Type Order::getType() const {
     return orderType;
 }
 
+// Setter for the order type
+void Order::setType(const Order_Type& orderType) {
+    this->orderType = orderType;
+}
+
 //Destructor
 Order::~Order() { }
 
