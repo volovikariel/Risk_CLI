@@ -55,4 +55,7 @@ int main()
     //Print the elements of the list
     cout << "========== Order list after adding a new order ==========" << endl;
     cout << list2 << endl;
+
+
+    cout << *deploy;
 }

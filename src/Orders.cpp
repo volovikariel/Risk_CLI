@@ -56,6 +56,44 @@ Order::~Order() { }
 
 //Input stream operator
 ostream& operator<<(ostream& os, Order& order){
+
+    switch (order.getType()) {
+        case (Order::Order_Type::order):
+        {
+            os << "Default order object" << endl;
+            break;
+        }
+        case (Order::Order_Type::deploy):
+        {
+            os << "Deploy Description: Places some armies on one of the current player's territories" << endl;
+            if(order.getExecuted()){
+                os << "Deploy Effect: Places armies on territories" << endl;
+            }
+            break;
+        }
+        case (Order::Order_Type::advance):
+        {
+            break;
+        }
+        case (Order::Order_Type::bomb):
+        {
+            break;
+        }
+        case (Order::Order_Type::blockade):
+        {
+            break;
+        }
+        case (Order::Order_Type::airlift):
+        {
+            break;
+        }
+        case (Order::Order_Type::negotiate):
+        {
+            break;
+        }
+    }
+
+
     return os << "Order type: " << order.getType() << endl;
 }
 
@@ -73,6 +111,14 @@ bool Order::execute()
 bool Order::validate()
 {
     return true;
+}
+
+bool Order::getExecuted() {
+    return this->executed;
+}
+
+bool Order::setExecuted(const bool& value) {
+    this->executed = value;
 }
 
 
@@ -218,6 +264,9 @@ Deploy::~Deploy() {
 //Execute : First validates the order, and if valid executes its action
 bool Deploy::execute() {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
+    if(validate()){
+
+    }
     return false;
 }
 
@@ -258,6 +307,9 @@ Advance::~Advance() {
 
 bool Advance::execute() {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
+    if(validate()){
+
+    }
     return false;
 }
 
@@ -298,6 +350,9 @@ Bomb::~Bomb() {
 
 bool Bomb::execute() {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
+    if(validate()){
+
+    }
     return false;
 }
 
@@ -335,6 +390,9 @@ Blockade::~Blockade() {
 
 bool Blockade::execute() {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
+    if(validate()){
+
+    }
     return false;
 }
 
@@ -374,6 +432,9 @@ Airlift::~Airlift() {
 
 bool Airlift::execute() {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
+    if(validate()){
+
+    }
     return false;
 }
 
@@ -417,6 +478,9 @@ Negotiate::~Negotiate() {
 
 bool Negotiate::execute() {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
+    if(validate()){
+
+    }
     return false;
 }
 
