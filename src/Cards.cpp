@@ -62,7 +62,7 @@ void Card::play()
         hand->getPlayer()->addPlayerOrder(new Bomb());
         break;
     case Card::reinforcement:
-        hand->getPlayer()->addPlayerOrder(new Deploy());
+        // This card doesn't create an order
         break;
     case Card::blockade:
         hand->getPlayer()->addPlayerOrder(new Blockade());
