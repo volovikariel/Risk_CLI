@@ -207,7 +207,7 @@ Deploy::Deploy() {
 
 //Copy Constructor
 Deploy::Deploy(const Deploy& deploy) : Order(deploy) {
-    this->orderName = deploy.orderName;
+    this->setType(Order_Type::deploy);
 }
 
 //Destructor
@@ -230,7 +230,6 @@ bool Deploy::validate() {
 //Assignment operator
 Deploy &Deploy::operator=(const Deploy &order) {
     Order::operator=(order);
-    this->orderName = order.orderName;
     return *this;
 }
 
@@ -250,7 +249,7 @@ Advance::Advance() {
 }
 
 Advance::Advance(const Advance &advance) : Order(advance) {
-    this->orderName = advance.orderName;
+    this->setType(Order_Type::advance);
 }
 
 Advance::~Advance() {
@@ -269,7 +268,6 @@ bool Advance::validate() {
 
 Advance &Advance::operator=(const Advance &advance) {
     Order::operator=(advance);
-    this->orderName = advance.orderName;
     return *this;
 }
 
@@ -291,7 +289,7 @@ Bomb::Bomb() {
 }
 
 Bomb::Bomb(const Bomb &bomb) : Order(bomb) {
-    this->orderName = bomb.orderName;
+    this->setType(Order_Type::bomb);
 }
 
 Bomb::~Bomb() {
@@ -310,7 +308,6 @@ bool Bomb::validate() {
 
 Bomb &Bomb::operator=(const Bomb &bomb) {
     Order::operator=(bomb);
-    this->orderName = bomb.orderName;
     return *this;
 }
 
@@ -329,7 +326,7 @@ Blockade::Blockade() {
 }
 
 Blockade::Blockade(const Blockade &blockade) : Order(blockade){
-    this->orderName = blockade.orderName;
+    this->setType(Order_Type::blockade);
 }
 
 Blockade::~Blockade() {
@@ -348,7 +345,6 @@ bool Blockade::validate() {
 
 Blockade &Blockade::operator=(const Blockade &blockade) {
     Order::operator=(blockade);
-    this->orderName = blockade.orderName;
     return *this;
 }
 
@@ -369,7 +365,7 @@ Airlift::Airlift() {
 }
 
 Airlift::Airlift(const Airlift &airlift) : Order(airlift){
-    this->orderName = airlift.orderName;
+    this->setType(Order_Type::airlift);
 }
 
 Airlift::~Airlift() {
@@ -388,7 +384,6 @@ bool Airlift::validate() {
 
 Airlift &Airlift::operator=(const Airlift &airlift) {
     Order::operator=(airlift);
-    this->orderName = airlift.orderName;
     return *this;
 }
 
@@ -413,7 +408,7 @@ Negotiate::Negotiate() {
 }
 
 Negotiate::Negotiate(const Negotiate &negotiate) : Order(negotiate){
-    this->orderName = negotiate.orderName;
+    this->setType(Order_Type::negotiate);
 }
 
 Negotiate::~Negotiate() {
@@ -432,7 +427,6 @@ bool Negotiate::validate() {
 
 Negotiate &Negotiate::operator=(const Negotiate &negotiate) {
     Order::operator=(negotiate);
-    this->orderName = negotiate.orderName;
     return *this;
 }
 

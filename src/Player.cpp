@@ -50,7 +50,7 @@ Player::~Player() {
 }
 
 //accessors
-vector<Territory*> Player::getPlayerTerritories() {
+vector<Territory*>& Player::getPlayerTerritories() {
     return playerTerritories;
 }
 
@@ -75,6 +75,11 @@ void Player::setPlayerTerritories(vector<Territory*> playerTerritories_) {
 
 void Player::setPlayerCards(Hand* playerCards_) {
     playerCards = playerCards_;
+}
+
+void Player::setPlayerOrders(OrdersList* playerOrderList_)
+{
+    playerOrdersList = playerOrderList_;
 }
 
 void Player::addPlayerOrder(Order* playerOrder_) {
@@ -160,10 +165,10 @@ void Player::issueOrder(Order* order) {
     this->addPlayerOrder(order);
 }
 
-vector<Territory*> Player::toDefend() {
+vector<Territory*>& Player::toDefend() {
     return territoriesToDefend;
 }
 
-vector<Territory*> Player::toAttack() {
+vector<Territory*>& Player::toAttack() {
     return territoriesToAttack;
 }

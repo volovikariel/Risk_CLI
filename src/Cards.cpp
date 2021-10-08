@@ -56,8 +56,26 @@ std::ostream& operator << (std::ostream& out, const Card& source)
 // Adds an order to the player's order's list based on the type of card
 void Card::play()
 {
-    // TODO: Issue the order for this card based on its type
-    hand->getPlayer()->addPlayerOrder(new Order());
+    switch (type)
+    {
+    case Card::bomb:
+        hand->getPlayer()->addPlayerOrder(new Bomb());
+        break;
+    case Card::reinforcement:
+        hand->getPlayer()->addPlayerOrder(new Deploy());
+        break;
+    case Card::blockade:
+        hand->getPlayer()->addPlayerOrder(new Blockade());
+        break;
+    case Card::airlift:
+        hand->getPlayer()->addPlayerOrder(new Airlift());
+        break;
+    case Card::diplomacy:
+        hand->getPlayer()->addPlayerOrder(new Negotiate());
+        break;
+    default:
+        break;
+    }
 
     // Removes the card from the hand
     hand->removeCard(*this);

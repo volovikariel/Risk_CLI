@@ -29,17 +29,18 @@ public:
     ~Player();
 
     //accessors
-    vector<Territory*> getPlayerTerritories(); //returns the collection of territories of the player
+    vector<Territory*>& getPlayerTerritories(); //returns the collection of territories of the player
     Hand* getPlayerCards(); //returns the cards owned by the player
     OrdersList* getPlayerOrders(); //returns the OrderList queued by the player
     int getPlayerArmies(); //returns the armies of the player
-    vector<Territory*> toDefend(); //returns a list of territories owned by the player that need to be defended
-    vector<Territory*> toAttack(); //returns a list of territories that are attacked by the player
+    vector<Territory*>& toDefend(); //returns a list of territories owned by the player that need to be defended
+    vector<Territory*>& toAttack(); //returns a list of territories that are attacked by the player
 
     //mutators
     void setPlayerTerritories(vector<Territory*> playerTerritories_);
     void setPlayerCards(Hand* playerCards_);
-    void addPlayerOrder(Order* playerOrderList_);
+    void setPlayerOrders(OrdersList* playerOrderList_);
+    void addPlayerOrder(Order* playerOrder_);
     void setPlayerArmies(int playerArmies_);
     void setTerritoriesToAttack(vector<Territory*> territoriesToAttack_);
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend_);

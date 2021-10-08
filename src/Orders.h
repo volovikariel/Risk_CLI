@@ -60,8 +60,6 @@ public:
 
 // ==================== Deploy Class ====================
 class Deploy : public Order {
-private:
-    string orderName;                                                   // Type of the order, in this case Deploy
 public:
     Deploy();                                                           // Default Constructor
     Deploy(const Deploy& deploy);                                       // Copy Constructor
@@ -77,8 +75,6 @@ public:
 
 // ==================== Advance Class ====================
 class Advance : public Order {
-private:
-    string orderName;                                                   // Type of the order, in this case Deploy
 public:
     Advance();                                                          // Default Constructor
     Advance(const Advance& advance);                                    // Copy Constructor
@@ -93,8 +89,6 @@ public:
 
 // ==================== Bomb Class ====================
 class Bomb : public Order {
-private:
-    string orderName;                                                   // Type of the order, in this case Deploy
 public:
     Bomb();                                                             // Default Constructor
     Bomb(const Bomb& bomb);                                             // Copy Constructor
@@ -110,8 +104,6 @@ public:
 
 // ==================== Blockade Class ====================
 class Blockade : public Order {
-private:
-    string orderName;                                                       // Type of the order, in this case Deploy
 public:
     Blockade();                                                             // Default Constructor
     Blockade(const Blockade& blockade);                                     // Copy Constructor
@@ -127,8 +119,6 @@ public:
 
 // ==================== Airlift Class ====================
 class Airlift : public Order {
-private:
-    string orderName;                                                       // Type of the order, in this case Deploy
 public:
     Airlift();                                                              // Default Constructor
     Airlift(const Airlift& airlift);                                        // Copy Constructor
@@ -145,8 +135,6 @@ public:
 
 // ==================== Negotiate Class ====================
 class Negotiate : public Order {
-private:
-    string orderName;                                                           // Type of the order, in this case Deploy
 public:
     Negotiate();                                                                // Default Constructor
     Negotiate(const Negotiate& negotiate);                                      // Copy Constructor
@@ -156,6 +144,3 @@ public:
     Negotiate& operator =(const Negotiate& negotiate);                          // Assignment operator overloading
     friend ostream& operator<<(ostream& os, Negotiate &negotiate);              // Stream Insertion Operator
 };
-
-
-
