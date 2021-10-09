@@ -15,9 +15,9 @@ int main()
     Negotiate *negotiate = new Negotiate();
 
     //Print the order details
-    cout << *deploy << endl;
+    cout << *deploy << endl;        //bool executed = true (hard coded for demonstration)
     cout << *advance << endl;
-    cout << *bomb << endl;
+    cout << *bomb << endl;          //bool executed = true (hard coded for demonstration)
     cout << *blockade << endl;
     cout << *airlift << endl;
     cout << *negotiate << endl;
@@ -34,33 +34,44 @@ int main()
     cout << "========== Order list contents ==========" << endl;
     cout << list << endl;
 
-    list.removeOrder(2);
+    //Remove order at index 2
+    list.remove(2);
 
     //Print the elements of the list
     cout << "========== Order list after removing index 2 ==========" << endl;
     cout << list << endl;
 
+    //Move order from index 1 to index 3
     list.move(1, 3);
 
     //Print the elements of the list
     cout << "========== Order list after moving index 1 to index 3 ==========" << endl;
     cout << list << endl;
 
-
-    Order *order = new Order();
-
-    list.addOrder(order);
-
-    cout << "Adding a new random order" << endl << endl;
-
-    //Print the elements of the list
-    cout << "========== Order list after adding a new order ==========" << endl;
-    cout << list << endl;
-
-
+    //Creating a second orders list and doing a deep copy of original list
     OrdersList list2 = list;
 
     //Print the elements of the assign-copied list
-    cout << "========== Order list after assignment operator ==========" << endl;
+    cout << "========== New list with deep copy (list2) ==========" << endl;
     cout << list2 << endl;
+
+    //Remove and add a new order to list2
+    list2.remove(0);
+    list2.remove(2);
+    list2.addOrder(new Bomb());
+
+    //Print the elements of list2 after modification
+    cout << "========== Elements of list2 after modifications ==========" << endl;
+    cout << list2 << endl;
+
+    //Print the elements of list1 to show that it is unchanged and is a true deep copy
+    cout << "========== Elements of list1 to show deep copy didn't change list1 ==========" << endl;
+    cout << list << endl;
+
+    deploy->validate();
+    deploy->execute();
+
+    airlift->execute();
+    airlift->validate();
+
 }
