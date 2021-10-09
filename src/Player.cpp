@@ -82,10 +82,6 @@ void Player::setPlayerOrders(OrdersList* playerOrderList_)
     playerOrdersList = playerOrderList_;
 }
 
-void Player::addPlayerOrder(Order* playerOrder_) {
-    playerOrdersList->addOrder(playerOrder_);
-}
-
 void Player::setPlayerArmies(int playerArmies_) {
     playerArmies = playerArmies_;
 }
@@ -159,7 +155,7 @@ ostream& operator<<(ostream& out, const Player& p) {
 
 //required methods
 void Player::issueOrder(Order* order) {
-    this->addPlayerOrder(order);
+    playerOrdersList->addOrder(order);
 }
 
 vector<Territory*>& Player::toDefend() {
