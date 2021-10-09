@@ -27,15 +27,16 @@ public:
     explicit Order(const Order_Type& orderType);                        // Parameterized Constructor to define the type of Order
     Order_Type getType() const;                                         // Getter for the order type
     Order & operator=(const Order& order);                              // Assignment operator overloading
-    friend ostream& operator <<(ostream& os, Order& order);             // Input stream operator
+    friend ostream& operator <<(ostream& os, const Order& order);       // Input stream operator
     virtual bool execute();                                             // First validates the order, and if valid executes its action
     virtual bool validate();                                            // Checks if the order is valid
-    bool getExecuted();                                                 // Getter for executed boolean
-    bool setExecuted(const bool& value);                                // Setter for executed boolean
+    virtual ostream& print(ostream& os) const;                          // Prints to an output stream
+    bool getExecuted() const;                                           // Getter for executed boolean
+    void setExecuted(bool value);                                       // Setter for executed boolean
 private:
     Order_Type orderType;
 protected:
-    void setType(const Order_Type& orderType);                          // Setter for the order type
+    void setType(Order_Type orderType);                                 // Setter for the order type
     bool executed;                                                      // Boolean to check if order has been executed or not
 };
 
@@ -43,20 +44,21 @@ protected:
 // ==================== OrderList Class ====================
 class OrdersList {
 private:
-    vector<Order*> orderList;                                           // List (vector) of orders
-    void deepCopy(const vector<Order*>& orderList);                     // Deep copy a list of orders
+    vector<Order*> orderList;                                               // List (vector) of orders
+    void deepCopy(const vector<Order*>& orderList);                         // Deep copy a list of orders
 
 public:
-    OrdersList();                                                       // Default Constructor
-    OrdersList(const OrdersList& copy);                                 // Copy Constructor
+    OrdersList();                                                           // Default Constructor
+    OrdersList(const OrdersList& copy);                                     // Copy Constructor
     explicit OrdersList(const vector<Order*>& orderList);
-    ~OrdersList();                                                      // Destructor
-    void removeOrder(int index);                                        // Removes the order from the list at specified index
-    void move(int from, int to);                                        // Moves an order from position x (from) to position y (to)
-    void addOrder(Order* order);                                        // Adds an order to the list
-    OrdersList& operator =(const OrdersList& orderList);                // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, OrdersList &ordersList);    // Stream insertion operator
-    vector<Order*>& getOrdersList();                                    // Getter for orders list
+    ~OrdersList();                                                          // Destructor
+    void removeOrder(int index);                                            // Removes the order from the list at specified index
+    void move(int from, int to);                                            // Moves an order from position x (from) to position y (to)
+    void addOrder(Order* order);                                            // Adds an order to the list
+    OrdersList& operator =(const OrdersList& orderList);                    // Assignment operator overloading
+    friend ostream& operator<<(ostream& os, const OrdersList &ordersList);  // Stream insertion operator
+    vector<Order*>& getOrdersList();                                        // Getter for orders list
+    const vector<Order*>& getOrdersList() const;                            // Const getter for orders list
 };
 
 
@@ -70,7 +72,8 @@ public:
     bool execute();                                                     // First validates the order, and if valid executes its action
     bool validate();                                                    // Checks if the order is valid
     Deploy& operator =(const Deploy& deploy);                           // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, Deploy &deploy);            // Stream Insertion Operator
+    friend ostream& operator<<(ostream& os, const Deploy &deploy);      // Stream Insertion Operator
+    ostream& print(ostream& os) const;                                  // Prints to an output stream
 };
 
 
@@ -85,7 +88,7 @@ public:
     bool execute();                                                     // First validates the order, and if valid executes its action
     bool validate();                                                    // Checks if the order is valid
     Advance& operator =(const Advance& advance);                        // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, Advance &advance);          // Stream Insertion Operator
+    friend ostream& operator<<(ostream& os, const Advance &advance);    // Stream Insertion Operator
 };
 
 
@@ -99,7 +102,7 @@ public:
     bool execute();                                                     // First validates the order, and if valid executes its action
     bool validate();                                                    // Checks if the order is valid
     Bomb& operator =(const Bomb& bomb);                                 // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, Bomb &bomb);                // Stream Insertion Operator
+    friend ostream& operator<<(ostream& os, const Bomb &bomb);          // Stream Insertion Operator
 };
 
 
@@ -114,7 +117,7 @@ public:
     bool execute();                                                         // First validates the order, and if valid executes its action
     bool validate();                                                        // Checks if the order is valid
     Blockade& operator =(const Blockade& blockade);                         // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, Blockade &blockade);            // Stream Insertion Operator
+    friend ostream& operator<<(ostream& os, const Blockade &blockade);      // Stream Insertion Operator
 };
 
 
@@ -129,7 +132,7 @@ public:
     bool execute();                                                         // First validates the order, and if valid executes its action
     bool validate();                                                        // Checks if the order is valid
     Airlift& operator =(const Airlift& airlift);                            // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, Airlift &airlift);              // Stream Insertion Operator
+    friend ostream& operator<<(ostream& os, const Airlift &airlift);        // Stream Insertion Operator
 };
 
 
@@ -145,5 +148,5 @@ public:
     bool execute();                                                             // First validates the order, and if valid executes its action
     bool validate();                                                            // Checks if the order is valid
     Negotiate& operator =(const Negotiate& negotiate);                          // Assignment operator overloading
-    friend ostream& operator<<(ostream& os, Negotiate &negotiate);              // Stream Insertion Operator
+    friend ostream& operator<<(ostream& os, const Negotiate &negotiate);        // Stream Insertion Operator
 };

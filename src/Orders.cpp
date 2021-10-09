@@ -47,7 +47,7 @@ Order::Order_Type Order::getType() const {
 }
 
 // Setter for the order type
-void Order::setType(const Order_Type& orderType) {
+void Order::setType(Order_Type orderType) {
     this->orderType = orderType;
 }
 
@@ -55,46 +55,8 @@ void Order::setType(const Order_Type& orderType) {
 Order::~Order() { }
 
 //Input stream operator
-ostream& operator<<(ostream& os, Order& order){
-
-    switch (order.getType()) {
-        case (Order::Order_Type::order):
-        {
-            os << "Default order object" << endl;
-            break;
-        }
-        case (Order::Order_Type::deploy):
-        {
-            os << "Deploy Description: Places some armies on one of the current player's territories" << endl;
-            if(order.getExecuted()){
-                os << "Deploy Effect: Places armies on territories" << endl;
-            }
-            break;
-        }
-        case (Order::Order_Type::advance):
-        {
-            break;
-        }
-        case (Order::Order_Type::bomb):
-        {
-            break;
-        }
-        case (Order::Order_Type::blockade):
-        {
-            break;
-        }
-        case (Order::Order_Type::airlift):
-        {
-            break;
-        }
-        case (Order::Order_Type::negotiate):
-        {
-            break;
-        }
-    }
-
-
-    return os << "Order type: " << order.getType() << endl;
+ostream& operator<<(ostream& os, const Order& order){
+    return order.print(os);
 }
 
 //Assignment Operator
@@ -113,11 +75,16 @@ bool Order::validate()
     return true;
 }
 
-bool Order::getExecuted() {
+ostream& Order::print(ostream& os) const
+{
+    return os << "Order type: " << getType() << endl;
+}
+
+bool Order::getExecuted() const {
     return this->executed;
 }
 
-bool Order::setExecuted(const bool& value) {
+void Order::setExecuted(bool value) {
     this->executed = value;
 }
 
@@ -186,7 +153,7 @@ OrdersList &OrdersList::operator=(const OrdersList &ordersList) {
 }
 
 //Stream insertion
-ostream &operator<<(ostream &os, OrdersList &ordersList) {
+ostream &operator<<(ostream &os, const OrdersList &ordersList) {
     for(int i = 0; i < ordersList.orderList.size(); i++){
         os << "[Order " + to_string(i) << "] " << ordersList.getOrdersList()[i]->getType() << endl;
     }
@@ -195,6 +162,11 @@ ostream &operator<<(ostream &os, OrdersList &ordersList) {
 
 //Getter for orderList
 vector<Order *>& OrdersList::getOrdersList() {
+    return orderList;
+}
+
+//Const getter for orderList
+const vector<Order *>& OrdersList::getOrdersList() const {
     return orderList;
 }
 
@@ -282,8 +254,17 @@ Deploy &Deploy::operator=(const Deploy &order) {
     return *this;
 }
 
-ostream &operator<<(ostream &os, Deploy &deploy) {
-    return os << "Order name: " << deploy.getType();
+ostream &operator<<(ostream &os, const Deploy &deploy) {
+    return deploy.print(os);
+}
+
+ostream& Deploy::print(ostream& os) const {
+    Order::print(os);
+    os << "Deploy Description: Places some armies on one of the current player's territories" << endl;
+    if (executed) {
+        os << "Deploy Effect: Places armies on territories" << endl;
+    }
+    return os;
 }
 
 
@@ -323,7 +304,7 @@ Advance &Advance::operator=(const Advance &advance) {
     return *this;
 }
 
-ostream &operator<<(ostream &os, Advance &advance) {
+ostream &operator<<(ostream &os, const Advance &advance) {
     return os << "Order name: " << advance.getType();
 }
 
@@ -366,7 +347,7 @@ Bomb &Bomb::operator=(const Bomb &bomb) {
     return *this;
 }
 
-ostream &operator<<(ostream &os, Bomb &bomb) {
+ostream &operator<<(ostream &os, const Bomb &bomb) {
     return os << "Order name: " << bomb.getType();
 }
 
@@ -406,7 +387,7 @@ Blockade &Blockade::operator=(const Blockade &blockade) {
     return *this;
 }
 
-ostream &operator<<(ostream &os, Blockade &blockade) {
+ostream &operator<<(ostream &os, const Blockade &blockade) {
     return os << "Order name: " << blockade.getType();
 }
 
@@ -448,7 +429,7 @@ Airlift &Airlift::operator=(const Airlift &airlift) {
     return *this;
 }
 
-ostream &operator<<(ostream &os, Airlift &airlift) {
+ostream &operator<<(ostream &os, const Airlift &airlift) {
     return os << "Order name: " << airlift.getType();
 }
 
@@ -494,7 +475,7 @@ Negotiate &Negotiate::operator=(const Negotiate &negotiate) {
     return *this;
 }
 
-ostream &operator<<(ostream &os, Negotiate &negotiate) {
+ostream &operator<<(ostream &os, const Negotiate &negotiate) {
     return os << "Order name: " << negotiate.getType();
 }
 

@@ -14,6 +14,14 @@ int main()
     Airlift *airlift = new Airlift();
     Negotiate *negotiate = new Negotiate();
 
+    //Print the order details
+    cout << *deploy << endl;
+    cout << *advance << endl;
+    cout << *bomb << endl;
+    cout << *blockade << endl;
+    cout << *airlift << endl;
+    cout << *negotiate << endl;
+
     //Add the orders to the list
     list.addOrder(deploy);
     list.addOrder(advance);
@@ -52,10 +60,7 @@ int main()
 
     OrdersList list2 = list;
 
-    //Print the elements of the list
-    cout << "========== Order list after adding a new order ==========" << endl;
+    //Print the elements of the assign-copied list
+    cout << "========== Order list after assignment operator ==========" << endl;
     cout << list2 << endl;
-
-
-    cout << *deploy;
 }
