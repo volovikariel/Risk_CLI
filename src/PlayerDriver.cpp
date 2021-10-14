@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
     Order* o1 = new Order(Order::Order_Type::bomb);
     Order* o2 = new Order(Order::Order_Type::advance);
     Hand* h = new Hand(*p);
-    h->addCard(*new Card(Card::Card_Type::bomb));
-    h->addCard(*new Card(Card::Card_Type::airlift));
+    h->addCard(*new Card(Card::Type::Bomb));
+    h->addCard(*new Card(Card::Type::Airlift));
 
 
     // 1) Verifying that players have a collection of territories
