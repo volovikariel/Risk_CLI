@@ -1,244 +1,306 @@
 #include "GameEngine.h"
+
 #include <iostream>
 
-
-void GameEngine::GameEngineStart(){//the function that will start the game
-    cout<<"You are now in the " << state<< " state of the Game menu."<< endl;
-        cout << "Please enter the following command to start the game : loadmap --> "<<endl;
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "loadmap") {
-            cout <<"Transitioning to the next state --> Map Loaded..." << endl;
-            cout<<""<<endl;
-            setState("Map Loaded");
-            MapLoaded();
-
-        } else {
-            cout <<"You have not entered the right command."<< endl;
-            cout<<""<<endl;
-            GameEngineStart();
-        }
-    }
-
-GameEngine::GameEngine() {//constructor called when object is created. will set the state to start when game begins
-    state= "Start";
+// Constructor called when object is created. will set the state to start when game begins
+GameEngine::GameEngine()
+{
+    state = "Start";
 }
 
-GameEngine::~GameEngine() {//destructor
+// Destructor
+GameEngine::~GameEngine()
+{
 
 }
 
-void GameEngine::MapLoaded() {//will load the map chosen. 2 choices of command available
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command :  --> "<<endl;
-        cout<<""<<endl;
-        cout<<"loadmap\n";
-        cout<<"or \n";
-        cout<<"validatemap\n";
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "validatemap") {
-            cout << "Transitioning to the next state --> Map Validated..." << endl;
-            cout<<""<<endl;
-            setState("Map Validated");
-            MapValidated();
-        } else if(UserInput =="loadmap") {// reloading the same state we are in.
-            MapLoaded();
-        }else {
-                cout << "You have not entered the right command." << endl;
-                cout<<""<<endl;
-                MapLoaded();
-            }
-        }
-
-
-void GameEngine::MapValidated() {//will validate the chosen map.
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command : addplayer --> "<<endl;
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "addplayer") {
-            cout << "Transitioning to the next state --> Players Added..." << endl;
-            cout<<""<<endl;
-            setState("Players Added");
-            PlayersAdded();
-        } else {
-            cout << "You have not entered the right command." << endl;
-            cout<<""<<endl;
-            MapValidated();
-        }
-
-    }
-
-
-void GameEngine::PlayersAdded() {//will add players as need and then assign them a country. 2 choices of command
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command :  --> "<<endl;
-        cout<<""<<endl;
-        cout<<"addplayer\n";
-        cout<<"or \n";
-        cout<<"assigncountries\n";
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "assigncountries") {
-            cout << "Transitioning to the next state --> Assign Reinforcement..." << endl;
-            cout<<""<<endl;
-            setState("Assign Reinforcement");
-            AssignReinforcements();
-        } else if(UserInput =="addplayer") {
-            PlayersAdded();//Re-loading the same state we are in
-        }else {
-            cout << "You have not entered the right command." << endl;
-            cout<<""<<endl;
-            PlayersAdded();
-        }
-    }
-
-
-void GameEngine::AssignReinforcements() {// will assign reinforcements as needed
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command : issueorder --> "<<endl;
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "issueorder") {
-            cout << "Transitioning to the next state --> Issue Orders..." << endl;
-            cout<<""<<endl;
-            setState("Issue Orders");
-            IssueOrders();
-        } else {
-            cout << "You have not entered the right command." << endl;
-            cout<<""<<endl;
-            AssignReinforcements();
-        }
-
-    }
-
-void GameEngine::IssueOrders() {//issue orders. 2 choices of command available
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command :  --> "<<endl;
-        cout<<""<<endl;
-        cout<<"issueorder\n";
-        cout<<"or \n";
-        cout<<"endissueorders\n";
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "endissueorders") {
-            cout << "Transitioning to the next state --> Execute Orders..." << endl;
-            cout<<""<<endl;
-            setState("Execute Orders");
-            ExecuteOrders();
-        } else if(UserInput =="issueorder") {
-            IssueOrders(); //re-laoding the state we are in
-        }else {
-            cout << "You have not entered the right command." << endl;
-            cout<<""<<endl;
-            IssueOrders();
-        }
-    }
-
-
-void GameEngine::ExecuteOrders() {// will execute the orders given. 3 choices of command available
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command :  --> "<<endl;
-        cout<<""<<endl;
-        cout<<"execorder\n";
-        cout<<"or \n";
-        cout<<"endexecorders\n";
-        cout<<"or \n";
-        cout<<"win\n";
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput == "win") {
-            cout << "Transitioning to the next state --> Win..." << endl;
-            cout<<""<<endl;
-            setState("Win");
-            Win();
-        } else if(UserInput =="execorder") {
-            ExecuteOrders();//re-loading the state we are in
-        }else if (UserInput =="endexecorders") {
-            cout << "Transitioning to the previous state --> Assign Reinforcement..." << endl;
-            cout<<""<<endl;
-            setState("Assign Reinforcement");
-            AssignReinforcements();
-        }else {
-                cout << "You have not entered the right command." << endl;
-                cout<<""<<endl;
-                ExecuteOrders();
-            }
-        }
-
-
-void GameEngine::Win() {// will help determine if you end the game or want to play another one.
-    cout << "You are now in the " << state
-         << " state of the Game menu." << endl;
-
-        cout << "Please enter the following command : --> "<<endl;
-        cout<<""<<endl;
-        cout<<"play \n";
-        cout<<"or \n";
-        cout<<"end\n";
-        getline(cin, UserInput);
-        cout<<""<<endl;
-        if (UserInput=="end") {
-            cout << "" << endl;
-            cout<<"The game has now ended. Thank you for playing";
-        }
-        else if(UserInput =="play"){
-            cout << "You are starting a new game..." << endl;
-            cout << "Transitioning to the first state --> Start..." << endl;
-            cout<<""<<endl;
-            setState("Start");
-            GameEngineStart();
-        }
-        else{
-            cout << "You have not entered the right command." << endl;
-            cout<<""<<endl;
-            Win();
-        }
-    }
-
-
-void GameEngine::setState(const string &state) {//Will help set the next state
+// Will help set the next state
+void GameEngine::setState(const string& state)
+{
     GameEngine::state = state;
 }
 
-ostream &operator<<(ostream &os, const GameEngine &engine) { //stream insertion operator
-    os << "state: " << engine.state;
-    return os;
+// Stream insertion operator
+ostream &operator << (ostream& out, const GameEngine& source)
+{
+    out << "state: " << source.state;
+    return out;
 }
 
-GameEngine::GameEngine(const GameEngine& copie) {//copy constructor
-    this->state=copie.state;
-
+// Copy constructor
+GameEngine::GameEngine(const GameEngine& other)
+{
+    this->state = other.state;
 }
 
-GameEngine &GameEngine::operator=(const GameEngine &assign) {//assignment operator
-    this->state=assign.state;
-
+// Assignment operator
+GameEngine &GameEngine::operator = (const GameEngine& other)
+{
+    this->state = other.state;
     return *this;
 }
 
+// Starts the game
+void GameEngine::gameEngineStart()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
 
+    cout << "Please enter the following command to start the game : loadmap --> " << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
 
+    if (userInput == "loadmap")
+    {
+        cout << "Transitioning to the next state --> Map Loaded..." << endl;
+        cout << "" << endl;
 
+        setState("Map Loaded");
+        mapLoaded();
 
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
 
+        gameEngineStart();
+    }
+}
 
+// Will load the map chosen. 2 choices of command available
+void GameEngine::mapLoaded()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
 
+    cout << "Please enter the following command :  --> " << endl;
+    cout << "" << endl;
+    cout << "loadmap" << endl;
+    cout << "or" << endl;
+    cout << "validatemap" << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
 
+    if (userInput == "validatemap")
+    {
+        cout << "Transitioning to the next state --> Map Validated..." << endl;
+        cout << "" << endl;
 
+        setState("Map Validated");
+        mapValidated();
+    }
+    else if(userInput == "loadmap")
+    {
+        // Reloading the same state we are in.
+        mapLoaded();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
 
+        mapLoaded();
+    }
+}
 
+// Validates the chosen map.
+void GameEngine::mapValidated()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
 
+    cout << "Please enter the following command : addplayer --> " << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
+
+    if (userInput == "addplayer")
+    {
+        cout << "Transitioning to the next state --> Players Added..." << endl;
+        cout << "" << endl;
+
+        setState("Players Added");
+        playersAdded();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
+
+        mapValidated();
+    }
+}
+
+// Adds players as need and then assigns them a country. 2 choices of command
+void GameEngine::playersAdded()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
+
+    cout << "Please enter the following command :  --> "<<endl;
+    cout << "" << endl;
+    cout << "addplayer" << endl;
+    cout << "or" << endl;
+    cout << "assigncountries" << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
+
+    if (userInput == "assigncountries")
+    {
+        cout << "Transitioning to the next state --> Assign Reinforcement..." << endl;
+        cout << "" << endl;
+
+        setState("Assign Reinforcement");
+        assignReinforcements();
+    }
+    else if (userInput =="addplayer")
+    {
+        // Re-loading the same state we are in
+        playersAdded();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
+
+        playersAdded();
+    }
+}
+
+// Assigns reinforcements as needed
+void GameEngine::assignReinforcements()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
+
+    cout << "Please enter the following command : issueorder --> " << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
+
+    if (userInput == "issueorder")
+    {
+        cout << "Transitioning to the next state --> Issue Orders..." << endl;
+        cout << "" << endl;
+
+        setState("Issue Orders");
+        issueOrders();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
+
+        assignReinforcements();
+    }
+}
+
+// Issue orders. 2 choices of command available
+void GameEngine::issueOrders()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
+
+    cout << "Please enter the following command :  --> " << endl;
+    cout << "" << endl;
+    cout << "issueorder" << endl;
+    cout << "or" << endl;
+    cout << "endissueorders" << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
+
+    if (userInput == "endissueorders")
+    {
+        cout << "Transitioning to the next state --> Execute Orders..." << endl;
+        cout << "" << endl;
+
+        setState("Execute Orders");
+        executeOrders();
+    }
+    else if(userInput =="issueorder")
+    {
+        // Re-laoding the state we are in
+        issueOrders();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
+
+        issueOrders();
+    }
+}
+
+// Execute the orders given. 3 choices of command available
+void GameEngine::executeOrders()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
+
+    cout << "Please enter the following command :  --> "<< endl;
+    cout << "" << endl;
+    cout << "execorder" << endl;
+    cout << "or" << endl;
+    cout << "endexecorders" << endl;
+    cout << "or" << endl;
+    cout << "win" << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
+
+    if (userInput == "win")
+    {
+        cout << "Transitioning to the next state --> Win..." << endl;
+        cout << "" << endl;
+
+        setState("Win");
+        win();
+    }
+    else if(userInput =="execorder")
+    {
+        // Re-loading the state we are in
+        executeOrders();
+    }
+    else if (userInput =="endexecorders")
+    {
+        cout << "Transitioning to the previous state --> Assign Reinforcement..." << endl;
+        cout << "" << endl;
+
+        setState("Assign Reinforcement");
+        assignReinforcements();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
+
+        executeOrders();
+    }
+}
+
+// Helps determine if you end the game or want to play another one.
+void GameEngine::win()
+{
+    cout << "You are now in the " << state << " state of the Game menu." << endl;
+
+    cout << "Please enter the following command : --> " << endl;
+    cout << "" << endl;
+    cout << "play" << endl;
+    cout << "or" << endl;
+    cout << "end" << endl;
+    getline(cin, userInput);
+    cout << "" << endl;
+
+    if (userInput == "end")
+    {
+        cout << "" << endl;
+        cout << "The game has now ended. Thank you for playing";
+    }
+    else if (userInput == "play")
+    {
+        cout << "You are starting a new game..." << endl;
+        cout << "Transitioning to the first state --> Start..." << endl;
+        cout << "" << endl;
+
+        setState("Start");
+        gameEngineStart();
+    }
+    else
+    {
+        cout << "You have not entered the right command." << endl;
+        cout << "" << endl;
+
+        win();
+    }
+}

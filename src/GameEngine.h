@@ -1,5 +1,5 @@
-#include <string>
 #include <ostream>
+#include <string>
 
 using namespace std;
 
@@ -7,35 +7,43 @@ class GameEngine
 {
 public :
 
-    GameEngine();//Default constructor
+    // Default constructor
+    GameEngine();
+    // Copy constructor
+    GameEngine(const GameEngine& other);
+    // Destructor
+    ~GameEngine();
 
-    ~GameEngine();//destructor
+    // To start the game
+    void gameEngineStart();
 
-    void GameEngineStart();// to start the game
+    // Will help set the state when transitioning
+    void setState(const string &state);
 
-    void setState(const string &state);//will help set the state when transitioning
-
-    string UserInput; //will store using input
-
-    string state; //will hold the state
-
-    friend ostream &operator<<(ostream &os, const GameEngine &engine); //stream insertion operator
-
-    GameEngine (const GameEngine& copie); // copy constructor
-
-    GameEngine& operator = (const GameEngine& assign);//assignment operator
-
-
-
+    // Assignment operator
+    GameEngine& operator = (const GameEngine& other);
+    // Stream insertion operator
+    friend ostream& operator << (ostream &out, const GameEngine& source);
+    
 private:
-    void MapLoaded(); // function that will show if the map is  loaded
-    void MapValidated(); // function that will show if the map loaded is valid
-    void PlayersAdded(); // function that will add player or assign countries
-    void AssignReinforcements(); // function that will determine what orders are issued
-    void IssueOrders(); // function that will show if the orders have to end or more to be added
-    void ExecuteOrders(); // function that will determine if there is a winner or more needs to be done
-    void Win(); // function that will determine if the game will end or another will be played
 
+    // Shows if the map is loaded
+    void mapLoaded();
+    // Shows if the map loaded is valid
+    void mapValidated();
+    // Adds player or assigns countries
+    void playersAdded();
+    // Determines what orders are issued
+    void assignReinforcements();
+    // Shows if the orders have to end or more to be added
+    void issueOrders();
+    // Determine if there is a winner or more needs to be done
+    void executeOrders();
+    // Determines if the game will end or another will be played
+    void win();
 
+    // Stores user input
+    string userInput;
+    // Holds the current state
+    string state;
 };
-
