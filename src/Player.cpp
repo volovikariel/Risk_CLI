@@ -1,167 +1,190 @@
 #include "Player.h"
 
-using namespace std;
-
-//constructors
-//default constructor
-Player::Player() :
-
-        playerTerritories(),
-        playerCards(new Hand(*this)),
-        playerOrdersList(new OrdersList()),
-        playerArmies(0),
-        playerID(0),
-        territoriesToAttack(),
-        territoriesToDefend()
+// Constructors
+// Default constructor
+Player::Player():
+    playerTerritories(),
+    playerCards(new Hand(*this)),
+    playerOrdersList(new OrdersList()),
+    playerArmies(0),
+    playerID(0),
+    territoriesToAttack(),
+    territoriesToDefend()
 {
 
 }
 
 //parametrized constructor
-Player::Player(vector<Territory*> playerTerritories_, int playerArmies_, int playerID_, vector<Territory*> territoriesToAttack_, vector<Territory*> territoriesToDefend_) :
-        playerTerritories(playerTerritories_),
-        playerCards(new Hand(*this)),
-        playerOrdersList(new OrdersList()),
-        playerArmies(playerArmies_),
-        playerID(playerID_),
-        territoriesToAttack(territoriesToAttack_),
-        territoriesToDefend(territoriesToDefend_)
+Player::Player(vector<Territory*>& playerTerritories, int playerArmies, int playerID, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend):
+    playerTerritories(playerTerritories),
+    playerCards(new Hand(*this)),
+    playerOrdersList(new OrdersList()),
+    playerArmies(playerArmies),
+    playerID(playerID),
+    territoriesToAttack(territoriesToAttack),
+    territoriesToDefend(territoriesToDefend)
 {
 
 }
-//copy constructor
-Player::Player(const Player& p) :
-        playerTerritories(p.playerTerritories),
-        playerArmies(p.playerArmies),
-        playerID(p.playerID),
-        territoriesToAttack(p.territoriesToAttack),
-        territoriesToDefend(p.territoriesToDefend)
+
+// Copy constructor
+Player::Player(const Player& other):
+    playerTerritories(other.playerTerritories),
+    playerArmies(other.playerArmies),
+    playerID(other.playerID),
+    territoriesToAttack(other.territoriesToAttack),
+    territoriesToDefend(other.territoriesToDefend)
 {
     delete this->playerCards;
     delete this->playerOrdersList;
-    this->playerCards = new Hand(*(p.playerCards));
-    this->playerOrdersList = new OrdersList(*(p.playerOrdersList));
+
+    this->playerCards = new Hand(*(other.playerCards));
+    this->playerOrdersList = new OrdersList(*(other.playerOrdersList));
 }
 
-//destructor
-Player::~Player() {
+// Destructor
+Player::~Player()
+{
     delete playerCards;
     delete playerOrdersList;
 }
 
-//accessors
-vector<Territory*>& Player::getPlayerTerritories() {
+// Accessors
+vector<Territory*>& Player::getPlayerTerritories()
+{
     return playerTerritories;
 }
 
-Hand* Player::getPlayerCards() {
+Hand* Player::getPlayerCards()
+{
     return playerCards;
 }
 
-OrdersList* Player::getPlayerOrders() {
+OrdersList* Player::getPlayerOrders()
+{
     return playerOrdersList;
 }
 
-int Player::getPlayerArmies() {
+int Player::getPlayerArmies() const
+{
     return playerArmies;
 }
 
-//mutators
-void Player::setPlayerTerritories(vector<Territory*> playerTerritories_) {
-    for (Territory* t : playerTerritories_) {
+// Mutators
+void Player::setPlayerTerritories(vector<Territory*> playerTerritories)
+{
+    for (Territory* t : playerTerritories)
+    {
         this->playerTerritories.push_back(t);
     }
 }
 
-void Player::setPlayerCards(Hand* playerCards_) {
-    playerCards = playerCards_;
-}
-
-void Player::setPlayerOrders(OrdersList* playerOrderList_)
+void Player::setPlayerCards(Hand* playerCards)
 {
-    playerOrdersList = playerOrderList_;
+    this->playerCards = playerCards;
 }
 
-void Player::setPlayerArmies(int playerArmies_) {
-    playerArmies = playerArmies_;
+void Player::setPlayerOrders(OrdersList* playerOrderList)
+{
+    this->playerOrdersList = playerOrderList;
 }
 
-void Player::setTerritoriesToAttack(vector<Territory*> territoriesToAttack_) {
-    for (Territory* t : territoriesToAttack_) {
+void Player::setPlayerArmies(int playerArmies)
+{
+    this->playerArmies = playerArmies;
+}
+
+void Player::setTerritoriesToAttack(vector<Territory*> territoriesToAttack)
+{
+    for (Territory* t : territoriesToAttack)
+    {
         this->territoriesToAttack.push_back(t);
     }
 }
 
-void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend_) {
-    for (Territory* t : territoriesToDefend_) {
+void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend)
+{
+    for (Territory* t : territoriesToDefend)
+    {
         this->territoriesToDefend.push_back(t);
     }
 }
 
-//operator overloading
-//assignment operator overloading
-void Player::operator=(const Player& p) {
+// Operator overloading
+// Assignment operator overloading
+void Player::operator = (const Player& other)
+{
     delete playerCards;
     delete playerOrdersList;
 
-    playerTerritories = p.playerTerritories;
-    playerCards = new Hand(*(p.playerCards));
-    playerOrdersList = new OrdersList(*(p.playerOrdersList));
-    playerArmies = p.playerArmies;
-    playerID = p.playerID;
-    territoriesToAttack = p.territoriesToAttack;
-    territoriesToDefend = p.territoriesToDefend;
+    playerTerritories = other.playerTerritories;
+    playerCards = new Hand(*(other.playerCards));
+    playerOrdersList = new OrdersList(*(other.playerOrdersList));
+    playerArmies = other.playerArmies;
+    playerID = other.playerID;
+    territoriesToAttack = other.territoriesToAttack;
+    territoriesToDefend = other.territoriesToDefend;
 }
 
 //stream insertion operator overloading
-ostream& operator<<(ostream& out, const Player& p) {
-    out << "\nPlayer ID: " << p.playerID << endl;
+ostream& operator << (ostream& out, const Player& source)
+{
+    out << "\nPlayer ID: " << source.playerID << endl;
 
-    if (!p.playerTerritories.empty()) {
+    if (!source.playerTerritories.empty())
+    {
         out << "\nPlayer's territories:\n";
-        for (Territory *t : p.playerTerritories) {
+        for (Territory *t : source.playerTerritories)
+        {
             out << *t << endl;
         }
     }
-
-    else {
+    else
+    {
         out << "\nTerritories not initialized!\n";
     }
 
-    if (p.playerCards != nullptr) {
+    if (source.playerCards != nullptr)
+    {
         out << "\nPlayer's Hand:\n";
-        for (Card* c : p.playerCards->getCards()) {
+        for (Card* c : source.playerCards->getCards())
+        {
             out << *c << endl;
         }
     }
-
-    else {
+    else
+    {
         out << "\nHand not initialized!\n";
     }
 
-    if (p.playerOrdersList != nullptr) {
+    if (source.playerOrdersList != nullptr)
+    {
         out << "\nPlayer's Orders:\n";
-        for (Order* o : p.playerOrdersList->getOrdersList()) {
+        for (Order* o : source.playerOrdersList->getOrdersList())
+        {
             out << *o;
         }
     }
-
-    else {
+    else
+    {
         out << "\nOrders not initialized!\n";
     }
 
     return out;
 }
 
-//required methods
-void Player::issueOrder(Order* order) {
+// Required methods
+void Player::issueOrder(Order* order)
+{
     playerOrdersList->addOrder(order);
 }
 
-vector<Territory*>& Player::toDefend() {
+vector<Territory*>& Player::toDefend()
+{
     return territoriesToDefend;
 }
 
-vector<Territory*>& Player::toAttack() {
+vector<Territory*>& Player::toAttack()
+{
     return territoriesToAttack;
 }

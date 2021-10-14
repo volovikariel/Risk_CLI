@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     h->addCard(*new Card(Card::Card_Type::bomb));
     h->addCard(*new Card(Card::Card_Type::airlift));
 
-    //1) Verifying that players have a collection of territories
+
+    // 1) Verifying that players have a collection of territories
 
     cout << "\n===1) Verifying that players have a collection of territories===" << endl;
     territories.push_back(&t1);
@@ -28,35 +29,39 @@ int main(int argc, char *argv[])
     cout << *p;
 
 
-    //2) Verifying that players have a collection of cards (i.e a hand of cards)
+    // 2) Verifying that players have a collection of cards (i.e a hand of cards)
 
     cout << "\n===2) Verifying that players have a collection of cards (i.e a hand of cards)===" << endl;
     p->setPlayerCards(h);
     cout << *p;
 
-    //3) Verifying that players have a collection of territories returned by .toDefend()
+
+    // 3) Verifying that players have a collection of territories returned by .toDefend()
 
     cout << "\n===3) Verifying that players have a collection of territories returned by .toDefend()===" << endl;
     territoriesToDefend = territories;
     p->setTerritoriesToDefend(territoriesToDefend);
     cout << "\nTerritories to defend: " << endl;
-    for (Territory* t : p->toDefend()) {
+    for (Territory* t : p->toDefend())
+    {
         cout << *t << endl;
     }
 
-    //4) Verifying that players have a collection of territories returned by .toAttack()
+
+    // 4) Verifying that players have a collection of territories returned by .toAttack()
 
     cout << "\n===4) Verifying that players have a collection of territories returned by .toAttack()===" << endl;
     territoriesToAttack.push_back(&t3);
     territoriesToAttack.push_back(&t4);
     p->setTerritoriesToAttack(territoriesToAttack);
     cout << "\nTerritories to attack: " << endl;
-    for (Territory* t : p->toAttack()) {
+    for (Territory* t : p->toAttack())
+    {
         cout << *t << endl;
     }
 
 
-    //5) Verifying that players can use the method .issueOrder() to add an order to their list of orders
+    // 5) Verifying that players can use the method .issueOrder() to add an order to their list of orders
 
     cout << "\n===5) Verifying that players can use the method .issueOrder() to add an order to their list of orders===" << endl;
     p->issueOrder(o1);
