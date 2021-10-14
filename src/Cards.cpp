@@ -279,12 +279,14 @@ void Hand::addCard(Card& card)
 // Removes a card in the hand given the card's index in the hand vector
 void Hand::removeCard(int cardIndex)
 {
-    if (cardIndex < 0 || cardIndex >= cards.size()) {
+    unsigned int index = cardIndex;
+    if (index >= cards.size())
+    {
         return;
     }
     // This card is now not attached to any hand, so set its hand property to nullptr
-    cards[cardIndex]->setHand(nullptr);
-    cards.erase(cards.begin() + cardIndex);
+    cards[index]->setHand(nullptr);
+    cards.erase(cards.begin() + index);
 }
 
 // Removes a card in the hand given a card's reference
@@ -303,11 +305,12 @@ void Hand::removeCard(Card& card)
 // Gets a card from the hand given the card's index
 Card* Hand::getCard(int cardIndex)
 {
-    if (cardIndex < 0 || cardIndex >= cards.size())
+    unsigned int index = cardIndex;
+    if (index >= cards.size())
     {
         return nullptr;
     }
-    return cards[cardIndex];
+    return cards[index];
 }
 
 // Returns a reference to the cards in the hand

@@ -173,7 +173,7 @@ OrdersList& OrdersList::operator = (const OrdersList& other)
 // Stream insertion operator
 ostream& operator << (ostream& out, const OrdersList& source)
 {
-    for (int i = 0; i < source.orderList.size(); i++)
+    for (size_t i = 0; i < source.orderList.size(); i++)
     {
         out << "[Order " + to_string(i) << "] " << source.getOrdersList()[i]->getType() << endl;
     }

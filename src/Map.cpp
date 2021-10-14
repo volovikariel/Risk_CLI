@@ -194,9 +194,9 @@ std::ostream& operator << (std::ostream &out, const Map& source)
 
 Continent* Map::getContinentByID(int ID) const
 {
-    int index = ID - 1;
+    unsigned int index = ID - 1;
 
-    if (index < 0 || index >= continents.size())
+    if (index >= continents.size())
     {
         return nullptr;
     }
@@ -208,9 +208,9 @@ Continent* Map::getContinentByID(int ID) const
 
 Territory* Map::getTerritoryByID(int ID) const
 {
-    int index = ID - 1;
+    unsigned int index = ID - 1;
 
-    if (index < 0 || index >= territories.size())
+    if (index >= territories.size())
     {
         return nullptr;
     }
@@ -363,7 +363,7 @@ void Map::deepCopy(const Map& other)
         continents.push_back(newContinent);
 
         // Re-assign territory pointers
-        for (int i = 0; i < newContinent->territoryIDs.size(); ++i)
+        for (size_t i = 0; i < newContinent->territoryIDs.size(); ++i)
         {
             int territoryIndex = newContinent->territoryIDs[i] - 1;
             newContinent->territories[i] = territories.at(territoryIndex);
@@ -377,7 +377,7 @@ void Map::deepCopy(const Map& other)
         newTerritory->continent = continents[continentIndex];
 
         // Re-assign neighbor pointers
-        for (int i = 0; i < newTerritory->neighborIDs.size(); ++i)
+        for (size_t i = 0; i < newTerritory->neighborIDs.size(); ++i)
         {
             int territoryIndex = newTerritory->neighborIDs[i] - 1;
             newTerritory->neighbors[i] = territories.at(territoryIndex);
