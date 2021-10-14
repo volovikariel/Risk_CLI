@@ -1,14 +1,11 @@
-#include <iostream>
 #include "Orders.h"
-
-using namespace std;
 
 //==================== Order Class ====================
 
 // Stream output operator of Order_Type
-std::ostream& operator << (std::ostream& out, const Order::Order_Type order)
+std::ostream& operator << (std::ostream& out, const Order::Type source)
 {
-    //Names for the orders
+    // Names for the orders
     static const char* names[9] =
     {
         "Order",
@@ -20,84 +17,89 @@ std::ostream& operator << (std::ostream& out, const Order::Order_Type order)
         "Negotiate"
     };
 
-    out << names[static_cast<size_t>(order)];
+    out << names[static_cast<size_t>(source)];
     return out;
 }
 
-//Default Constructor
-Order::Order() {
-    this->orderType = Order_Type::order;
+// Default Constructor
+Order::Order()
+{
+    this->orderType = Type::Order;
 }
 
-//Copy Constructor
+// Copy Constructor
 Order::Order(const Order& copy):
     orderType(copy.orderType)
 {
 }
 
-//Parameterized Constructor
-Order::Order(const Order_Type &orderType):
+// Parameterized Constructor
+Order::Order(const Type orderType):
     orderType(orderType)
 {
 
 }
 
-//Getter for the order type
-Order::Order_Type Order::getType() const {
+// Getter for the order type
+Order::Type Order::getType() const
+{
     return orderType;
 }
 
 // Setter for the order type
-void Order::setType(Order_Type orderType) {
+void Order::setType(Type orderType)
+{
     this->orderType = orderType;
 }
 
-//Destructor
-Order::~Order() { }
+// Destructor
+Order::~Order()
+{
 
-//Input stream operator
-ostream& operator<<(ostream& os, const Order& order){
-    return order.print(os);
 }
 
-//Assignment Operator
-Order& Order::operator=(const Order& order) {
+// Input stream operator
+ostream& operator << (ostream& out, const Order& order)
+{
+    return order.print(out);
+}
+
+// Assignment Operator
+Order& Order::operator = (const Order& order)
+{
     this->orderType = order.orderType;
     return *this;
 }
 
-//Execute method
+// Execute method
 bool Order::execute()
 {
     return true;
 }
 
-//Validate method
+// Validate method
 bool Order::validate()
 {
     return true;
 }
 
 //Print the order type
-ostream& Order::print(ostream& os) const
+ostream& Order::print(ostream& out) const
 {
-    return os << "Order type: " << getType() << endl;
+    return out << "Order type: " << getType() << endl;
 }
 
-//Getter for bool executed
-bool Order::getExecuted() const {
+// Getter for bool executed
+bool Order::getExecuted() const
+{
     return this->executed;
 }
 
-//Setter for bool executed
-void Order::setExecuted(bool value) {
+// Setter for bool executed
+void Order::setExecuted(bool value)
+{
     this->executed = value;
 }
-
-
-
-
-
 
 
 
@@ -111,108 +113,123 @@ OrdersList::OrdersList():
 
 }
 
-//Copy Constructor
-OrdersList::OrdersList(const OrdersList& ordersList)
+// Copy Constructor
+OrdersList::OrdersList(const OrdersList& other)
 {
-    deepCopy(ordersList.orderList);
+    deepCopy(other.orderList);
 }
 
-//Parameterized Constructor
+// Parameterized Constructor
 OrdersList::OrdersList(const vector<Order*>& orderList)
 {
     deepCopy(orderList);
 }
 
-//Destructor
-OrdersList::~OrdersList() {
-    for(Order* o : orderList){
-        delete o;
+// Destructor
+OrdersList::~OrdersList()
+{
+    for(Order* order : orderList)
+    {
+        delete order;
     }
 }
 
-//Removes an order from the specified index
-void OrdersList::remove(int index) {
+// Removes an order from the specified index
+void OrdersList::remove(int index)
+{
     Order* order = orderList.at(index);
     orderList.erase(orderList.begin() + index);
     cout << "Deleted Order at index: " << index << endl << endl;
     delete order;
 }
 
-//Move the order from index x (from) to index y (to)
-void OrdersList::move(int from, int to) {
+// Move the order from index x (from) to index y (to)
+void OrdersList::move(int from, int to)
+{
     std::swap(*orderList[from], *orderList[to]);
     cout << "Moved order from index " << from << " to the index " << to << "." << endl << endl;
 }
 
-//Add an order to the orders list
-void OrdersList::addOrder(Order *order) {
+// Add an order to the orders list
+void OrdersList::addOrder(Order *order)
+{
     orderList.push_back(order);
     cout << "Added Order " << order->getType() << endl << endl;
 }
 
-//Assignment operator
-OrdersList &OrdersList::operator=(const OrdersList &ordersList) {
-    for (const Order* order : orderList) {
+// Assignment operator
+OrdersList& OrdersList::operator = (const OrdersList& other)
+{
+    for (const Order* order : orderList)
+    {
         delete order;
     }
-    deepCopy(ordersList.orderList);
+
+    deepCopy(other.orderList);
+
     return *this;
 }
 
-//Stream insertion
-ostream &operator<<(ostream &os, const OrdersList &ordersList) {
-    for(int i = 0; i < ordersList.orderList.size(); i++){
-        os << "[Order " + to_string(i) << "] " << ordersList.getOrdersList()[i]->getType() << endl;
+// Stream insertion operator
+ostream& operator << (ostream& out, const OrdersList& source)
+{
+    for (int i = 0; i < source.orderList.size(); i++)
+    {
+        out << "[Order " + to_string(i) << "] " << source.getOrdersList()[i]->getType() << endl;
     }
-    return os;
+    return out;
 }
 
-//Getter for orderList
-vector<Order *>& OrdersList::getOrdersList() {
+// Getter for orderList
+vector<Order *>& OrdersList::getOrdersList()
+{
     return orderList;
 }
 
-//Const getter for orderList
-const vector<Order *>& OrdersList::getOrdersList() const {
+// Const getter for orderList
+const vector<Order *>& OrdersList::getOrdersList() const
+{
     return orderList;
 }
 
-//Method to deep copy the order list
+// Method to deep copy the order list
 void OrdersList::deepCopy(const vector<Order*>& orderList)
 {
-    for(const Order* order : orderList){
-        switch (order->getType()) {
-            case (Order::Order_Type::order):
+    for (const Order* order : orderList)
+    {
+        switch (order->getType())
+        {
+            case (Order::Type::Order):
             {
                 this->orderList.push_back(new Order(*order));
                 break;
             }
-            case (Order::Order_Type::deploy):
+            case (Order::Type::Deploy):
             {
                 this->orderList.push_back(new Deploy(*static_cast<const Deploy*>(order)));
                 break;
             }
-            case (Order::Order_Type::advance):
+            case (Order::Type::Advance):
             {
                 this->orderList.push_back(new Advance(*static_cast<const Advance*>(order)));
                 break;
             }
-            case (Order::Order_Type::bomb):
+            case (Order::Type::Bomb):
             {
                 this->orderList.push_back(new Bomb(*static_cast<const Bomb*>(order)));
                 break;
             }
-            case (Order::Order_Type::blockade):
+            case (Order::Type::Blockade):
             {
                 this->orderList.push_back(new Blockade(*static_cast<const Blockade*>(order)));
                 break;
             }
-            case (Order::Order_Type::airlift):
+            case (Order::Type::Airlift):
             {
                 this->orderList.push_back(new Airlift(*static_cast<const Airlift*>(order)));
                 break;
             }
-            case (Order::Order_Type::negotiate):
+            case (Order::Type::Negotiate):
             {
                 this->orderList.push_back(new Negotiate(*static_cast<const Negotiate*>(order)));
                 break;
@@ -226,24 +243,29 @@ void OrdersList::deepCopy(const vector<Order*>& orderList)
 
 //==================== Deploy Class ====================
 
-//Default Constructor
-Deploy::Deploy() {
-    this->setType(Order_Type::deploy);
+// Default Constructor
+Deploy::Deploy()
+{
+    this->setType(Type::Deploy);
     this->setExecuted(true);
 }
 
-//Copy Constructor
-Deploy::Deploy(const Deploy& deploy) : Order(deploy) {
-    this->setType(Order_Type::deploy);
+// Copy Constructor
+Deploy::Deploy(const Deploy& source):
+    Order(source)
+{
+    this->setType(Type::Deploy);
 }
 
-//Destructor
-Deploy::~Deploy() {
+// Destructor
+Deploy::~Deploy()
+{
     cout << "Destroying order: deploy." << endl;
 }
 
-//Execute : First validates the order, and if valid executes its action
-bool Deploy::execute() {
+// Execute : First validates the order, and if valid executes its action
+bool Deploy::execute()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Deploy] Inside execute()" << endl;
 //    if(validate()){
@@ -252,58 +274,66 @@ bool Deploy::execute() {
     return false;
 }
 
-//Validate : checks if an order is valid
-bool Deploy::validate() {
+// Validate : checks if an order is valid
+bool Deploy::validate()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Deploy] Inside validate()" << endl;
     return false;
 }
 
-//Assignment operator
-Deploy &Deploy::operator=(const Deploy &order) {
-    Order::operator=(order);
+// Assignment operator
+Deploy& Deploy::operator = (const Deploy& other)
+{
+    Order::operator = (other);
     return *this;
 }
 
-//Stream operator that calls the print
-ostream &operator<<(ostream &os, const Deploy &deploy) {
-    return deploy.print(os);
+// Stream operator that calls the print
+ostream& operator<<(ostream& out, const Deploy& source)
+{
+    return source.print(out);
 }
 
-//Print method to display the description and effect of the order
-ostream& Deploy::print(ostream& os) const {
-    Order::print(os);
-    os << "[Deploy Description]: Places some armies on one of the current player's territories" << endl;
-    if (executed) {
-        os << "[Deploy Effect]: Places armies on territories" << endl;
+// Print method to display the description and effect of the order
+ostream& Deploy::print(ostream& out) const
+{
+    Order::print(out);
+    out << "[Deploy Description]: Places some armies on one of the current player's territories" << endl;
+    if (executed)
+    {
+        out << "[Deploy Effect]: Places armies on territories" << endl;
     }
-    return os;
+    return out;
 }
-
-
 
 
 
 
 // ==================== Advance Class ====================
 
-//Default Constructor
-Advance::Advance() {
-    this->setType(Order_Type::advance);
+// Default Constructor
+Advance::Advance()
+{
+    this->setType(Type::Advance);
 }
 
-//Copy Constructor
-Advance::Advance(const Advance &advance) : Order(advance) {
-    this->setType(Order_Type::advance);
+// Copy Constructor
+Advance::Advance(const Advance &other):
+    Order(other)
+{
+    this->setType(Type::Advance);
 }
 
-//Destructor
-Advance::~Advance() {
+// Destructor
+Advance::~Advance()
+{
     cout << "Destroying order: advance." << endl;
 }
 
 //Execute : First validates the order, and if valid executes its action
-bool Advance::execute() {
+bool Advance::execute()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Advance] Inside execute()" << endl;
 //    if(validate()){
@@ -313,62 +343,65 @@ bool Advance::execute() {
 }
 
 //Validate : checks if an order is valid
-bool Advance::validate() {
+bool Advance::validate()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Advance] Inside validate()" << endl;
     return false;
 }
 
-//Assignment operator
-Advance &Advance::operator=(const Advance &advance) {
-    Order::operator=(advance);
+// Assignment operator
+Advance& Advance::operator = (const Advance& other)
+{
+    Order::operator = (other);
     return *this;
 }
 
-//Stream operator that calls the print
-ostream &operator<<(ostream &os, const Advance &advance) {
-    return advance.print(os);
+// Stream operator that calls the print
+ostream& operator<<(ostream& out, const Advance& source)
+{
+    return source.print(out);
 }
 
-//Print method to display the description and effect of the order
-ostream &Advance::print(ostream &os) const {
-    Order::print(os);
-    os << "[Advance Description]: Move some armies from one of the current player's territories to an adjacent territory." << endl;
-    if (executed) {
-        os << "[Advance Effect]: If the territory belongs to the player, the armies move there. If it belongs to an other player, an attack happens." << endl;
+// Print method to display the description and effect of the order
+ostream& Advance::print(ostream& out) const
+{
+    Order::print(out);
+    out << "[Advance Description]: Move some armies from one of the current player's territories to an adjacent territory." << endl;
+    if (executed)
+    {
+        out << "[Advance Effect]: If the territory belongs to the player, the armies move there. If it belongs to an other player, an attack happens." << endl;
     }
-    return os;
+    return out;
 }
-
-
-
-
-
-
 
 
 
 
 // ==================== Bomb Class ====================
 
-//Default Constructor
+// Default Constructor
 Bomb::Bomb() {
-    this->setType(Order_Type::bomb);
+    this->setType(Type::Bomb);
     this->setExecuted(true);
 }
 
-//Copy Constructor
-Bomb::Bomb(const Bomb &bomb) : Order(bomb) {
-    this->setType(Order_Type::bomb);
+// Copy Constructor
+Bomb::Bomb(const Bomb& other):
+    Order(other)
+{
+    this->setType(Type::Bomb);
 }
 
-//Destructor
-Bomb::~Bomb() {
+// Destructor
+Bomb::~Bomb()
+{
     cout << "Destroying order: bomb." << endl;
 }
 
-//Execute : First validates the order, and if valid executes its action
-bool Bomb::execute() {
+// Execute : First validates the order, and if valid executes its action
+bool Bomb::execute()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Bomb] Inside execute()" << endl;
 //    if(validate()){
@@ -377,33 +410,37 @@ bool Bomb::execute() {
     return false;
 }
 
-//Validate : checks if an order is valid
-bool Bomb::validate() {
+// Validate : checks if an order is valid
+bool Bomb::validate()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Bomb] Inside validate()" << endl;
     return false;
 }
 
-//Assignment operator
-Bomb &Bomb::operator=(const Bomb &bomb) {
-    Order::operator=(bomb);
+// Assignment operator
+Bomb& Bomb::operator = (const Bomb& other)
+{
+    Order::operator = (other);
     return *this;
 }
 
-//Stream operator that calls the print
-ostream &operator<<(ostream &os, const Bomb &bomb) {
-    return bomb.print(os);
+// Stream operator that calls the print
+ostream& operator << (ostream& out, const Bomb& source)
+{
+    return source.print(out);
 }
 
-
-//Print method to display the description and effect of the order
-ostream &Bomb::print(ostream &os) const {
-    Order::print(os);
-    os << "[Bomb Description]: Destroy half of the armies on opponent's territory which is adjacent to one of the current player's territory." << endl;
-    if (executed) {
-        os << "[Bomb Effect]: Target country loses half of their army units." << endl;
+// Print method to display the description and effect of the order
+ostream& Bomb::print(ostream& out) const
+{
+    Order::print(out);
+    out << "[Bomb Description]: Destroy half of the armies on opponent's territory which is adjacent to one of the current player's territory." << endl;
+    if (executed)
+    {
+        out << "[Bomb Effect]: Target country loses half of their army units." << endl;
     }
-    return os;
+    return out;
 }
 
 
@@ -411,23 +448,28 @@ ostream &Bomb::print(ostream &os) const {
 
 // ==================== Blockade Class ====================
 
-//Default Constructor
-Blockade::Blockade() {
-    this->setType(Order_Type::blockade);
+// Default Constructor
+Blockade::Blockade()
+{
+    this->setType(Type::Blockade);
 }
 
-//Copy Constructor
-Blockade::Blockade(const Blockade &blockade) : Order(blockade){
-    this->setType(Order_Type::blockade);
+// Copy Constructor
+Blockade::Blockade(const Blockade& other):
+    Order(other)
+{
+    this->setType(Type::Blockade);
 }
 
-//Destructor
-Blockade::~Blockade() {
+// Destructor
+Blockade::~Blockade()
+{
     cout << "Destroying order: blockade." << endl;
 }
 
-//Execute : First validates the order, and if valid executes its action
-bool Blockade::execute() {
+// Execute : First validates the order, and if valid executes its action
+bool Blockade::execute()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Blockade] Inside execute()" << endl;
 //    if(validate()){
@@ -436,58 +478,66 @@ bool Blockade::execute() {
     return false;
 }
 
-//Validate : checks if an order is valid
-bool Blockade::validate() {
+// Validate : checks if an order is valid
+bool Blockade::validate()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Blockade] Inside validate()" << endl;
     return false;
 }
 
-//Assignment operator
-Blockade &Blockade::operator=(const Blockade &blockade) {
-    Order::operator=(blockade);
+// Assignment operator
+Blockade& Blockade::operator = (const Blockade& other)
+{
+    Order::operator = (other);
     return *this;
 }
 
-//Stream operator that calls the print
-ostream &operator<<(ostream &os, const Blockade &blockade) {
-    return blockade.print(os);
+// Stream operator that calls the print
+ostream& operator << (ostream& out, const Blockade& source)
+{
+    return source.print(out);
 }
 
-//Print method to display the description and effect of the order
-ostream &Blockade::print(ostream &os) const {
-    Order::print(os);
-    os << "[Blockade Description]: Triple the number of armies on one of the current player’s territories and make it a neutral territory." << endl;
-    if (executed) {
-        os << "[Blockade Effect]: the target territory’s army units count is tripled, and the territory becomes neutral." << endl;
+// Print method to display the description and effect of the order
+ostream &Blockade::print(ostream& out) const
+{
+    Order::print(out);
+    out << "[Blockade Description]: Triple the number of armies on one of the current player’s territories and make it a neutral territory." << endl;
+    if (executed)
+    {
+        out << "[Blockade Effect]: the target territory’s army units count is tripled, and the territory becomes neutral." << endl;
     }
-    return os;
+    return out;
 }
-
-
 
 
 
 
 // ==================== Airlift Class ====================
 
-//Default Constructor
-Airlift::Airlift() {
-    this->setType(Order_Type::airlift);
+// Default Constructor
+Airlift::Airlift()
+{
+    this->setType(Type::Airlift);
 }
 
-//Copy Constructor
-Airlift::Airlift(const Airlift &airlift) : Order(airlift){
-    this->setType(Order_Type::airlift);
+// Copy Constructor
+Airlift::Airlift(const Airlift& other):
+    Order(other)
+{
+    this->setType(Type::Airlift);
 }
 
-//Destructor
-Airlift::~Airlift() {
+// Destructor
+Airlift::~Airlift()
+{
     cout << "Destroying order: airlift." << endl;
 }
 
-//Execute : First validates the order, and if valid executes its action
-bool Airlift::execute() {
+// Execute : First validates the order, and if valid executes its action
+bool Airlift::execute()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Airlift] Inside execute()" << endl;
 //    if(validate()){
@@ -496,59 +546,66 @@ bool Airlift::execute() {
     return false;
 }
 
-//Validate : checks if an order is valid
-bool Airlift::validate() {
+// Validate : checks if an order is valid
+bool Airlift::validate()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Airlift] Inside validate()" << endl;
     return false;
 }
 
-//Assignment operator
-Airlift &Airlift::operator=(const Airlift &airlift) {
-    Order::operator=(airlift);
+// Assignment operator
+Airlift &Airlift::operator = (const Airlift& other)
+{
+    Order::operator = (other);
     return *this;
 }
 
-//Stream operator that calls the print
-ostream &operator<<(ostream &os, const Airlift &airlift) {
-    return airlift.print(os);
+// Stream operator that calls the print
+ostream& operator << (ostream& out, const Airlift& source)
+{
+    return source.print(out);
 }
 
-//Print method to display the description and effect of the order
-ostream &Airlift::print(ostream &os) const {
-    Order::print(os);
-    os << "[Airlift Description]: Advance some armies from one of the current player’s territories to any another territory." << endl;
-    if (executed) {
-        os << "[Airlift Effect]: Move any number of army units from one of your territories to another territory, even if they are not adjacent." << endl;
+// Print method to display the description and effect of the order
+ostream& Airlift::print(ostream& out) const
+{
+    Order::print(out);
+    out << "[Airlift Description]: Advance some armies from one of the current player’s territories to any another territory." << endl;
+    if (executed)
+    {
+        out << "[Airlift Effect]: Move any number of army units from one of your territories to another territory, even if they are not adjacent." << endl;
     }
-    return os;
+    return out;
 }
-
-
-
 
 
 
 
 // ==================== Negotiate Class ====================
 
-//Default Constructor
-Negotiate::Negotiate() {
-    this->setType(Order_Type::negotiate);
+// Default Constructor
+Negotiate::Negotiate()
+{
+    this->setType(Type::Negotiate);
 }
 
-//Copy Constructor
-Negotiate::Negotiate(const Negotiate &negotiate) : Order(negotiate){
-    this->setType(Order_Type::negotiate);
+// Copy Constructor
+Negotiate::Negotiate(const Negotiate& other):
+    Order(other)
+{
+    this->setType(Type::Negotiate);
 }
 
-//Destructor
-Negotiate::~Negotiate() {
+// Destructor
+Negotiate::~Negotiate()
+{
     cout << "Destroying order: airlift." << endl;
 }
 
-//Execute : First validates the order, and if valid executes its action
-bool Negotiate::execute() {
+// Execute : First validates the order, and if valid executes its action
+bool Negotiate::execute()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Negotiate] Inside execute()" << endl;
 //    if(validate()){
@@ -557,34 +614,35 @@ bool Negotiate::execute() {
     return false;
 }
 
-//Validate : checks if an order is valid
-bool Negotiate::validate() {
+// Validate : checks if an order is valid
+bool Negotiate::validate()
+{
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Negotiate] Inside validate()" << endl;
     return false;
 }
 
-//Assignment operator
-Negotiate &Negotiate::operator=(const Negotiate &negotiate) {
-    Order::operator=(negotiate);
+// Assignment operator
+Negotiate& Negotiate::operator = (const Negotiate& other)
+{
+    Order::operator = (other);
     return *this;
 }
 
-//Stream operator that calls the print
-ostream &operator<<(ostream &os, const Negotiate &negotiate) {
-    return negotiate.print(os);
+// Stream operator that calls the print
+ostream& operator << (ostream& out, const Negotiate& source)
+{
+    return source.print(out);
 }
 
-//Print method to display the description and effect of the order
-ostream &Negotiate::print(ostream &os) const {
-    Order::print(os);
-    os << "[Negotiate Description]: Prevent attacks between the current player and another player until the end of the turn." << endl;
-    if (executed) {
-        os << "[Negotiate Effect]: until the end of the turn, you and the target player cannot attack each other." << endl;
+// Print method to display the description and effect of the order
+ostream& Negotiate::print(ostream& out) const
+{
+    Order::print(out);
+    out << "[Negotiate Description]: Prevent attacks between the current player and another player until the end of the turn." << endl;
+    if (executed)
+    {
+        out << "[Negotiate Effect]: until the end of the turn, you and the target player cannot attack each other." << endl;
     }
-    return os;
+    return out;
 }
-
-
-
-
