@@ -99,13 +99,20 @@ public:
     // Stream output operator
     friend std::ostream& operator << (std::ostream& out, const StateInfo& source);
 
+    // Returns (State, Transition) pairs of direct graph connections
     const vector<pair<GameEngine::State, GameEngine::Transition>> getStateTransitions() const;
+    // Returns directly connected states
     const vector<GameEngine::State> getStates() const;
+    // Returns possible transitions
     const vector<GameEngine::Transition> getTransitions() const;
 
+    // Checks if this state can directly transition to the provided state
     bool canDoState(GameEngine::State state) const;
+    // Checks if this state can directly transition to the provided state. If yes, stores the associated transition in result.
     bool canDoState(GameEngine::State state, GameEngine::Transition& result) const;
+    // Checks if this state can perform the provided transition
     bool canDoTransition(GameEngine::Transition state) const;
+    // Checks if this state can perform the provided transition. If yes, stores the State associated to this transition in result.
     bool canDoTransition(GameEngine::Transition state, GameEngine::State& result) const;
 
 private:
