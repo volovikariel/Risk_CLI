@@ -2,10 +2,30 @@
 
 #include <iostream>
 
-// Constructor called when object is created. will set the state to start when game begins
-GameEngine::GameEngine()
+// Stream output operator of State
+std::ostream& operator << (std::ostream& out, const GameEngine::State source)
 {
-    state = "Start";
+    static const char* names[8] =
+    {
+        "Start",
+        "MapLoaded",
+        "MapValidated",
+        "PlayersAdded",
+        "AssignReinforcements",
+        "IssueOrders",
+        "ExecuteOrders",
+        "Win"
+    };
+
+    out << names[static_cast<size_t>(source)];
+    return out;
+}
+
+// Constructor called when object is created. will set the state to start when game begins
+GameEngine::GameEngine():
+    state(State::Start)
+{
+
 }
 
 // Destructor
@@ -14,10 +34,16 @@ GameEngine::~GameEngine()
 
 }
 
-// Will help set the next state
-void GameEngine::setState(const string& state)
+// Returns the current state of the engine
+GameEngine::State GameEngine::getState() const
 {
-    GameEngine::state = state;
+    return state;
+}
+
+// Will help set the next state
+void GameEngine::setState(State state)
+{
+    this->state = state;
 }
 
 // Stream insertion operator
@@ -28,13 +54,14 @@ ostream &operator << (ostream& out, const GameEngine& source)
 }
 
 // Copy constructor
-GameEngine::GameEngine(const GameEngine& other)
+GameEngine::GameEngine(const GameEngine& other):
+    state(other.state)
 {
-    this->state = other.state;
+
 }
 
 // Assignment operator
-GameEngine &GameEngine::operator = (const GameEngine& other)
+GameEngine& GameEngine::operator = (const GameEngine& other)
 {
     this->state = other.state;
     return *this;
@@ -54,7 +81,7 @@ void GameEngine::gameEngineStart()
         cout << "Transitioning to the next state --> Map Loaded..." << endl;
         cout << "" << endl;
 
-        setState("Map Loaded");
+        setState(State::MapLoaded);
         mapLoaded();
 
     }
@@ -85,7 +112,7 @@ void GameEngine::mapLoaded()
         cout << "Transitioning to the next state --> Map Validated..." << endl;
         cout << "" << endl;
 
-        setState("Map Validated");
+        setState(State::MapValidated);
         mapValidated();
     }
     else if(userInput == "loadmap")
@@ -116,7 +143,7 @@ void GameEngine::mapValidated()
         cout << "Transitioning to the next state --> Players Added..." << endl;
         cout << "" << endl;
 
-        setState("Players Added");
+        setState(State::PlayersAdded);
         playersAdded();
     }
     else
@@ -146,7 +173,7 @@ void GameEngine::playersAdded()
         cout << "Transitioning to the next state --> Assign Reinforcement..." << endl;
         cout << "" << endl;
 
-        setState("Assign Reinforcement");
+        setState(State::AssignReinforcements);
         assignReinforcements();
     }
     else if (userInput =="addplayer")
@@ -177,7 +204,7 @@ void GameEngine::assignReinforcements()
         cout << "Transitioning to the next state --> Issue Orders..." << endl;
         cout << "" << endl;
 
-        setState("Issue Orders");
+        setState(State::IssueOrders);
         issueOrders();
     }
     else
@@ -207,7 +234,7 @@ void GameEngine::issueOrders()
         cout << "Transitioning to the next state --> Execute Orders..." << endl;
         cout << "" << endl;
 
-        setState("Execute Orders");
+        setState(State::ExecuteOrders);
         executeOrders();
     }
     else if(userInput =="issueorder")
@@ -244,7 +271,7 @@ void GameEngine::executeOrders()
         cout << "Transitioning to the next state --> Win..." << endl;
         cout << "" << endl;
 
-        setState("Win");
+        setState(State::Win);
         win();
     }
     else if(userInput =="execorder")
@@ -257,7 +284,7 @@ void GameEngine::executeOrders()
         cout << "Transitioning to the previous state --> Assign Reinforcement..." << endl;
         cout << "" << endl;
 
-        setState("Assign Reinforcement");
+        setState(State::AssignReinforcements);
         assignReinforcements();
     }
     else
@@ -293,7 +320,7 @@ void GameEngine::win()
         cout << "Transitioning to the first state --> Start..." << endl;
         cout << "" << endl;
 
-        setState("Start");
+        setState(State::Start);
         gameEngineStart();
     }
     else

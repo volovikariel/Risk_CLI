@@ -7,6 +7,21 @@ class GameEngine
 {
 public :
 
+    enum class State
+    {
+        Start,
+        MapLoaded,
+        MapValidated,
+        PlayersAdded,
+        AssignReinforcements,
+        IssueOrders,
+        ExecuteOrders,
+        Win
+    };
+
+    // Stream output operator of State
+    friend std::ostream& operator << (std::ostream& out, const State source);
+
     // Default constructor
     GameEngine();
     // Copy constructor
@@ -17,15 +32,18 @@ public :
     // To start the game
     void gameEngineStart();
 
-    // Will help set the state when transitioning
-    void setState(const string &state);
+    // Returns the current state of the engine
+    State getState() const;
 
     // Assignment operator
     GameEngine& operator = (const GameEngine& other);
     // Stream insertion operator
-    friend ostream& operator << (ostream &out, const GameEngine& source);
-    
+    friend ostream& operator << (ostream& out, const GameEngine& source);
+
 private:
+
+    // Will help set the state when transitioning
+    void setState(State state);
 
     // Shows if the map is loaded
     void mapLoaded();
@@ -45,5 +63,5 @@ private:
     // Stores user input
     string userInput;
     // Holds the current state
-    string state;
+    State state;
 };
