@@ -6,7 +6,7 @@
 StateGraphInfo stateGraphInfo = StateGraphInfo();
 
 
-// GameEngine
+/* --- GameEngine --- */
 
 std::ostream& operator << (std::ostream& out, const GameEngine::State source)
 {
@@ -117,7 +117,7 @@ bool GameEngine::transitionState(Transition transition)
 
 
 
-// StateInfo
+/* --- StateInfo --- */
 
 StateInfo::StateInfo():
     stateTransitions(),
@@ -222,7 +222,7 @@ bool StateInfo::canDoTransition(GameEngine::Transition transition, GameEngine::S
 
 
 
-// StateGraph
+/* --- StateGraph --- */
 
 StateGraphInfo::StateGraphInfo()
 {
@@ -323,7 +323,7 @@ const StateInfo& StateGraphInfo::getStateInfo(GameEngine::State state) const
 
 
 
-// StringUtils
+/* --- StringUtils --- */
 
 bool StringUtils::ToInteger(std::string& str, int& result)
 {

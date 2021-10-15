@@ -2,6 +2,9 @@
 #include <string>
 #include <vector>
 
+// Forward declarations
+class GameEngine;
+
 class Command
 {
 public:
@@ -16,10 +19,30 @@ public:
         Quit
     };
 
+    // Stream output operator of Type
+    friend std::ostream& operator << (std::ostream& out, const Type source);
+
+    // Default constructor
+    Command();
+    // Parametrized constructor
+    Command(Type type);
+    // Copy constructor
+    Command(const Command& other);
+    // Destructor
+    ~Command();
+
+    // Assignment operator
+    Command& operator = (const Command& other);
+    // Stream output operator
+    friend std::ostream& operator << (std::ostream& out, const Command& source);
+
+    Type getType() const;
+
+    void safeEffect(std::string& description);
+
 private:
 
-    void saveCommand();
-
+    Type type;
     std::string effect;
 };
 
@@ -27,13 +50,55 @@ class CommandProcessor
 {
 public:
 
-    void getCommand();
+    // Default constructor
+    CommandProcessor();
+    // Parametrized constructor
+    CommandProcessor(GameEngine& gameEngine);
+    // Copy constructor
+    CommandProcessor(const CommandProcessor& other);
+    // Destructor
+    ~CommandProcessor();
+
+    // Assignment operator
+    CommandProcessor& operator = (const CommandProcessor& other);
+    // Stream output operator
+    friend std::ostream& operator << (std::ostream& out, const CommandProcessor& source);
+
+    Command& getCommand();
     bool validate();
 
 private:
 
     void readCommand();
-    void saveCommand();
+    void saveCommand(Command& command);
 
     std::vector<Command*> commands;
+    GameEngine* gameEngine;
+};
+
+class FileCommandProcessorAdapter
+{
+public:
+
+    // Default constructor
+    FileCommandProcessorAdapter();
+    // Parametrized constructor
+    FileCommandProcessorAdapter(CommandProcessor& processor);
+    // Copy constructor
+    FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
+    // Destructor
+    ~FileCommandProcessorAdapter();
+
+    // Assignment operator
+    FileCommandProcessorAdapter& operator = (const FileCommandProcessorAdapter& other);
+    // Stream output operator
+    friend std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter& source);
+
+    Command& getCommand();
+    bool validate();
+
+private:
+
+    CommandProcessor* commandProcessor;
+    std::string filepath;
 };
