@@ -1,6 +1,7 @@
 #pragma once
 #include "GameEngine.h"
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -80,15 +81,14 @@ public:
     friend std::ostream& operator << (std::ostream& out, const CommandProcessor& source);
 
     // Ask the user to input the next command
-    Command& getCommand();
+    // Returns null if the input was not a well-formed command
+    virtual Command* getCommand();
 
     // Checks if the command is valid given the game engine's current state
     bool validate(Command& command);
 
-private:
+protected:
 
-    // Prompts the user in a loop until a well-formed command is obtained from console input
-    Command& readCommand();
     // Saves a command to the internal list
     void saveCommand(Command& command);
 
@@ -96,17 +96,23 @@ private:
     std::vector<Command*> commands;
     // A pointer to the game state
     GameEngine* gameEngine;
+
+private:
+
+    // Prompts the user to input a well-formed command
+    // Returns null if the input was not a well-formed command
+    Command* readCommand();
 };
 
-// Adapter that bridges text file input with CommandProcessor
-class FileCommandProcessorAdapter
+// Adapter that bridges CommandProcessor with an input file stream
+class FileCommandProcessorAdapter : public CommandProcessor, public std::ifstream
 {
 public:
 
     // Default constructor
     FileCommandProcessorAdapter();
     // Parametrized constructor
-    FileCommandProcessorAdapter(CommandProcessor& processor);
+    FileCommandProcessorAdapter(GameEngine& gameEngine, std::string& filepath);
     // Copy constructor
     FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
     // Destructor
@@ -117,13 +123,9 @@ public:
     // Stream output operator
     friend std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter& source);
 
-    Command& getCommand();
-    bool validate(Command& command);
-
-private:
-
-    CommandProcessor* commandProcessor;
-    std::string filepath;
+    // Reads the next line of the file and returns the corresponding command
+    // Returns null if the line was not a well-formed command
+    Command* getCommand() override;
 };
 
 // Helper functions for commands

@@ -147,7 +147,7 @@ std::ostream& operator << (std::ostream& out, const CommandProcessor& source)
     return out;
 }
 
-Command& CommandProcessor::getCommand()
+Command* CommandProcessor::getCommand()
 {
     return readCommand();
 }
@@ -161,120 +161,113 @@ bool CommandProcessor::validate(Command& command)
     return gameEngine->getStateInfo().canDoTransition(requestedTransition);
 }
 
-Command& CommandProcessor::readCommand()
+Command* CommandProcessor::readCommand()
 {
     Command* requestedCommand = nullptr;
-    bool fullCommandProvided = false;
 
-    // Prompt until a well-formed command is provided through console input
-    while (!fullCommandProvided)
+    // Output available commands and current state
+    std::cout << std::endl;
+    std::cout << "Input one of the following commands [current state is " << gameEngine->getState() << "]:" << std::endl;
+
+    auto& possibleTransitions = gameEngine->getStateInfo().getTransitions();
+    size_t numCommands = static_cast<size_t>(Command::Type::NumTypes);
+    for (size_t i = 0; i < numCommands; ++i)
     {
-        // Output available commands and current state
-        std::cout << std::endl;
-        std::cout << "Input one of the following commands [current state is " << gameEngine->getState() << "]:" << std::endl;
+        Command::Type commandType = static_cast<Command::Type>(i);
+        GameEngine::Transition transition = CommandProcessingUtils::commandToTransition(commandType);
 
-        auto& possibleTransitions = gameEngine->getStateInfo().getTransitions();
-        size_t numCommands = static_cast<size_t>(Command::Type::NumTypes);
-        for (size_t i = 0; i < numCommands; ++i)
+        // Transform to lowercase for familiarity
+        std::ostringstream stream;
+        stream << transition;
+        std::string transitionName = StringUtils::ToLowerCase(stream.str());
+
+        // Wrap valid transitions with [] brackets
+        bool isValidContext = std::find(possibleTransitions.begin(), possibleTransitions.end(), transition) != possibleTransitions.end();
+
+        if (isValidContext)
         {
-            Command::Type commandType = static_cast<Command::Type>(i);
-            GameEngine::Transition transition = CommandProcessingUtils::commandToTransition(commandType);
-
-            // Transform to lowercase for familiarity
-            std::ostringstream stream;
-            stream << transition;
-            std::string transitionName = StringUtils::ToLowerCase(stream.str());
-
-            // Wrap valid transitions with [] brackets
-            bool isValidContext = std::find(possibleTransitions.begin(), possibleTransitions.end(), transition) != possibleTransitions.end();
-
-            if (isValidContext)
-            {
-                std::cout << "[";
-            }
-            std::cout << transitionName;
-
-            // Include argument hints for commands that require them
-            if (transition == GameEngine::Transition::LoadMap)
-            {
-                std::cout << " <mapfile>";
-            }
-            else if (transition == GameEngine::Transition::AddPlayer)
-            {
-                std::cout << " <playername>";
-            }
-
-            if (isValidContext)
-            {
-                std::cout << "]";
-            }
-
-            if (i != numCommands - 1)
-            {
-                std::cout << ", ";
-            }
+            std::cout << "[";
         }
-        std::cout << std::endl;
+        std::cout << transitionName;
 
-        // Get console line input
-        std::string line;
-        std::getline(std::cin, line);
-        if (line.length() == 0)
+        // Include argument hints for commands that require them
+        if (transition == GameEngine::Transition::LoadMap)
         {
-            continue;
+            std::cout << " <mapfile>";
+        }
+        else if (transition == GameEngine::Transition::AddPlayer)
+        {
+            std::cout << " <playername>";
         }
 
-        std::istringstream lineStream = std::istringstream(line);
+        if (isValidContext)
+        {
+            std::cout << "]";
+        }
 
-        std::string command;
-        std::string argument;
+        if (i != numCommands - 1)
+        {
+            std::cout << ", ";
+        }
+    }
+    std::cout << std::endl;
 
-        // Parse the command word
-        lineStream >> command;
+    // Get console line input
+    std::string line;
+    std::getline(std::cin, line);
+    if (line.length() == 0)
+    {
+        return nullptr;
+    }
+
+    std::istringstream lineStream = std::istringstream(line);
+
+    std::string command;
+    std::string argument;
+
+    // Parse the command word
+    lineStream >> command;
+    if (lineStream.fail())
+    {
+        return nullptr;
+    }
+
+    // Resolve the corresponding GameEngine::Transition
+    GameEngine::Transition transition;
+    if (!StringUtils::ToGameEngineTransition(command, transition))
+    {
+        std::cout << "Unknown command" << std::endl;
+        return nullptr;
+    }
+    // Resolve the GameEngine::Transition to Command::Type mapping
+    Command::Type commandType;
+    if (!CommandProcessingUtils::transitionToCommand(transition, commandType))
+    {
+        std::cout << "Unknown command" << std::endl;
+        return nullptr;
+    }
+
+    if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
+    {
+        // Parse the required argument
+        lineStream >> argument;
         if (lineStream.fail())
         {
-            continue;
+            std::cout << "Missing the argument for this command" << std::endl;
+            return nullptr;
         }
 
-        // Resolve the corresponding GameEngine::Transition
-        GameEngine::Transition transition;
-        if (!StringUtils::ToGameEngineTransition(command, transition))
-        {
-            std::cout << "Unknown command" << std::endl;
-            continue;
-        }
-        // Resolve the GameEngine::Transition to Command::Type mapping
-        Command::Type commandType;
-        if (!CommandProcessingUtils::transitionToCommand(transition, commandType))
-        {
-            std::cout << "Unknown command" << std::endl;
-            continue;
-        }
-
-        if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
-        {
-            // Parse the required argument
-            lineStream >> argument;
-            if (lineStream.fail())
-            {
-                std::cout << "Missing the argument for this command" << std::endl;
-                continue;
-            }
-
-            // Create the command and stop prompting for input
-            requestedCommand = new Command(commandType, argument);
-            fullCommandProvided = true;
-        }
-        else
-        {
-            // Create the command and stop prompting for input
-            requestedCommand = new Command(commandType);
-            fullCommandProvided = true;
-        }
+        // Create the command
+        requestedCommand = new Command(commandType, argument);
+    }
+    else
+    {
+        // Create the command
+        requestedCommand = new Command(commandType);
     }
     
     saveCommand(*requestedCommand);
-    return *requestedCommand;
+    return requestedCommand;
 }
 
 void CommandProcessor::saveCommand(Command& command)
@@ -288,24 +281,24 @@ void CommandProcessor::saveCommand(Command& command)
 /* --- FileCommandProcessorAdapter --- */
 
 FileCommandProcessorAdapter::FileCommandProcessorAdapter():
-    commandProcessor(),
-    filepath()
+    CommandProcessor(),
+    std::ifstream()
 {
 
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(CommandProcessor& processor):
-    commandProcessor(&processor),
-    filepath()
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(GameEngine& gameEngine, std::string& filepath):
+    CommandProcessor(gameEngine),
+    std::ifstream(filepath)
 {
 
 }
 
 FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other):
-    commandProcessor(other.commandProcessor),
-    filepath(other.filepath)
+    CommandProcessor(other),
+    std::ifstream()
 {
-
+    set_rdbuf(other.rdbuf());
 }
 
 FileCommandProcessorAdapter::~FileCommandProcessorAdapter()
@@ -314,33 +307,86 @@ FileCommandProcessorAdapter::~FileCommandProcessorAdapter()
 }
 
 FileCommandProcessorAdapter& FileCommandProcessorAdapter::operator = (const FileCommandProcessorAdapter& other)
-{
-    this->commandProcessor = other.commandProcessor;
-    this->filepath = other.filepath;
+{;
+    CommandProcessor::operator = (other);
+    set_rdbuf(other.rdbuf());
     return *this;
 }
 
 std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter& source)
 {
-    out << "Reading file: " << source.filepath;
-    if (source.commandProcessor != nullptr)
+    for (Command* command : source.commands)
     {
-        out << std::endl;
-        out << source.commandProcessor;
+        out << command << std::endl;
     }
     return out;
 }
 
-Command& FileCommandProcessorAdapter::getCommand()
+Command* FileCommandProcessorAdapter::getCommand()
 {
-    // TODO
-    return Command();
-}
+    Command* requestedCommand = nullptr;
 
-bool FileCommandProcessorAdapter::validate(Command& command)
-{
-    // TODO
-    return true;
+    // Check that the file exists and still readable
+    if (!good())
+    {
+        return nullptr;
+    }
+
+    // Read one line
+    std::string line;
+    std::getline(*this, line);
+
+    // Skip empty line
+    if (line.length() <= 0)
+    {
+        return nullptr;
+    }
+
+    std::istringstream lineStream = std::istringstream(line);
+
+    std::string command;
+    std::string argument;
+
+    // Parse the command word
+    lineStream >> command;
+    if (lineStream.fail())
+    {
+        return nullptr;
+    }
+
+    // Resolve the corresponding GameEngine::Transition
+    GameEngine::Transition transition;
+    if (!StringUtils::ToGameEngineTransition(command, transition))
+    {
+        return nullptr;
+    }
+    // Resolve the GameEngine::Transition to Command::Type mapping
+    Command::Type commandType;
+    if (!CommandProcessingUtils::transitionToCommand(transition, commandType))
+    {
+        return nullptr;
+    }
+
+    if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
+    {
+        // Parse the required argument
+        lineStream >> argument;
+        if (lineStream.fail())
+        {
+            return nullptr;
+        }
+
+        // Create the command
+        requestedCommand = new Command(commandType, argument);
+    }
+    else
+    {
+        // Create the command
+        requestedCommand = new Command(commandType);
+    }
+
+    saveCommand(*requestedCommand);
+    return requestedCommand;
 }
 
 
@@ -363,6 +409,8 @@ GameEngine::Transition CommandProcessingUtils::commandToTransition(Command::Type
     case Command::Type::Replay:
         return GameEngine::Transition::Replay;
     case Command::Type::Quit:
+        return GameEngine::Transition::Quit;
+    default:
         return GameEngine::Transition::Quit;
     }
 }

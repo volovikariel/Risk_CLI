@@ -1,0 +1,10 @@
+replay
+quit
+
+loadmap badpath
+loadmap ../maps/artic.map
+loadmap ../maps/canada.map
+validatemap
+addplayer testplayer1
+addplayer testplayer2
+gamestart
