@@ -1,3 +1,4 @@
+#pragma once
 #include <ostream>
 #include <string>
 #include <vector>
@@ -162,7 +163,8 @@ namespace StringUtils
     bool ToUnsignedInteger(std::string& str, int& result);
 
     // Transform the string to lower-case. Result is stored in the same string.
-    void ToLowerCase(std::string& str);
+    // Returns a reference to the same string, not a new one.
+    std::string& ToLowerCase(std::string& str);
 
     // Returns the GameEngine::Transition corresponding to a user input string.
     // Not case sensitive.

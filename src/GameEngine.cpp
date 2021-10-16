@@ -356,12 +356,13 @@ bool StringUtils::ToUnsignedInteger(std::string& str, int& result)
     }
 }
 
-void StringUtils::ToLowerCase(std::string& str)
+std::string& StringUtils::ToLowerCase(std::string& str)
 {
     for (auto& character : str)
     {
         character = tolower(character);
     }
+    return str;
 }
 
 bool StringUtils::ToGameEngineTransition(std::string& str, GameEngine::Transition& result)

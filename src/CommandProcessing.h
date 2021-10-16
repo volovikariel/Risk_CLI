@@ -1,9 +1,8 @@
 #pragma once
+#include "GameEngine.h"
+
 #include <string>
 #include <vector>
-
-// Forward declarations
-class GameEngine;
 
 class Command
 {
@@ -16,7 +15,8 @@ public:
         AddPlayer,
         GameStart,
         Replay,
-        Quit
+        Quit,
+        NumTypes
     };
 
     // Stream output operator of Type
@@ -26,6 +26,8 @@ public:
     Command();
     // Parametrized constructor
     Command(Type type);
+    // Parametrized constructor
+    Command(Type type, std::string& argument);
     // Copy constructor
     Command(const Command& other);
     // Destructor
@@ -38,11 +40,12 @@ public:
 
     Type getType() const;
 
-    void safeEffect(std::string& description);
+    void saveEffect(std::string& description);
 
 private:
 
     Type type;
+    std::string argument;
     std::string effect;
 };
 
@@ -65,11 +68,11 @@ public:
     friend std::ostream& operator << (std::ostream& out, const CommandProcessor& source);
 
     Command& getCommand();
-    bool validate();
+    bool validate(Command& command);
 
 private:
 
-    void readCommand();
+    Command& readCommand();
     void saveCommand(Command& command);
 
     std::vector<Command*> commands;
@@ -95,10 +98,16 @@ public:
     friend std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter& source);
 
     Command& getCommand();
-    bool validate();
+    bool validate(Command& command);
 
 private:
 
     CommandProcessor* commandProcessor;
     std::string filepath;
+};
+
+namespace CommandProcessingUtils
+{
+    GameEngine::Transition commandToTransition(Command::Type type);
+    bool transitionToCommand(GameEngine::Transition transition, Command::Type& result);
 };
