@@ -124,6 +124,12 @@ public:
     // Stream output operator
     friend std::ostream& operator << (std::ostream &out, const Map& source);
 
+    // Validates this map's graph connections
+    FormatError validate() const;
+
+    // Releases all allocations pertaining to maps, continents, and territories
+    void releaseAllocs();
+
     // Returns a pointer to a territory, given its ID
     // (nullptr if the ID is invalid)
     Continent* getContinentByID(int ID) const;
@@ -141,12 +147,6 @@ public:
     std::vector<Territory*> territories;
 
 private:
-
-    // Validates this map's graph connections. Called inside MapLoader::load.
-    FormatError validate() const;
-
-    // Releases all allocations pertaining to maps, continents, and territories
-    void releaseAllocs();
 
     // Calls releaseAllocs, then makes a full duplicate of the other map
     // (including its territories and continents)

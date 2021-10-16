@@ -41,17 +41,18 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    GameEngine::State oldState = gameEngine.getState();
                     GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command.getType());
-                    gameEngine.transitionState(requestedTransition);
-                    GameEngine::State newState = gameEngine.getState();
-
-                    std::ostringstream stream;
-                    stream << "Changed game state from " << oldState << " to " << newState;
-                    command.saveEffect(stream.str());
+                    bool success = gameEngine.executeCommand(command);
 
                     std::cout << std::endl;
-                    std::cout << "Executed command:" << std::endl;
+                    if (success)
+                    {
+                        std::cout << "Command execution succeeded:" << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Command execution failed:" << std::endl;
+                    }
                     std::cout << command << std::endl;
                 }
             }

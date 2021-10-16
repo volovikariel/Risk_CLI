@@ -40,7 +40,10 @@ public:
 
     Type getType() const;
 
+    const std::string& getArgument() const;
+
     void saveEffect(std::string& description);
+    void saveEffect(const char* description);
 
 private:
 

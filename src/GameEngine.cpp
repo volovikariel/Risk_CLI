@@ -1,6 +1,10 @@
 #include "GameEngine.h"
+#include "CommandProcessing.h"
+#include "Map.h"
+#include "Player.h"
 
 #include <iostream>
+#include <sstream>
 
 // Global StateGraph object for queries about states and transitions
 StateGraphInfo stateGraphInfo = StateGraphInfo();
@@ -49,14 +53,21 @@ std::ostream& operator << (std::ostream& out, const GameEngine::Transition sourc
 }
 
 GameEngine::GameEngine():
-    state(State::Start)
+    state(State::Start),
+    map(new Map()),
+    players()
 {
 
 }
 
 GameEngine::~GameEngine()
 {
+    delete map;
 
+    for (Player* player : players)
+    {
+        delete player;
+    }
 }
 
 ostream& operator << (ostream& out, const GameEngine& source)
@@ -66,7 +77,9 @@ ostream& operator << (ostream& out, const GameEngine& source)
 }
 
 GameEngine::GameEngine(const GameEngine& other):
-    state(other.state)
+    state(other.state),
+    map(other.map),
+    players(other.players)
 {
 
 }
@@ -74,6 +87,8 @@ GameEngine::GameEngine(const GameEngine& other):
 GameEngine& GameEngine::operator = (const GameEngine& other)
 {
     state = other.state;
+    map = other.map;
+    players = other.players;
     return *this;
 }
 
@@ -112,6 +127,104 @@ bool GameEngine::transitionState(Transition transition)
     {
         return false;
     }
+}
+
+Map& GameEngine::getMap()
+{
+    return *map;
+}
+
+vector<Player*>& GameEngine::getPlayers()
+{
+    return players;
+}
+
+bool GameEngine::executeCommand(Command& command)
+{
+    // TODO complete all case
+
+    switch (command.getType())
+    {
+        case Command::Type::LoadMap:
+        {
+            map->releaseAllocs();
+
+            int errorLine;
+            MapLoader mapLoader;
+            Map::FormatError result = mapLoader.load(command.getArgument(), *map, errorLine);
+
+            std::ostringstream stream;
+            if (errorLine > 0)
+            {
+                stream << "Load error: " << result << " on line " << errorLine;
+            }
+            else
+            {
+                stream << "Load error: " << result;
+            }
+            stream << " for map " << map->name;
+
+            command.saveEffect(stream.str());
+
+            if (result != Map::FormatError::None)
+            {
+                return false;
+            }
+
+            return transitionState(Transition::LoadMap);
+        }
+        case Command::Type::ValidateMap:
+        {
+            Map::FormatError result = map->validate();
+
+            std::ostringstream stream;
+            stream << "Validation error: " << result << " for map " << map->name;
+
+            command.saveEffect(stream.str());
+
+            if (result != Map::FormatError::None)
+            {
+                return false;
+            }
+
+            return transitionState(Transition::ValidateMap);
+        }
+        case Command::Type::AddPlayer:
+        {
+            // TODO
+
+            std::string effect = "Added player " + command.getArgument();
+            command.saveEffect(effect);
+
+            return transitionState(Transition::AddPlayer);
+        }
+        case Command::Type::GameStart:
+        {
+            // TODO
+
+            command.saveEffect("Started game, performed initial setup");
+
+            return transitionState(Transition::GameStart);
+        }
+        case Command::Type::Replay:
+        {
+            // TODO
+
+            command.saveEffect("Replaying new game");
+
+            return transitionState(Transition::Replay);
+        }
+        case Command::Type::Quit:
+        {
+            // TODO
+
+            command.saveEffect("Quitting game");
+
+            return transitionState(Transition::Quit);
+        }
+    }
+
+    return false;
 }
 
 

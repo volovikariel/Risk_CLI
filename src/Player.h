@@ -31,6 +31,8 @@ public:
     vector<Territory*>& toDefend();
     // Returns a list of territories that are attacked by the player
     vector<Territory*>& toAttack();
+    // Returns the player's name
+    const std::string& getPlayerName() const;
 
     // Mutators
     void setPlayerTerritories(vector<Territory*> playerTerritories);
@@ -39,6 +41,7 @@ public:
     void setPlayerArmies(int playerArmies);
     void setTerritoriesToAttack(vector<Territory*> territoriesToAttack);
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend);
+    void setPlayerName(std::string& name);
 
     // Operator overloading
     // Assignment operator overloading
@@ -69,4 +72,6 @@ private:
     int playerArmies;
     // Represents the player ID's
     int playerID;
+    // Represents the player's name
+    string playerName;
 };

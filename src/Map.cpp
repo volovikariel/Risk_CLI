@@ -341,22 +341,24 @@ void Map::releaseAllocs()
     {
         delete territory;
     }
+
+    territories.clear();
+    continents.clear();
+    name.clear();
 }
 
 void Map::deepCopy(const Map& other)
 {
-    name = other.name;
-
     releaseAllocs();
 
-    territories.clear();
+    name = other.name;
+
     for (const Territory* const otherTerritory : other.territories)
     {
         Territory* newTerritory = new Territory(*otherTerritory);
         territories.push_back(newTerritory);
     }
 
-    continents.clear();
     for (const Continent* const otherContinent : other.continents)
     {
         Continent* newContinent = new Continent(*otherContinent);
@@ -625,5 +627,5 @@ Map::FormatError MapLoader::load(const std::string& filepath, Map& destination, 
     errorLine = -1;
 
     inputFile.close();
-    return destination.validate();
+    return Map::FormatError::None;
 }

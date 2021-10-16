@@ -70,6 +70,11 @@ int Player::getPlayerArmies() const
     return playerArmies;
 }
 
+const std::string& Player::getPlayerName() const
+{
+    return playerName;
+}
+
 // Mutators
 void Player::setPlayerTerritories(vector<Territory*> playerTerritories)
 {
@@ -108,6 +113,11 @@ void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend)
     {
         this->territoriesToDefend.push_back(t);
     }
+}
+
+void Player::setPlayerName(std::string& name)
+{
+    playerName = name;
 }
 
 // Operator overloading

@@ -6,6 +6,9 @@
 using namespace std;
 
 // Forward declaration
+class Command;
+class Map;
+class Player;
 class StateInfo;
 
 // Runs the game logic
@@ -75,10 +78,25 @@ public :
     // Performs the provided state transition, if valid. Returns the valid status.
     bool transitionState(Transition transition);
 
+    // Returns the currently loaded map
+    Map& getMap();
+
+    // Returns the current players
+    vector<Player*>& getPlayers();
+
+    // Executes a command. Returns a success status.
+    bool executeCommand(Command& command);
+
 private:
 
     // Holds the current state
     State state;
+
+    // Holds the currently loaded map
+    Map* map;
+
+    // Holds the players
+    vector<Player*> players;
 };
 
 // Describes a State's graph connectivity

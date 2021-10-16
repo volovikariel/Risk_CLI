@@ -1,4 +1,5 @@
 #include "CommandProcessing.h"
+#include "Map.h"
 
 #include <iostream>
 #include <sstream>
@@ -81,7 +82,17 @@ Command::Type Command::getType() const
     return type;
 }
 
+const std::string& Command::getArgument() const
+{
+    return argument;
+}
+
 void Command::saveEffect(std::string& description)
+{
+    effect = description;
+}
+
+void Command::saveEffect(const char* description)
 {
     effect = description;
 }
@@ -155,7 +166,7 @@ Command& CommandProcessor::readCommand()
     while (!fullCommandProvided)
     {
         std::cout << std::endl;
-        std::cout << "Input one of the following commands:" << std::endl;
+        std::cout << "Input one of the following commands [current state is " << gameEngine->getState() << "]:" << std::endl;
 
         auto& possibleTransitions = gameEngine->getStateInfo().getTransitions();
         size_t numCommands = static_cast<size_t>(Command::Type::NumTypes);
