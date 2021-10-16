@@ -172,6 +172,7 @@ private:
     vector<StateInfo*> states;
 };
 
+// Helper functions for string processing
 namespace StringUtils
 {
     // Converts a string to an integer. Returns success value.
@@ -185,6 +186,7 @@ namespace StringUtils
     std::string& ToLowerCase(std::string& str);
 
     // Returns the GameEngine::Transition corresponding to a user input string.
+    // Handles similar words (ex: quit/exit, endissueorders/issueordersend, etc).
     // Not case sensitive.
     // Returns success value.
     bool ToGameEngineTransition(std::string& str, GameEngine::Transition& result);

@@ -154,7 +154,10 @@ Command& CommandProcessor::getCommand()
 
 bool CommandProcessor::validate(Command& command)
 {
+    // Resolve Command::Type to GameEngine::Transition mapping
     GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command.getType());
+
+    // Check if the requested transition can be done from the current GameEngine::State
     return gameEngine->getStateInfo().canDoTransition(requestedTransition);
 }
 
@@ -163,8 +166,10 @@ Command& CommandProcessor::readCommand()
     Command* requestedCommand = nullptr;
     bool fullCommandProvided = false;
 
+    // Prompt until a well-formed command is provided through console input
     while (!fullCommandProvided)
     {
+        // Output available commands and current state
         std::cout << std::endl;
         std::cout << "Input one of the following commands [current state is " << gameEngine->getState() << "]:" << std::endl;
 
@@ -175,10 +180,12 @@ Command& CommandProcessor::readCommand()
             Command::Type commandType = static_cast<Command::Type>(i);
             GameEngine::Transition transition = CommandProcessingUtils::commandToTransition(commandType);
 
+            // Transform to lowercase for familiarity
             std::ostringstream stream;
             stream << transition;
             std::string transitionName = StringUtils::ToLowerCase(stream.str());
 
+            // Wrap valid transitions with [] brackets
             bool isValidContext = std::find(possibleTransitions.begin(), possibleTransitions.end(), transition) != possibleTransitions.end();
 
             if (isValidContext)
@@ -187,6 +194,7 @@ Command& CommandProcessor::readCommand()
             }
             std::cout << transitionName;
 
+            // Include argument hints for commands that require them
             if (transition == GameEngine::Transition::LoadMap)
             {
                 std::cout << " <mapfile>";
@@ -208,6 +216,7 @@ Command& CommandProcessor::readCommand()
         }
         std::cout << std::endl;
 
+        // Get console line input
         std::string line;
         std::getline(std::cin, line);
         if (line.length() == 0)
@@ -220,18 +229,21 @@ Command& CommandProcessor::readCommand()
         std::string command;
         std::string argument;
 
+        // Parse the command word
         lineStream >> command;
         if (lineStream.fail())
         {
             continue;
         }
 
+        // Resolve the corresponding GameEngine::Transition
         GameEngine::Transition transition;
         if (!StringUtils::ToGameEngineTransition(command, transition))
         {
             std::cout << "Unknown command" << std::endl;
             continue;
         }
+        // Resolve the GameEngine::Transition to Command::Type mapping
         Command::Type commandType;
         if (!CommandProcessingUtils::transitionToCommand(transition, commandType))
         {
@@ -241,18 +253,21 @@ Command& CommandProcessor::readCommand()
 
         if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
         {
+            // Parse the required argument
             lineStream >> argument;
             if (lineStream.fail())
             {
-                std::cout << "Didn't receive the expected argument" << std::endl;
+                std::cout << "Missing the argument for this command" << std::endl;
                 continue;
             }
 
+            // Create the command and stop prompting for input
             requestedCommand = new Command(commandType, argument);
             fullCommandProvided = true;
         }
         else
         {
+            // Create the command and stop prompting for input
             requestedCommand = new Command(commandType);
             fullCommandProvided = true;
         }

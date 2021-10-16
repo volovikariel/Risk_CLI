@@ -4,10 +4,12 @@
 #include <string>
 #include <vector>
 
+// Represents a command (may include a string parameter)
 class Command
 {
 public:
 
+    // A subset of GameEngine::Transition
     enum class Type
     {
         LoadMap,
@@ -38,20 +40,27 @@ public:
     // Stream output operator
     friend std::ostream& operator << (std::ostream& out, const Command& source);
 
+    // Returns command type
     Type getType() const;
 
+    // Returns argument (if required by the command type)
     const std::string& getArgument() const;
 
+    // Set detailed effects of this command (after execution)
     void saveEffect(std::string& description);
     void saveEffect(const char* description);
 
 private:
 
+    // The type of command
     Type type;
+    // Stores the argument (if required by the command type, otherwise an empty string)
     std::string argument;
+    // Detailed effects (set externally after execution)
     std::string effect;
 };
 
+// Reads command from console input
 class CommandProcessor
 {
 public:
@@ -70,18 +79,26 @@ public:
     // Stream output operator
     friend std::ostream& operator << (std::ostream& out, const CommandProcessor& source);
 
+    // Ask the user to input the next command
     Command& getCommand();
+
+    // Checks if the command is valid given the game engine's current state
     bool validate(Command& command);
 
 private:
 
+    // Prompts the user in a loop until a well-formed command is obtained from console input
     Command& readCommand();
+    // Saves a command to the internal list
     void saveCommand(Command& command);
 
+    // A list of commands obtained from console input
     std::vector<Command*> commands;
+    // A pointer to the game state
     GameEngine* gameEngine;
 };
 
+// Adapter that bridges text file input with CommandProcessor
 class FileCommandProcessorAdapter
 {
 public:
@@ -109,8 +126,11 @@ private:
     std::string filepath;
 };
 
+// Helper functions for commands
 namespace CommandProcessingUtils
 {
+    // Command::Type is a subset of GameEngine::Transition
+    // The following functions convert between them
     GameEngine::Transition commandToTransition(Command::Type type);
     bool transitionToCommand(GameEngine::Transition transition, Command::Type& result);
 };

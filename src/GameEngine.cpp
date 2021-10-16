@@ -99,11 +99,13 @@ GameEngine::State GameEngine::getState() const
 
 const StateInfo& GameEngine::getStateInfo() const
 {
+    // Query the global state graph info
     return stateGraphInfo.getStateInfo(state);
 }
 
 bool GameEngine::transitionState(State state)
 {
+    // Check if the requested transition is valid
     if (getStateInfo().canDoState(state))
     {
         this->state = state;
@@ -117,6 +119,7 @@ bool GameEngine::transitionState(State state)
 
 bool GameEngine::transitionState(Transition transition)
 {
+    // Check if the requested transition is valid, and retrieve the requested new state
     State newState;
     if (getStateInfo().canDoTransition(transition, newState))
     {
@@ -244,6 +247,7 @@ StateInfo::StateInfo(vector<pair<GameEngine::State, GameEngine::Transition>>& st
 {
     this->stateTransitions = stateTransitions;
 
+    // Populate states and transitions using stateTransitions
     for (auto& pair : this->stateTransitions)
     {
         states.push_back(pair.first);
@@ -298,11 +302,14 @@ const vector<GameEngine::Transition> StateInfo::getTransitions() const
 
 bool StateInfo::canDoState(GameEngine::State state) const
 {
+    // Check if this state has the state as a direct connection
     return find(states.begin(), states.end(), state) != states.end();
 }
 
 bool StateInfo::canDoState(GameEngine::State state, GameEngine::Transition& result) const
 {
+    // Check if this state has the state as a direct connection,
+    // and find the transition that leads to it
     for (auto& pair : stateTransitions)
     {
         if (pair.first == state)
@@ -316,11 +323,14 @@ bool StateInfo::canDoState(GameEngine::State state, GameEngine::Transition& resu
 
 bool StateInfo::canDoTransition(GameEngine::Transition transition) const
 {
+    // Check if this state has the transition
     return find(transitions.begin(), transitions.end(), transition) != transitions.end();
 }
 
 bool StateInfo::canDoTransition(GameEngine::Transition transition, GameEngine::State& result) const
 {
+    // Check if this state has the transition,
+    // and find which new state it leads to
     for (auto& pair : stateTransitions)
     {
         if (pair.second == transition)
@@ -342,7 +352,7 @@ StateGraphInfo::StateGraphInfo()
     size_t numStates = static_cast<size_t>(GameEngine::State::NumStates);
     states = vector<StateInfo*>(numStates);
 
-    // Mirroring the connectivity of the graph
+    // Mirroring the connectivity of the graph that is described in the assignment instructions
 
     states[static_cast<size_t>(GameEngine::State::Start)] = new StateInfo(vector<pair<GameEngine::State, GameEngine::Transition>>
     {
