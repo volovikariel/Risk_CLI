@@ -149,7 +149,12 @@ std::ostream& operator << (std::ostream& out, const CommandProcessor& source)
 
 Command* CommandProcessor::getCommand()
 {
-    return readCommand();
+    Command* command = readCommand();
+    if (command != nullptr)
+    {
+        saveCommand(*command);
+    }
+    return command;
 }
 
 bool CommandProcessor::validate(Command& command)
@@ -266,7 +271,6 @@ Command* CommandProcessor::readCommand()
         requestedCommand = new Command(commandType);
     }
     
-    saveCommand(*requestedCommand);
     return requestedCommand;
 }
 
@@ -278,27 +282,90 @@ void CommandProcessor::saveCommand(Command& command)
 
 
 
-/* --- FileCommandProcessorAdapter --- */
+/* --- FileLineReader --- */
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter():
-    CommandProcessor(),
-    std::ifstream()
+FileLineReader::FileLineReader():
+    filepath(),
+    filestream()
 {
 
 }
 
-FileCommandProcessorAdapter::FileCommandProcessorAdapter(GameEngine& gameEngine, std::string& filepath):
+FileLineReader::FileLineReader(const std::string& filepath):
+    filepath(filepath),
+    filestream(filepath)
+{
+
+}
+
+FileLineReader::FileLineReader(const FileLineReader& other):
+    filepath(other.filepath)
+{
+    filestream.set_rdbuf(other.filestream.rdbuf());
+}
+
+FileLineReader::~FileLineReader()
+{
+
+}
+
+FileLineReader& FileLineReader::operator = (const FileLineReader& other)
+{
+    filepath = other.filepath;
+    filestream.set_rdbuf(other.filestream.rdbuf());
+    return *this;
+}
+
+std::ostream& operator << (std::ostream& out, const FileLineReader& source)
+{
+    out << source.filepath;
+    return out;
+}
+
+std::string FileLineReader::readLineFromFile()
+{
+    // Check that the file exists and still readable
+    if (!filestream.good())
+    {
+        return "";
+    }
+
+    // Read one line
+    std::string line;
+    std::getline(filestream, line);
+
+    return line;
+}
+
+bool FileLineReader::good() const
+{
+    return filestream.good();
+}
+
+
+
+
+/* --- FileCommandProcessorAdapter --- */
+
+FileCommandProcessorAdapter::FileCommandProcessorAdapter():
+    CommandProcessor(),
+    fileLineReader(nullptr)
+{
+
+}
+
+FileCommandProcessorAdapter::FileCommandProcessorAdapter(GameEngine& gameEngine, FileLineReader& fileLineReader):
     CommandProcessor(gameEngine),
-    std::ifstream(filepath)
+    fileLineReader(&fileLineReader)
 {
 
 }
 
 FileCommandProcessorAdapter::FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other):
     CommandProcessor(other),
-    std::ifstream()
+    fileLineReader(other.fileLineReader)
 {
-    set_rdbuf(other.rdbuf());
+
 }
 
 FileCommandProcessorAdapter::~FileCommandProcessorAdapter()
@@ -307,14 +374,15 @@ FileCommandProcessorAdapter::~FileCommandProcessorAdapter()
 }
 
 FileCommandProcessorAdapter& FileCommandProcessorAdapter::operator = (const FileCommandProcessorAdapter& other)
-{;
+{
     CommandProcessor::operator = (other);
-    set_rdbuf(other.rdbuf());
+    fileLineReader = other.fileLineReader;
     return *this;
 }
 
 std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter& source)
 {
+    out << "Reading file: " << source.fileLineReader << std::endl;
     for (Command* command : source.commands)
     {
         out << command << std::endl;
@@ -322,19 +390,12 @@ std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter&
     return out;
 }
 
-Command* FileCommandProcessorAdapter::getCommand()
+Command* FileCommandProcessorAdapter::readCommand()
 {
     Command* requestedCommand = nullptr;
 
-    // Check that the file exists and still readable
-    if (!good())
-    {
-        return nullptr;
-    }
-
     // Read one line
-    std::string line;
-    std::getline(*this, line);
+    std::string line = fileLineReader->readLineFromFile();
 
     // Skip empty line
     if (line.length() <= 0)
@@ -385,8 +446,12 @@ Command* FileCommandProcessorAdapter::getCommand()
         requestedCommand = new Command(commandType);
     }
 
-    saveCommand(*requestedCommand);
     return requestedCommand;
+}
+
+bool FileCommandProcessorAdapter::good() const
+{
+    return fileLineReader->good();
 }
 
 

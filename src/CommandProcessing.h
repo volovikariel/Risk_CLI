@@ -82,12 +82,16 @@ public:
 
     // Ask the user to input the next command
     // Returns null if the input was not a well-formed command
-    virtual Command* getCommand();
+    Command* getCommand();
 
     // Checks if the command is valid given the game engine's current state
     bool validate(Command& command);
 
 protected:
+
+    // Prompts the user to input a well-formed command
+    // Returns null if the input was not a well-formed command
+    virtual Command* readCommand();
 
     // Saves a command to the internal list
     void saveCommand(Command& command);
@@ -96,23 +100,49 @@ protected:
     std::vector<Command*> commands;
     // A pointer to the game state
     GameEngine* gameEngine;
+};
+
+class FileLineReader
+{
+public:
+
+    // Default constructor
+    FileLineReader();
+    // Parametrized constructor
+    FileLineReader(const std::string& filepath);
+    // Copy constructor
+    FileLineReader(const FileLineReader& other);
+    // Destructor
+    ~FileLineReader();
+
+    // Assignment operator
+    FileLineReader& operator = (const FileLineReader& other);
+    // Stream output operator
+    friend std::ostream& operator << (std::ostream& out, const FileLineReader& source);
+
+    // Reads the next line of the file
+    std::string readLineFromFile();
+
+    // Checks the good bit status on the input file
+    bool good() const;
 
 private:
 
-    // Prompts the user to input a well-formed command
-    // Returns null if the input was not a well-formed command
-    Command* readCommand();
+    // Input file path
+    std::string filepath;
+    // Input file stream
+    std::ifstream filestream;
 };
 
-// Adapter that bridges CommandProcessor with an input file stream
-class FileCommandProcessorAdapter : public CommandProcessor, public std::ifstream
+// Adapter (Target is CommandProcessor, Adaptee is FileLineReader)
+class FileCommandProcessorAdapter : public CommandProcessor
 {
 public:
 
     // Default constructor
     FileCommandProcessorAdapter();
     // Parametrized constructor
-    FileCommandProcessorAdapter(GameEngine& gameEngine, std::string& filepath);
+    FileCommandProcessorAdapter(GameEngine& gameEngine, FileLineReader& fileLineReader);
     // Copy constructor
     FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other);
     // Destructor
@@ -123,9 +153,17 @@ public:
     // Stream output operator
     friend std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter& source);
 
+    // Checks the good bit status on the input file
+    bool good() const;
+
+private:
+
     // Reads the next line of the file and returns the corresponding command
     // Returns null if the line was not a well-formed command
-    Command* getCommand() override;
+    Command* readCommand() override;
+
+    // Adaptee
+    FileLineReader* fileLineReader;
 };
 
 // Helper functions for commands

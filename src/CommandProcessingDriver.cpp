@@ -5,6 +5,54 @@
 #include <sstream>
 #include <string>
 
+void tryExecuteCommand(GameEngine& gameEngine, CommandProcessor& commandProcessor, Command& command)
+{
+    // Check that the requested state transition is valid
+    if (!commandProcessor.validate(command))
+    {
+        // The requested state transition is invalid
+
+        // Get game engine's current state
+        GameEngine::State state = gameEngine.getState();
+
+        // Resolve command to transition mapping
+        GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command.getType());
+
+        // Set detailed explanation for command status
+        std::ostringstream stream;
+        stream << "The current state is " << state << " which has no transition " << requestedTransition;
+        command.saveEffect(stream.str());
+
+        // Print command
+        std::cout << std::endl;
+        std::cout << "Invalid command in the current game engine state:" << std::endl;
+        std::cout << command << std::endl;
+    }
+    else
+    {
+        // The requested state transition is valid
+
+        // Resolve command to transition mapping
+        GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command.getType());
+
+        // Execute command (if succesful, will also apply the state transition)
+        // Details are saved to the command's effect string
+        bool success = gameEngine.executeCommand(command);
+
+        // Print execution result
+        std::cout << std::endl;
+        if (success)
+        {
+            std::cout << "Command execution succeeded:" << std::endl;
+        }
+        else
+        {
+            std::cout << "Command execution failed:" << std::endl;
+        }
+        std::cout << command << std::endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     GameEngine gameEngine;
@@ -34,50 +82,8 @@ int main(int argc, char *argv[])
                     command = commandProcessor.getCommand();
                 }
 
-                // Check that the requested state transition is valid
-                if (!commandProcessor.validate(*command))
-                {
-                    // The requested state transition is invalid
-
-                    // Get game engine's current state
-                    GameEngine::State state = gameEngine.getState();
-
-                    // Resolve command to transition mapping
-                    GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command->getType());
-
-                    // Set detailed explanation for command status
-                    std::ostringstream stream;
-                    stream << "The current state is " << state << " which has no transition " << requestedTransition;
-                    command->saveEffect(stream.str());
-
-                    // Print command
-                    std::cout << std::endl;
-                    std::cout << "Invalid command in the current game engine state:" << std::endl;
-                    std::cout << (*command) << std::endl;
-                }
-                else
-                {
-                    // The requested state transition is valid
-
-                    // Resolve command to transition mapping
-                    GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command->getType());
-
-                    // Execute command (if succesful, will also apply the state transition)
-                    // Details are saved to the command's effect string
-                    bool success = gameEngine.executeCommand(*command);
-
-                    // Print execution result
-                    std::cout << std::endl;
-                    if (success)
-                    {
-                        std::cout << "Command execution succeeded:" << std::endl;
-                    }
-                    else
-                    {
-                        std::cout << "Command execution failed:" << std::endl;
-                    }
-                    std::cout << (*command) << std::endl;
-                }
+                // Validates the command for current context before executing
+                tryExecuteCommand(gameEngine, commandProcessor, *command);
             }
         }
         else if (firstArgument == "-file" && argc == 3)
@@ -85,63 +91,25 @@ int main(int argc, char *argv[])
             // Get filepath
             std::string secondArgument(argv[2]);
 
+            // Create file line reader
+            FileLineReader fileLineReader(secondArgument);
+
             // Create file input command processor
-            FileCommandProcessorAdapter commandProcessor(gameEngine, secondArgument);
+            FileCommandProcessorAdapter commandProcessor(gameEngine, fileLineReader);
 
             // Read command input file line by line until end of file
             while (commandProcessor.good())
             {
-                // Get a fully-formed command from the next line in the file
+                // Get a command from the next line in the file
                 Command* command = commandProcessor.getCommand();
                 if (command == nullptr)
                 {
+                    // Skip badly-formed commands
                     continue;
                 }
 
-                // Check that the requested state transition is valid
-                if (!commandProcessor.validate(*command))
-                {
-                    // The requested state transition is invalid
-
-                    // Get game engine's current state
-                    GameEngine::State state = gameEngine.getState();
-
-                    // Resolve command to transition mapping
-                    GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command->getType());
-
-                    // Set detailed explanation for command status
-                    std::ostringstream stream;
-                    stream << "The current state is " << state << " which has no transition " << requestedTransition;
-                    command->saveEffect(stream.str());
-
-                    // Print command
-                    std::cout << std::endl;
-                    std::cout << "Invalid command in the current game engine state:" << std::endl;
-                    std::cout << (*command) << std::endl;
-                }
-                else
-                {
-                    // The requested state transition is valid
-
-                    // Resolve command to transition mapping
-                    GameEngine::Transition requestedTransition = CommandProcessingUtils::commandToTransition(command->getType());
-
-                    // Execute command (if succesful, will also apply the state transition)
-                    // Details are saved to the command's effect string
-                    bool success = gameEngine.executeCommand(*command);
-
-                    // Print execution result
-                    std::cout << std::endl;
-                    if (success)
-                    {
-                        std::cout << "Command execution succeeded:" << std::endl;
-                    }
-                    else
-                    {
-                        std::cout << "Command execution failed:" << std::endl;
-                    }
-                    std::cout << (*command) << std::endl;
-                }
+                // Validates the command for current context before executing
+                tryExecuteCommand(gameEngine, commandProcessor, *command);
             }
         }
         else

@@ -1,6 +1,7 @@
 replay
 quit
 
+badcommand
 loadmap badpath
 loadmap ../maps/artic.map
 loadmap ../maps/canada.map

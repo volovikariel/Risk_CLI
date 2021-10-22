@@ -144,7 +144,7 @@ vector<Player*>& GameEngine::getPlayers()
 
 bool GameEngine::executeCommand(Command& command)
 {
-    // TODO complete all case
+    // TODO complete all cases
 
     switch (command.getType())
     {
