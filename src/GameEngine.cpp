@@ -3,8 +3,10 @@
 #include "Map.h"
 #include "Player.h"
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
+
 
 // Global StateGraph object for queries about states and transitions
 StateGraphInfo stateGraphInfo = StateGraphInfo();
@@ -243,7 +245,7 @@ StateInfo::StateInfo():
 
 }
 
-StateInfo::StateInfo(vector<pair<GameEngine::State, GameEngine::Transition>>& stateTransitions)
+StateInfo::StateInfo(const vector<pair<GameEngine::State, GameEngine::Transition>>& stateTransitions)
 {
     this->stateTransitions = stateTransitions;
 

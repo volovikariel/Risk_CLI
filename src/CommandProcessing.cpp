@@ -1,6 +1,7 @@
 #include "CommandProcessing.h"
 #include "Map.h"
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
@@ -87,10 +88,15 @@ const std::string& Command::getArgument() const
     return argument;
 }
 
-void Command::saveEffect(std::string& description)
+void Command::saveEffect(const std::string& description)
 {
     effect = description;
 }
+
+/*void Command::saveEffect(std::string description)
+{
+    effect = description;
+}*/
 
 void Command::saveEffect(const char* description)
 {
@@ -184,7 +190,8 @@ Command* CommandProcessor::readCommand()
         // Transform to lowercase for familiarity
         std::ostringstream stream;
         stream << transition;
-        std::string transitionName = StringUtils::ToLowerCase(stream.str());
+        std::string transitionName = stream.str();
+        StringUtils::ToLowerCase(transitionName);
 
         // Wrap valid transitions with [] brackets
         bool isValidContext = std::find(possibleTransitions.begin(), possibleTransitions.end(), transition) != possibleTransitions.end();
@@ -301,7 +308,7 @@ FileLineReader::FileLineReader(const std::string& filepath):
 FileLineReader::FileLineReader(const FileLineReader& other):
     filepath(other.filepath)
 {
-    filestream.set_rdbuf(other.filestream.rdbuf());
+
 }
 
 FileLineReader::~FileLineReader()
@@ -312,7 +319,6 @@ FileLineReader::~FileLineReader()
 FileLineReader& FileLineReader::operator = (const FileLineReader& other)
 {
     filepath = other.filepath;
-    filestream.set_rdbuf(other.filestream.rdbuf());
     return *this;
 }
 

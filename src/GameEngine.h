@@ -107,7 +107,7 @@ public:
     // Default constructor
     StateInfo();
     // Parametrized constructor
-    StateInfo(vector<pair<GameEngine::State, GameEngine::Transition>>& stateTransitions);
+    StateInfo(const vector<pair<GameEngine::State, GameEngine::Transition>>& stateTransitions);
     // Copy constructor
     StateInfo(const StateInfo& other);
     // Destructor

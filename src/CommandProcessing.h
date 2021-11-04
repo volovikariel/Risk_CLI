@@ -48,7 +48,8 @@ public:
     const std::string& getArgument() const;
 
     // Set detailed effects of this command (after execution)
-    void saveEffect(std::string& description);
+    void saveEffect(const std::string& description);
+    //void saveEffect(std::string description);
     void saveEffect(const char* description);
 
 private:
