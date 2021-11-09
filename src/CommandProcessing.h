@@ -1,4 +1,5 @@
 #pragma once
+#include "LoggingObserver.h"
 #include "GameEngine.h"
 
 #include <fstream>
@@ -6,7 +7,7 @@
 #include <vector>
 
 // Represents a command (may include a string parameter)
-class Command
+class Command : public Subject
 {
 public:
 
