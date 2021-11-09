@@ -2,9 +2,14 @@
 #include <string>
 using namespace std;
 
+class ILoggable {
+    public:
+        virtual string stringToLog() = 0;
+};
+
 class Observer {
     public:
-        virtual void update() = 0;
+        virtual void update(ILoggable*) = 0;
         Observer();
         virtual ~Observer();
 };
@@ -18,10 +23,5 @@ class Subject {
         virtual ~Subject();
     private:
         list<Observer*>* observers;
-};
-
-class ILoggable {
-    public:
-        virtual string stringToLog() = 0;
 };
 
