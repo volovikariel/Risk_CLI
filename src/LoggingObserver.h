@@ -1,3 +1,4 @@
+#pragma once
 #include <list>
 #include <string>
 using namespace std;
@@ -9,18 +10,18 @@ class ILoggable {
 
 class Observer {
     public:
-        virtual void update(ILoggable*) = 0;
+        virtual void update(ILoggable* log) = 0;
         Observer();
         virtual ~Observer();
 };
 
 class Subject {
     public:
-        virtual void attach(Observer*);
-        virtual void detach(Observer*);
-        virtual void notify();
+        void attach(Observer* observer);
+        void detach(Observer* observer);
+        void notify();
         Subject();
-        virtual ~Subject();
+        ~Subject();
     private:
         list<Observer*>* observers;
 };

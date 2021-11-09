@@ -34,7 +34,7 @@ void Subject::detach(Observer* o)
 void Subject::notify()
 {
     for(Observer* observer: *observers) {
-        observer->update();
+        observer->update((dynamic_cast<ILoggable*>(this)));
     }
 }
 

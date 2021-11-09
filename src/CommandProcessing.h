@@ -7,7 +7,7 @@
 #include <vector>
 
 // Represents a command (may include a string parameter)
-class Command : public Subject
+class Command : public Subject, public ILoggable
 {
 public:
 
@@ -64,7 +64,7 @@ private:
 };
 
 // Reads command from console input
-class CommandProcessor
+class CommandProcessor : public Subject
 {
 public:
 
