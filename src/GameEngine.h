@@ -91,6 +91,18 @@ public :
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
 
+    // Creates main game loop for the game.
+    void mainGameLoop();
+
+    // Calculates Reinforcements for players.
+    void reinforcementPhase();
+
+    // Queues players orders.
+    void issueOrdersPhase();
+
+    // Executes queued player orders.
+    void executeOrdersPhase();
+
 private:
 
     // Holds the current state

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 
 // Global StateGraph object for queries about states and transitions
@@ -250,6 +251,36 @@ string GameEngine::stringToLog()
         "NumStates"
     };
     return "GameEngine: State has been changed to '" + states[(int)this->getState()] + "'\n";
+}
+
+void GameEngine::mainGameLoop() {
+    GameEngine::reinforcementPhase();
+    //GameEngine::issueOrdersPhase();
+    //GameEngine::executeOrdersPhase();
+}
+
+void GameEngine::reinforcementPhase() {
+
+    //Loop over all players
+    for(auto i : players) {												//Need Player Order from part 2
+        i->setPlayerArmies(floor(i->getPlayerTerritories().size() / 3));				//Initial reinforcement pool = floor(#territories / 3)
+
+        //Does player own a continent?
+        vector <int> numTerritoriesPerContinent = { 0 };					//Vector to hold count of # of territories per continent
+        for(auto j : i->getPlayerTerritories())
+            numTerritoriesPerContinent[j->continentID]+=1;						//Increment count at position CID
+
+        int index = 1;
+        for(auto j : getMap().continents) {									//Compare map continent size with player count
+            if (j->territories.size() == numTerritoriesPerContinent[index++]) {
+                i->setPlayerArmies(i->getPlayerArmies() + getMap().continents[index-1]->bonus);		//If player owns all territories in continent, add bonus to reinforcements
+            }
+            continue;
+        }
+
+        if (i->getPlayerArmies() < 3)
+            i->setPlayerArmies(3);
+    }
 }
 
 
