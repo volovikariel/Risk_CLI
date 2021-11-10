@@ -1,4 +1,5 @@
 #pragma once
+#include "LoggingObserver.h"
 #include <ostream>
 #include <string>
 #include <vector>
@@ -12,7 +13,7 @@ class Player;
 class StateInfo;
 
 // Runs the game logic
-class GameEngine
+class GameEngine : public Subject, public ILoggable
 {
 public :
 
@@ -86,6 +87,9 @@ public :
 
     // Executes a command. Returns a success status.
     bool executeCommand(Command& command);
+
+    // Implementation of stringToLog function inherited from ILoggable
+    string stringToLog();
 
 private:
 

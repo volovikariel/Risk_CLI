@@ -1,4 +1,5 @@
 #pragma once
+#include "LoggingObserver.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -6,7 +7,7 @@
 using namespace std;
 
 // ==================== Order Class ====================
-class Order
+class Order : public Subject, public ILoggable
 {
 public:
 
@@ -37,6 +38,8 @@ public:
     virtual ostream& print(ostream& out) const;                         // Prints to an output stream
     bool getExecuted() const;                                           // Getter for executed boolean
     void setExecuted(bool value);                                       // Setter for executed boolean
+    // Implementation of stringToLog function inherited from ILoggable
+    string stringToLog();
 
 protected:
 
@@ -49,7 +52,7 @@ private:
 };
 
 // ==================== OrderList Class ====================
-class OrdersList
+class OrdersList : public Subject, public ILoggable
 {
 public:
 
@@ -64,6 +67,8 @@ public:
     friend ostream& operator<<(ostream& out, const OrdersList& source);     // Stream insertion operator
     vector<Order*>& getOrdersList();                                        // Getter for orders list
     const vector<Order*>& getOrdersList() const;                            // Const getter for orders list
+    // Implementation of stringToLog function inherited from ILoggable
+    string stringToLog();
 
 private:
 

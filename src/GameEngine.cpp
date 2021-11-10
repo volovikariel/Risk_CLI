@@ -111,6 +111,9 @@ bool GameEngine::transitionState(State state)
     if (getStateInfo().canDoState(state))
     {
         this->state = state;
+        //TODO: Do we only notify if we *can* do state? idk
+        // Notify the observers of something
+        notify();
         return true;
     }
     else
@@ -232,7 +235,11 @@ bool GameEngine::executeCommand(Command& command)
     return false;
 }
 
-
+string GameEngine::stringToLog()
+{
+    //TODO: Return an GameEngine specific string
+    return "GameEngine: UNFINISHED";
+}
 
 
 /* --- StateInfo --- */

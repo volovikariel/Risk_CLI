@@ -91,6 +91,8 @@ const std::string& Command::getArgument() const
 void Command::saveEffect(const std::string& description)
 {
     effect = description;
+    // Notify the observers that the Command object has changed
+    notify();
 }
 
 /*void Command::saveEffect(std::string description)
@@ -101,9 +103,15 @@ void Command::saveEffect(const std::string& description)
 void Command::saveEffect(const char* description)
 {
     effect = description;
+    // Notify the observers that the Command object has changed
+    notify();
 }
 
-
+string Command::stringToLog()
+{
+    //TODO: Return a Command specific string
+    return "Command: UNFINISHED";
+}
 
 
 /* --- CommandProcessor --- */
@@ -284,9 +292,15 @@ Command* CommandProcessor::readCommand()
 void CommandProcessor::saveCommand(Command& command)
 {
     commands.push_back(&command);
+    // Notify the observers that the CommandProcessor object has changed
+    notify();
 }
 
-
+string CommandProcessor::stringToLog()
+{
+    //TODO: Return a CommandProcessor specific string
+    return "CommandProcessor: UNFINISHED";
+}
 
 
 /* --- FileLineReader --- */

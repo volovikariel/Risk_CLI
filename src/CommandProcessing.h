@@ -7,7 +7,7 @@
 #include <vector>
 
 // Represents a command (may include a string parameter)
-class Command : public Subject
+class Command : public Subject, public ILoggable
 {
 public:
 
@@ -53,6 +53,8 @@ public:
     //void saveEffect(std::string description);
     void saveEffect(const char* description);
 
+    // Implementation of stringToLog function inherited from ILoggable
+    string stringToLog();
 private:
 
     // The type of command
@@ -64,7 +66,7 @@ private:
 };
 
 // Reads command from console input
-class CommandProcessor : public Subject
+class CommandProcessor : public Subject, public ILoggable
 {
 public:
 
@@ -89,6 +91,8 @@ public:
     // Checks if the command is valid given the game engine's current state
     bool validate(Command& command);
 
+    // Implementation of stringToLog function inherited from ILoggable
+    string stringToLog();
 protected:
 
     // Prompts the user to input a well-formed command

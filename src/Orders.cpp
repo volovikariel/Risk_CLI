@@ -74,6 +74,10 @@ Order& Order::operator = (const Order& order)
 // Execute method
 bool Order::execute()
 {
+    // TODO: How will it get this info though, how does it know if we're about to execute?
+    // Maybe set executed -> true
+    // Notify the observers that an Order was executed
+    notify();
     return true;
 }
 
@@ -101,6 +105,11 @@ void Order::setExecuted(bool value)
     this->executed = value;
 }
 
+string Order::stringToLog()
+{
+    //TODO: Return a Command specific string
+    return "Order: UNFINISHED";
+}
 
 
 
@@ -155,6 +164,8 @@ void OrdersList::addOrder(Order *order)
 {
     orderList.push_back(order);
     cout << "Added Order " << order->getType() << endl << endl;
+    // Notify the observers that an order of type etc etc was added to an orderList
+    notify();
 }
 
 // Assignment operator
@@ -238,6 +249,11 @@ void OrdersList::deepCopy(const vector<Order*>& orderList)
     }
 }
 
+string OrdersList::stringToLog()
+{
+    //TODO: Return an OrdersList specific string
+    return "OrdersList: UNFINISHED";
+}
 
 
 
