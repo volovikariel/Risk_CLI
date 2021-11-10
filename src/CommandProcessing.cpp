@@ -109,8 +109,7 @@ void Command::saveEffect(const char* description)
 
 string Command::stringToLog()
 {
-    //TODO: Return a Command specific string
-    return "Command: UNFINISHED";
+    return "Command: Effect has been changed to '" + this->effect + "'\n";
 }
 
 
@@ -298,8 +297,19 @@ void CommandProcessor::saveCommand(Command& command)
 
 string CommandProcessor::stringToLog()
 {
-    //TODO: Return a CommandProcessor specific string
-    return "CommandProcessor: UNFINISHED";
+    // A subset of GameEngine::Transition
+    string type[] =
+    {
+        "LoadMap",
+        "ValidateMap",
+        "AddPlayer",
+        "GameStart",
+        "Replay",
+        "Quit",
+        "NumTypes"
+    };
+    Command* most_recently_saved_command = this->commands[this->commands.size() - 1];
+    return "CommandProcessor: Last saved command has a type of '" + type[(int)most_recently_saved_command->getType()] + "'\n";
 }
 
 

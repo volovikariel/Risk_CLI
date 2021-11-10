@@ -111,8 +111,7 @@ bool GameEngine::transitionState(State state)
     if (getStateInfo().canDoState(state))
     {
         this->state = state;
-        //TODO: Do we only notify if we *can* do state? idk
-        // Notify the observers of something
+        // Notify the observers of the GameEngine state change
         notify();
         return true;
     }
@@ -237,8 +236,20 @@ bool GameEngine::executeCommand(Command& command)
 
 string GameEngine::stringToLog()
 {
-    //TODO: Return an GameEngine specific string
-    return "GameEngine: UNFINISHED";
+    // These are the states to which the State enum maps to
+    string states[] = {
+        "Start",
+        "MapLoaded",
+        "MapValidated",
+        "PlayersAdded",
+        "AssignReinforcements",
+        "IssueOrders",
+        "ExecuteOrders",
+        "Win",
+        "Quit",
+        "NumStates"
+    };
+    return "GameEngine: State has been changed to '" + states[(int)this->getState()] + "'\n";
 }
 
 

@@ -251,8 +251,20 @@ void OrdersList::deepCopy(const vector<Order*>& orderList)
 
 string OrdersList::stringToLog()
 {
-    //TODO: Return an OrdersList specific string
-    return "OrdersList: UNFINISHED";
+    // These are the types to which the Type enum maps to
+    string types[] =
+    {
+        "Order",
+        "Deploy",
+        "Advance",
+        "Bomb",
+        "Blockade",
+        "Airlift",
+        "Negotiate"
+    };
+
+    Order* most_recently_added_order = this->getOrdersList()[this->getOrdersList().size() - 1];
+    return "OrdersList: Last order added to the list had a type of '" + types[(int)most_recently_added_order->getType()] + "'\n";
 }
 
 
