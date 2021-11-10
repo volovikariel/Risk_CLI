@@ -7,7 +7,7 @@
 #include <vector>
 
 // Represents a command (may include a string parameter)
-class Command : public Subject, public ILoggable
+class Command : public Subject
 {
 public:
 

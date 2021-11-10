@@ -17,9 +17,9 @@ class Observer {
 
 class Subject {
     public:
-        void attach(Observer* observer);
-        void detach(Observer* observer);
-        void notify();
+        virtual void attach(Observer* observer);
+        virtual void detach(Observer* observer);
+        virtual void notify();
         Subject();
         ~Subject();
     private:
