@@ -113,6 +113,9 @@ private:
 
     // Holds the players
     vector<Player*> players;
+
+    // Holds elimination status for each player
+    vector<bool> eliminated;
 };
 
 // Describes a State's graph connectivity

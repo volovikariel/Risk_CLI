@@ -190,12 +190,38 @@ void Player::issueOrder(Order* order)
     playerOrdersList->addOrder(order);
 }
 
+// Return a list of territories that the player already owns to defend them.
 vector<Territory*>& Player::toDefend()
 {
+    territoriesToDefend = this->getPlayerTerritories();
     return territoriesToDefend;
 }
 
 vector<Territory*>& Player::toAttack()
 {
+    vector<Territory*> toAttack = vector<Territory*>();
+
+    // loop through each owned territory
+    for (int i = 0; i < this->getPlayerTerritories().size(); i++){
+        // get the adjacent territories to the current owned territory
+        vector<Territory*> adjacentList = this->getPlayerTerritories().at(i)->neighbors;
+        // loop through each adjacent territories
+        for (int j = 0; j < adjacentList.size(); j++) {
+            bool found = false;
+            // for each territory that has been added to toAttack
+            for (int k = 0; k < toAttack.size(); k++) {
+                // make sure the current adjacentTerritory is not already in the list
+                if (toAttack.at(k)->name.compare(adjacentList.at(j)->name) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+            // if the territoryname wasn't found
+            if (!found) {
+                toAttack.push_back(adjacentList.at(j));
+            }
+        }
+    }
+    territoriesToAttack = toAttack;
     return territoriesToAttack;
 }
