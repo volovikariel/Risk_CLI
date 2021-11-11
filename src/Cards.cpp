@@ -9,14 +9,14 @@ Deck mainDeck = Deck();
 // CARD
 // Card Default constructor
 Card::Card():
-    type(Type::Bomb),
+    type(Card::Type::Bomb),
     hand(nullptr)
 {
 
 }
 
 // Card constructor which allows it to be instantiated with a type
-Card::Card(Type type):
+Card::Card(Card::Type type):
     type(type),
     hand(nullptr)
 {
@@ -59,19 +59,19 @@ void Card::play()
 {
     switch (type)
     {
-    case Type::Bomb:
+    case Card::Type::Bomb:
         hand->getPlayer()->issueOrder(new Bomb());
         break;
-    case Type::Reinforcement:
+    case Card::Type::Reinforcement:
         // This card doesn't create an order
         break;
-    case Type::Blockade:
+    case Card::Type::Blockade:
         hand->getPlayer()->issueOrder(new Blockade());
         break;
-    case Type::Airlift:
+    case Card::Type::Airlift:
         hand->getPlayer()->issueOrder(new Airlift());
         break;
-    case Type::Diplomacy:
+    case Card::Type::Diplomacy:
         hand->getPlayer()->issueOrder(new Negotiate());
         break;
     default:
