@@ -6,8 +6,12 @@ int main()
 {
     std::cout << "======================================= Part 3  ======================================= " << std::endl;
 
-    GameEngine* ge = new GameEngine();
-    ge->mainGameLoop();
+    //Will need to initialize eliminated as false for all players for testing, should be implemented in startupPhase later.
+
+
+
+    //GameEngine* ge = new GameEngine();
+    //ge->mainGameLoop();
 
     std::cout << "======================================= Part 3 end =======================================\n" << std::endl;
 }

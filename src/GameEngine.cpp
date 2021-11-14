@@ -58,7 +58,8 @@ std::ostream& operator << (std::ostream& out, const GameEngine::Transition sourc
 GameEngine::GameEngine():
     state(State::Start),
     map(new Map()),
-    players()
+    players(),
+    eliminated()
 {
 
 }
@@ -82,7 +83,8 @@ ostream& operator << (ostream& out, const GameEngine& source)
 GameEngine::GameEngine(const GameEngine& other):
     state(other.state),
     map(other.map),
-    players(other.players)
+    players(other.players),
+    eliminated(other.eliminated)
 {
 
 }
@@ -92,6 +94,7 @@ GameEngine& GameEngine::operator = (const GameEngine& other)
     state = other.state;
     map = other.map;
     players = other.players;
+    eliminated = other.eliminated;
     return *this;
 }
 
@@ -261,26 +264,36 @@ void GameEngine::mainGameLoop() {
 
 void GameEngine::reinforcementPhase() {
 
-    //Loop over all players
-    for(auto i : players) {												//Need Player Order from part 2
-        i->setPlayerArmies(floor(i->getPlayerTerritories().size() / 3));				//Initial reinforcement pool = floor(#territories / 3)
+    int playerIndex = 0;
+    for(auto i : players) {
+        if (eliminated[playerIndex] == false) {
+            i->setPlayerArmies(floor(i->getPlayerTerritories().size() /3));
 
-        //Does player own a continent?
-        vector <int> numTerritoriesPerContinent = { 0 };					//Vector to hold count of # of territories per continent
-        for(auto j : i->getPlayerTerritories())
-            numTerritoriesPerContinent[j->continentID]+=1;						//Increment count at position CID
+            vector<int> numTerritoriesPerContinent = {0};
+            for (auto j : i->getPlayerTerritories())
+                numTerritoriesPerContinent[j->continentID] += 1;
 
-        int index = 1;
-        for(auto j : getMap().continents) {									//Compare map continent size with player count
-            if (j->territories.size() == numTerritoriesPerContinent[index++]) {
-                i->setPlayerArmies(i->getPlayerArmies() + getMap().continents[index-1]->bonus);		//If player owns all territories in continent, add bonus to reinforcements
+            int index = 1;
+            for (auto j : getMap().continents) {
+                if (j->territories.size() == numTerritoriesPerContinent[index++]) {
+                    i->setPlayerArmies(i->getPlayerArmies() + getMap().continents[index -1]->bonus);
+                }
+                continue;
             }
-            continue;
-        }
 
-        if (i->getPlayerArmies() < 3)
-            i->setPlayerArmies(3);
+            if (i->getPlayerArmies() < 3)
+                i->setPlayerArmies(3);
+            playerIndex ++;
+        }
     }
+}
+
+void GameEngine::issueOrdersPhase() {
+
+}
+
+void GameEngine::executeOrdersPhase() {
+
 }
 
 
