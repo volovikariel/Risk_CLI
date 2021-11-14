@@ -108,7 +108,7 @@ void Order::setExecuted(bool value)
 string Order::stringToLog()
 {
     //TODO: Return a Command specific string
-    return "Order: UNFINISHED";
+    return "Order: UNFINISHED\n";
 }
 
 

@@ -1,4 +1,6 @@
 #include "LoggingObserver.h"
+#include <iostream>
+#include <fstream>
 
 // Constructor for Subject which initializes an empty Observer* list
 Subject::Subject()
@@ -10,10 +12,7 @@ Subject::Subject()
 // Destructor for the Subject
 Subject::~Subject()
 {
-    // Delete the individual observer pointers
-    for(Observer* observer: observers) {
-        delete observer;
-    }
+    
 }
 
 // Attaches an observer to the subject
@@ -51,21 +50,22 @@ Observer::~Observer()
 // LogObserver constructor
 LogObserver::LogObserver()
 {
-
+    // Clear the file - the game.txt file only contains the record of a single game at a time
+    ofstream ofs;
+    ofs.open("game.txt", std::ios_base::out | std::ios_base::trunc);
+    ofs.close();
 }
 
 // LogObserver destructor
 LogObserver::~LogObserver()
 {
-
+    
 }
 
 void LogObserver::update(Subject& log)
 {
-    //TODO: Dynamic casting somehow
-    // dynamic_cast<ILoggable>(log)
-        //TODO: File IO here
-        //log.stringToLog();
+    ofstream ofs;
+    ofs.open("game.txt", std::ios_base::app);
+    ofs << dynamic_cast<ILoggable*>(&log)->stringToLog();
+    ofs.close();
 }
-
-// TODO: Do we care about ILoggable constructor/destructor at all
