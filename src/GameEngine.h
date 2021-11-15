@@ -103,6 +103,9 @@ public :
     // Executes queued player orders.
     void executeOrdersPhase();
 
+    // Holds elimination status for each player
+    vector<bool> eliminated;
+
 private:
 
     // Holds the current state
@@ -113,9 +116,6 @@ private:
 
     // Holds the players
     vector<Player*> players;
-
-    // Holds elimination status for each player
-    vector<bool> eliminated;
 };
 
 // Describes a State's graph connectivity

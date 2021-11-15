@@ -258,26 +258,29 @@ string GameEngine::stringToLog()
 
 void GameEngine::mainGameLoop() {
     GameEngine::reinforcementPhase();
-    //GameEngine::issueOrdersPhase();
-    //GameEngine::executeOrdersPhase();
+    GameEngine::issueOrdersPhase();
+    GameEngine::executeOrdersPhase();
 }
 
 void GameEngine::reinforcementPhase() {
 
+    this->transitionState(GameEngine::State::AssignReinforcements);
+
     int playerIndex = 0;
     for(auto i : players) {
         if (eliminated[playerIndex] == false) {
-            i->setPlayerArmies(floor(i->getPlayerTerritories().size() /3));
+            i->setPlayerArmies(i->getPlayerArmies() + floor(i->getPlayerTerritories().size() /3));
 
-            vector<int> numTerritoriesPerContinent = {0};
+            vector<int> numTerritoriesPerContinent(this->getMap().continents.size());
             for (auto j : i->getPlayerTerritories())
-                numTerritoriesPerContinent[j->continentID] += 1;
+                numTerritoriesPerContinent[j->continentID-1] += 1;
 
-            int index = 1;
+            int index = 0;
             for (auto j : getMap().continents) {
-                if (j->territories.size() == numTerritoriesPerContinent[index++]) {
-                    i->setPlayerArmies(i->getPlayerArmies() + getMap().continents[index -1]->bonus);
+                if (j->territories.size() == numTerritoriesPerContinent[index]) {
+                    i->setPlayerArmies(i->getPlayerArmies() + getMap().continents[index]->bonus);
                 }
+                index++;
                 continue;
             }
 
@@ -290,10 +293,51 @@ void GameEngine::reinforcementPhase() {
 
 void GameEngine::issueOrdersPhase() {
 
+    this->transitionState(GameEngine::State::IssueOrders);
+    for (size_t i = 0; i < this->getPlayers().size(); i++) {
+        int turn = 0;
+        if (eliminated[i] == false) {
+            while (turn < 3) {
+                if (this->getPlayers().at(i)->getPlayerArmies() == 0) {
+                    turn ++;
+                }
+                Order *currOrder = this->getPlayers().at(i)->issueOrder();
+                this->getPlayers().at(i)->getPlayerOrders()->addOrder(currOrder);
+            }
+        }
+    }
 }
 
 void GameEngine::executeOrdersPhase() {
 
+    this->transitionState(GameEngine::State::ExecuteOrders);
+
+    bool moreOrders = true;
+    while (moreOrders) {
+        moreOrders = false;
+        for (size_t i = 0; i < this->getPlayers().size(); i++) {
+            bool isDeploy = true;
+            OrdersList* ol = this->getPlayers().at(i)->getPlayerOrders();
+            vector<Order*> &orders = this->getPlayers().at(i)->getPlayerOrders()->getOrdersList();
+            if (orders.size() > 0) {
+                int count = 0;
+                for (size_t j = 0; j < orders.size(); j++) {
+                    Order *order = orders.at(j);
+                    if (order->getType() == Order::Type::Deploy) {
+                        count ++;
+                        cout << "Execute Deploy " << j << endl;
+                        if (order->validate())
+                            order->execute();
+                        ol->remove(j);
+                        j--;
+                    }
+                }
+            } else {
+                moreOrders = false;
+            }
+
+        }
+    }
 }
 
 

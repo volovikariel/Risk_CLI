@@ -4,6 +4,9 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <time.h>
+#include <stdlib.h>
 
 using std::vector;
 
@@ -44,6 +47,7 @@ public:
     void setTerritoriesToAttack(vector<Territory*> territoriesToAttack);
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend);
     void setPlayerName(std::string& name);
+    void addPlayerTerritory(Territory* territory);
 
     // Operator overloading
     // Assignment operator overloading
@@ -53,7 +57,8 @@ public:
 
     // Required methods
     // Creates an Order object and adds it to playerOrdersList
-    void issueOrder(Order* order);
+    void issueOrder(Order*);
+    Order* issueOrder();
 
 private:
 
