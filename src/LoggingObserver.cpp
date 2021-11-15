@@ -15,7 +15,7 @@ Subject::Subject()
 Subject::Subject(const Subject& other):
     observers(other.observers)
 {
-    
+
 }
 
 // Stream insertion operator
@@ -31,12 +31,13 @@ Subject& Subject::operator = (const Subject& other)
 {
     // Shallow copy the Observer pointers
     this->observers = other.observers;
+    return *this;
 }
 
 // Destructor for the Subject
 Subject::~Subject()
 {
-    
+
 }
 
 // Attaches an observer to the subject
@@ -84,7 +85,7 @@ ostream& operator << (ostream& out, const Observer& source)
 // Assignment operator (unused)
 Observer& Observer::operator = (const Observer& other)
 {
-
+    return *this;
 }
 
 // Destructor for Observer
@@ -118,13 +119,13 @@ ostream& operator << (ostream& out, const LogObserver& source)
 // Assignment operator (unused)
 LogObserver& LogObserver::operator = (const LogObserver& other)
 {
-
+    return *this;
 }
 
 // LogObserver destructor
 LogObserver::~LogObserver()
 {
-    
+
 }
 
 
@@ -166,5 +167,5 @@ ostream& operator << (ostream& out, const ILoggable& source)
 // Assignment operator (unused)
 ILoggable& ILoggable::operator = (const ILoggable& other)
 {
-
+    return *this;
 }
