@@ -179,6 +179,7 @@ bool CommandProcessor::validate(Command& command)
     return gameEngine->getStateInfo().canDoTransition(requestedTransition);
 }
 
+// TODO: Ohmnivore, notify of what command was entered into the console
 Command* CommandProcessor::readCommand()
 {
     Command* requestedCommand = nullptr;
