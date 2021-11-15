@@ -32,6 +32,8 @@ public:
     OrdersList* getPlayerOrders();
     // Returns the armies of the player
     int getPlayerArmies() const;
+    // Returns the player ID
+    int getPlayerID() const;
     // Returns a list of territories owned by the player that need to be defended
     vector<Territory*>& toDefend();
     // Returns a list of territories that are attacked by the player

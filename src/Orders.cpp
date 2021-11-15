@@ -1,4 +1,5 @@
 #include "Orders.h"
+#include <algorithm>
 
 //==================== Order Class ====================
 
@@ -71,7 +72,7 @@ Order& Order::operator = (const Order& order)
     return *this;
 }
 
-// Execute method
+// Execute method (Pure virtual)
 bool Order::execute()
 {
     // TODO: How will it get this info though, how does it know if we're about to execute?
@@ -155,7 +156,7 @@ void OrdersList::remove(int index)
 // Move the order from index x (from) to index y (to)
 void OrdersList::move(int from, int to)
 {
-    std::swap(*orderList[from], *orderList[to]);
+    std::swap(orderList[from], orderList[to]);
     cout << "Moved order from index " << from << " to the index " << to << "." << endl << endl;
 }
 
@@ -210,11 +211,6 @@ void OrdersList::deepCopy(const vector<Order*>& orderList)
     {
         switch (order->getType())
         {
-            case (Order::Type::Order):
-            {
-                this->orderList.push_back(new Order(*order));
-                break;
-            }
             case (Order::Type::Deploy):
             {
                 this->orderList.push_back(new Deploy(*static_cast<const Deploy*>(order)));
@@ -285,6 +281,15 @@ Deploy::Deploy(const Deploy& source):
     this->setType(Type::Deploy);
 }
 
+// Parameterized Constructor
+Deploy::Deploy(const int &playerArmies, Player *player, Territory *targetTerritory) : Order() {
+    this->setType(Type::Deploy);
+    this->playerID = player->getPlayerID();
+    this->player = player;
+    this->armies = playerArmies;
+    this->targetTerritory = targetTerritory;
+}
+
 // Destructor
 Deploy::~Deploy()
 {
@@ -294,20 +299,29 @@ Deploy::~Deploy()
 // Execute : First validates the order, and if valid executes its action
 bool Deploy::execute()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
-    cout << "[Deploy] Inside execute()" << endl;
-//    if(validate()){
-//        //TO BE IMPLEMENTED LATER
-//    }
-    return false;
+    if(validate()){
+        player->setPlayerArmies(player->getPlayerArmies() - this->armies);
+        targetTerritory->armies += this->armies;
+
+        cout << "[Deploy] valid order executed." << endl;
+        return true;
+    } else {
+        cout << "[Deploy] invalid order." << endl;
+        return false;
+    }
 }
 
 // Validate : checks if an order is valid
 bool Deploy::validate()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
-    cout << "[Deploy] Inside validate()" << endl;
-    return false;
+    cout << "[Deploy] Validating Order..." << endl;
+
+    if(targetTerritory != nullptr && armies >= 0 && std::find(player->getPlayerTerritories().begin(), player->getPlayerTerritories().end(), targetTerritory) != player->getPlayerTerritories().end()){
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 // Assignment operator
@@ -362,19 +376,17 @@ Advance::~Advance()
 //Execute : First validates the order, and if valid executes its action
 bool Advance::execute()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
-    cout << "[Advance] Inside execute()" << endl;
-//    if(validate()){
-//
-//    }
+    if(validate()){
+
+    }
     return false;
 }
 
 //Validate : checks if an order is valid
 bool Advance::validate()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
-    cout << "[Advance] Inside validate()" << endl;
+
+
     return false;
 }
 

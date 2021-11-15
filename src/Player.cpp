@@ -76,6 +76,10 @@ const std::string& Player::getPlayerName() const
     return playerName;
 }
 
+int Player::getPlayerID() const {
+    return playerID;
+}
+
 // Mutators
 void Player::setPlayerTerritories(vector<Territory*> playerTerritories)
 {

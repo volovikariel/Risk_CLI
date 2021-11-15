@@ -1,8 +1,12 @@
 #pragma once
 #include "LoggingObserver.h"
+#include "Player.h"
+#include "Cards.h"
 #include <iostream>
 #include <string>
 #include <vector>
+
+class Territory;
 
 using namespace std;
 
@@ -33,7 +37,7 @@ public:
     Type getType() const;                                               // Getter for the order type
     Order& operator = (const Order& other);                             // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Order& source);    // Input stream operator
-    virtual bool execute();                                             // First validates the order, and if valid executes its action
+    virtual bool execute() = 0;                                         // Pure virtual method execute();
     virtual bool validate();                                            // Checks if the order is valid
     virtual ostream& print(ostream& out) const;                         // Prints to an output stream
     bool getExecuted() const;                                           // Getter for executed boolean
@@ -42,12 +46,14 @@ public:
     string stringToLog();
 
 protected:
-
     void setType(Type orderType);                                       // Setter for the order type
     bool executed{};                                                    // Boolean to check if order has been executed or not
+    int playerID;
+    Player* player;
+    Territory* targetTerritory;
+    int armies;
 
 private:
-
     Type orderType;
 };
 
@@ -84,14 +90,15 @@ class Deploy : public Order
 {
 public:
 
-    Deploy();                                                           // Default Constructor
-    Deploy(const Deploy& other);                                        // Copy Constructor
-    ~Deploy();                                                          // Destructor
-    bool execute() override;                                            // First validates the order, and if valid executes its action
-    bool validate() override;                                           // Checks if the order is valid
-    Deploy& operator = (const Deploy& other);                           // Assignment operator overloading
-    friend ostream& operator << (ostream& out, const Deploy& source);   // Stream Insertion Operator
-    ostream& print(ostream& out) const override;                        // Prints to an output stream
+    Deploy();                                                                                           // Default Constructor
+    Deploy(const Deploy& other);                                                                        // Copy Constructor
+    Deploy(const int& playerArmies, Player* player, Territory* targetTerritory);                        // Parameterized Constructor
+    ~Deploy();                                                                                          // Destructor
+    bool execute() override;                                                                            // First validates the order, and if valid executes its action
+    bool validate() override;                                                                           // Checks if the order is valid
+    Deploy& operator = (const Deploy& other);                                                           // Assignment operator overloading
+    friend ostream& operator << (ostream& out, const Deploy& source);                                   // Stream Insertion Operator
+    ostream& print(ostream& out) const override;                                                        // Prints to an output stream
 };
 
 // ==================== Advance Class ====================
@@ -101,6 +108,7 @@ public:
 
     Advance();                                                          // Default Constructor
     Advance(const Advance& other);                                      // Copy Constructor
+    Advance(const int& playerArmies, Player* const player, Territory* source, Territory* target, Map* map, Deck* const deck);
     ~Advance();                                                         // Destructor
     bool execute() override;                                            // First validates the order, and if valid executes its action
     bool validate() override;                                           // Checks if the order is valid
