@@ -155,7 +155,7 @@ void LogObserver::update(Subject& log)
     ILoggable* loggable = dynamic_cast<ILoggable*>(&log);
 
     // Write to file
-    filestream << loggable->stringToLog();
+    filestream << loggable->stringToLog() << endl;
     filestream.flush();
 }
 

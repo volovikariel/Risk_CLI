@@ -150,7 +150,7 @@ OrdersList::OrdersList(const vector<Order*>& orderList)
 // Destructor
 OrdersList::~OrdersList()
 {
-    for(Order* order : orderList)
+    for (Order* order : orderList)
     {
         delete order;
     }
@@ -161,7 +161,6 @@ void OrdersList::remove(int index)
 {
     Order* order = orderList.at(index);
     orderList.erase(orderList.begin() + index);
-    cout << "Deleted Order at index: " << index << endl << endl;
     delete order;
 }
 
@@ -169,14 +168,12 @@ void OrdersList::remove(int index)
 void OrdersList::move(int from, int to)
 {
     std::swap(orderList[from], orderList[to]);
-    cout << "Moved order from index " << from << " to the index " << to << "." << endl << endl;
 }
 
 // Add an order to the orders list
 void OrdersList::addOrder(Order *order)
 {
     orderList.push_back(order);
-    cout << "Added Order " << order->getType() << endl << endl;
     // Notify the observers that an order of type etc etc was added to an orderList
     notify();
 }
@@ -259,20 +256,11 @@ void OrdersList::deepCopy(const vector<Order*>& orderList)
 
 string OrdersList::stringToLog()
 {
-    // These are the types to which the Type enum maps to
-    string types[] =
-    {
-        "Order",
-        "Deploy",
-        "Advance",
-        "Bomb",
-        "Blockade",
-        "Airlift",
-        "Negotiate"
-    };
+    Order* lastOrder = orderList.back();
 
-    Order* most_recently_added_order = this->getOrdersList()[this->getOrdersList().size() - 1];
-    return "OrdersList: Last order added to the list had a type of '" + types[(int)most_recently_added_order->getType()] + "'\n";
+    std::ostringstream stream;
+    stream << "OrdersList new element: " << *lastOrder;
+    return stream.str();
 }
 
 

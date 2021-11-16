@@ -132,6 +132,8 @@ bool GameEngine::transitionState(Transition transition)
     if (getStateInfo().canDoTransition(transition, newState))
     {
         this->state = newState;
+        // Notify the observers of the GameEngine state change
+        notify();
         return true;
     }
     else
@@ -299,20 +301,9 @@ bool GameEngine::executeCommand(Command& command)
 
 string GameEngine::stringToLog()
 {
-    // These are the states to which the State enum maps to
-    string states[] = {
-        "Start",
-        "MapLoaded",
-        "MapValidated",
-        "PlayersAdded",
-        "AssignReinforcements",
-        "IssueOrders",
-        "ExecuteOrders",
-        "Win",
-        "Quit",
-        "NumStates"
-    };
-    return "GameEngine: State has been changed to '" + states[(int)this->getState()] + "'\n";
+    std::ostringstream stream;
+    stream << "GameEngine: State has been changed to '" << state << "'";
+    return stream.str();
 }
 
 // Controls each game phase

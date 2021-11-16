@@ -116,7 +116,7 @@ void Command::saveEffect(const char* description)
 string Command::stringToLog()
 {
     std::ostringstream stream;
-    stream << "Command executed: " << *this << endl;
+    stream << "Command executed: " << *this;
     return stream.str();
 }
 
@@ -311,7 +311,7 @@ string CommandProcessor::stringToLog()
     Command* lastCommand = commands.back();
 
     std::ostringstream stream;
-    stream << "CommandProcessor saved command: " << *lastCommand << endl;
+    stream << "CommandProcessor saved command: " << *lastCommand;
     return stream.str();
 }
 
