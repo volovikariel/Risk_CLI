@@ -55,7 +55,7 @@ public:
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend);
     void setPlayerName(std::string& name);
     void addPlayerTerritory(Territory* territory);
-    void setUnattackable(vector<Player *> unattackble);
+    void setUnattackable(Player* player);
 
     // Operator overloading
     // Assignment operator overloading

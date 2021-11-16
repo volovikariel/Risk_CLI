@@ -138,8 +138,8 @@ void Player::addPlayerTerritory(Territory* territory)
 }
 
 //Sets a player in the list of players that this player cannot attack
-void Player::setUnattackable(vector<Player *> unattackble) {
-    this->unattackable = unattackble;
+void Player::setUnattackable(Player* player) {
+    this->unattackable.push_back(player);
 }
 
 
