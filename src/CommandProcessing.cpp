@@ -73,6 +73,10 @@ Command& Command::operator = (const Command& other)
 std::ostream& operator << (std::ostream& out, const Command& source)
 {
     out << "Command [" << source.type << "]";
+    if (source.argument.length() > 0)
+    {
+        out << "[" << source.argument << "]";
+    }
     if (source.effect.length() > 0)
     {
         out << ": " << source.effect;
@@ -300,7 +304,7 @@ string CommandProcessor::stringToLog()
     Command* lastCommand = commands.back();
 
     std::ostringstream stream;
-    stream << "CommandProcessor: Last saved command has a type of '" << lastCommand->getType() << "'" << endl;
+    stream << "CommandProcessor saved command: " << *lastCommand << endl;
     return stream.str();
 }
 

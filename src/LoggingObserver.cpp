@@ -68,7 +68,7 @@ Observer::Observer()
 
 }
 
-// Copy constructor for Observer (unused)
+// Copy constructor for Observer
 Observer::Observer(const Observer& other)
 {
 
@@ -82,7 +82,7 @@ ostream& operator << (ostream& out, const Observer& source)
     return out;
 }
 
-// Assignment operator (unused)
+// Assignment operator
 Observer& Observer::operator = (const Observer& other)
 {
     return *this;
@@ -97,49 +97,72 @@ Observer::~Observer()
 /* --- LogObserver --- */
 
 // LogObserver constructor
-LogObserver::LogObserver()
+LogObserver::LogObserver():
+    filepath("gamelog.txt")
 {
-
+    filestream.open(filepath);
 }
 
-// Copy constructor for Observer (unused)
-LogObserver::LogObserver(const LogObserver& other)
+// LogObserver parametrized constructor
+LogObserver::LogObserver(const std::string& filepath):
+    filepath(filepath)
 {
+    filestream.open(filepath);
+}
 
+// Copy constructor for Observer
+LogObserver::LogObserver(const LogObserver& other):
+    filepath(other.filepath)
+{
+    filestream.open(filepath);
 }
 
 // Stream insertion operator
 ostream& operator << (ostream& out, const LogObserver& source)
 {
     // The LogObservor doesn't really have any properties we can print out, so we just print out that it's an LogObservor
-    out << "LogObserver";
+    out << "LogObserver filepath: " << source.filepath;
     return out;
 }
 
-// Assignment operator (unused)
+// Assignment operator
 LogObserver& LogObserver::operator = (const LogObserver& other)
 {
+    // Close old opened file
+    if (isOpen())
+    {
+        filestream.close();
+    }
+
+    filepath = other.filepath;
+    filestream.open(filepath);
+
     return *this;
 }
 
 // LogObserver destructor
 LogObserver::~LogObserver()
 {
-
+    // filestream closes file automatically in its destructor, no need to call explicitly
 }
 
 
 // LogObserver update function inherited from the Observer class and overriden
-// Outputs to a "gamelog.txt" file logs of what is going on
+// log parameter must implement ILoggable 
 void LogObserver::update(Subject& log)
 {
-    ofstream ofs;
-    // We're appending to the file, so we specify "app"
-    ofs.open("gamelog.txt", std::ios_base::app);
-    // The stringToLog function is only available for classes that inherit ILoggable, so we use dynamic_cast to make the compiler happy
-    ofs << dynamic_cast<ILoggable*>(&log)->stringToLog();
-    // Close the file stream
-    ofs.close();
+    // The stringToLog function is only available for classes that inherit ILoggable, so we use dynamic_cast
+    ILoggable* loggable = dynamic_cast<ILoggable*>(&log);
+
+    // Write to file
+    filestream << loggable->stringToLog();
+    filestream.flush();
+}
+
+// Returns status of log file
+bool LogObserver::isOpen() const
+{
+    return filestream.is_open();
 }
 
 /* --- ILoggable --- */
@@ -150,7 +173,7 @@ ILoggable::ILoggable()
 
 }
 
-// Copy constructor for ILoggable (unused)
+// Copy constructor for ILoggable
 ILoggable::ILoggable(const ILoggable& other)
 {
 
@@ -164,7 +187,7 @@ ostream& operator << (ostream& out, const ILoggable& source)
     return out;
 }
 
-// Assignment operator (unused)
+// Assignment operator
 ILoggable& ILoggable::operator = (const ILoggable& other)
 {
     return *this;

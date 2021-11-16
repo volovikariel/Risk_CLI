@@ -15,6 +15,9 @@ int main()
     // Create console input command processor
     CommandProcessor commandProcessor(gameEngine);
 
+    LogObserver log;
+    commandProcessor.attach(log);
+
     // Keep reading commands from input
     while (true)
     {
