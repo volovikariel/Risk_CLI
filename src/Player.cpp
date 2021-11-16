@@ -9,12 +9,13 @@ Player::Player():
     playerArmies(0),
     playerID(0),
     territoriesToAttack(),
-    territoriesToDefend()
+    territoriesToDefend(),
+    hasConqueredThisTurn(false)
 {
 
 }
 
-//parametrized constructor
+// Parametrized constructor
 Player::Player(vector<Territory*>& playerTerritories, int playerArmies, int playerID, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend):
     playerTerritories(playerTerritories),
     playerCards(new Hand(*this)),
@@ -22,7 +23,8 @@ Player::Player(vector<Territory*>& playerTerritories, int playerArmies, int play
     playerArmies(playerArmies),
     playerID(playerID),
     territoriesToAttack(territoriesToAttack),
-    territoriesToDefend(territoriesToDefend)
+    territoriesToDefend(territoriesToDefend),
+    hasConqueredThisTurn(false)
 {
 
 }
@@ -33,7 +35,8 @@ Player::Player(const Player& other):
     playerArmies(other.playerArmies),
     playerID(other.playerID),
     territoriesToAttack(other.territoriesToAttack),
-    territoriesToDefend(other.territoriesToDefend)
+    territoriesToDefend(other.territoriesToDefend),
+    hasConqueredThisTurn(other.hasConqueredThisTurn)
 {
     delete this->playerCards;
     delete this->playerOrdersList;
@@ -172,6 +175,7 @@ void Player::operator = (const Player& other)
     playerID = other.playerID;
     territoriesToAttack = other.territoriesToAttack;
     territoriesToDefend = other.territoriesToDefend;
+    hasConqueredThisTurn = other.hasConqueredThisTurn;
 }
 
 //stream insertion operator overloading

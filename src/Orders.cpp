@@ -477,7 +477,9 @@ bool Advance::execute()
                     " with " << armies << " armies. The territory was conquered. " << armiesAttackingLeft << " attacking armies are left and have occupied the territory.";
                 saveEffect(stream.str());
 
-                // TODO: PLAYER MUST GET A CARD SINCE THEY WON.
+                // GameEngine will give this player a card and reset this flag to false
+                // at the start of the next turn
+                player->hasConqueredThisTurn = true;
             }
             else
             {

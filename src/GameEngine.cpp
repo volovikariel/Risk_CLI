@@ -370,9 +370,20 @@ void GameEngine::reinforcementPhase() {
 }
 
 // Issues orders to players based on the player's criteria
-void GameEngine::issueOrdersPhase() {
-
+void GameEngine::issueOrdersPhase()
+{
     this->transition(GameEngine::State::IssueOrders);
+
+    // Give players who conquered a territory last turn a card
+    for (Player* player : players)
+    {
+        if (player->hasConqueredThisTurn)
+        {
+            player->hasConqueredThisTurn = false;
+            player->getPlayerCards()->addCard(*mainDeck.draw());
+        }
+    }
+
     // Determines when to stop issuing orders
     while (keepIssuing()) {
         for (size_t i = 0; i < this->getPlayers().size(); i++) {

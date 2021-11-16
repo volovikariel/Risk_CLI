@@ -69,6 +69,8 @@ public:
     void issueOrder(Order*);
     Order* issueOrder();
 
+    bool hasConqueredThisTurn;
+
 private:
 
     // Required attributes
