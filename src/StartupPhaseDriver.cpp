@@ -49,6 +49,13 @@ int main()
             // Show players' state at startup
             if (success && command->getType() == Command::Type::GameStart)
             {
+                // Show random order
+                cout << "Random order of players:" << endl;
+                for (const Player* player : gameEngine.getPlayers())
+                {
+                    cout << "* " << player->getPlayerName() << endl;
+                }
+
                 // Showing off what the players have
                 cout << endl;
                 for (const Player* player : gameEngine.getPlayers())

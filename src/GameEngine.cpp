@@ -252,11 +252,6 @@ bool GameEngine::executeCommand(Command& command)
 
             // Shuffle in a random manner the order of players
             std::random_shuffle(players.begin(), players.end());
-            cout << "Random order of players:" << endl;
-            for (const Player* player : players)
-            {
-                cout << "Player " << player->getPlayerName() << endl;
-            }
 
             // Gives the players 50 armies
             for (Player* player : players)
