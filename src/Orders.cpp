@@ -643,7 +643,22 @@ bool Bomb::validate()
     }
     else
     {
-        return true;
+        bool isAdjacent = false;
+        for (Territory* playerTerritory : player->getPlayerTerritories())
+        {
+            if (territory->isNeighbor(playerTerritory))
+            {
+                isAdjacent = true;
+                break;
+            }
+        }
+
+        if (!isAdjacent)
+        {
+            saveEffect("Can't bomb a territory that is not adjacent to an owned territory", false);
+        }
+
+        return isAdjacent;
     }
 
     return false;
@@ -940,7 +955,7 @@ Negotiate::Negotiate(Player& player, Player& targetPlayer):
     player(&player),
     targetPlayer(&targetPlayer)
 {
-    this->setType(Type::Blockade);
+    this->setType(Type::Negotiate);
 }
 
 // Destructor

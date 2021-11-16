@@ -451,16 +451,6 @@ void GameEngine::issueOrdersPhase()
 {
     this->transition(GameEngine::State::IssueOrders);
 
-    // Give players who conquered a territory last turn a card
-    for (Player* player : players)
-    {
-        if (player->hasConqueredThisTurn)
-        {
-            player->hasConqueredThisTurn = false;
-            player->getPlayerCards()->addCard(*mainDeck.draw());
-        }
-    }
-
     // Determines when to stop issuing orders
     while (keepIssuing()) {
         for (size_t i = 0; i < this->getPlayers().size(); i++) {
@@ -510,11 +500,24 @@ void GameEngine::executeOrdersPhase() {
                         ol->remove(0);
                     }
                 }
-                // Clear all negotiations between players
-                this->getPlayers().at(i)->clearUnattackable();
             }
-
         }
+    }
+
+    // Give players who conquered a territory last turn a card
+    for (Player* player : players)
+    {
+        if (player->hasConqueredThisTurn)
+        {
+            player->hasConqueredThisTurn = false;
+            player->getPlayerCards()->addCard(*mainDeck.draw());
+        }
+    }
+
+    // Clear diplomatic ties from last turn
+    for (Player* player : players)
+    {
+        player->clearUnattackable();
     }
 }
 

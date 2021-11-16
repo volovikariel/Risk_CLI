@@ -132,19 +132,15 @@ Territory::~Territory()
 
 }
 
-std::ostream& operator << (std::ostream &out, const Territory& source)
+std::ostream& operator << (std::ostream& out, const Territory& source)
 {
     out << "[" << source.ID << "] " << source.name << " (" << source.continent->name << ")";
     return out;
 }
 
-bool Territory::isNeighbor(Territory *territory) {
-    if(std::find(neighbors.begin(), neighbors.end(), territory) != neighbors.end()){
-        return true;
-    }
-    else{
-        return false;
-    }
+bool Territory::isNeighbor(Territory* territory)
+{
+    return std::find(neighbors.begin(), neighbors.end(), territory) != neighbors.end();
 }
 
 

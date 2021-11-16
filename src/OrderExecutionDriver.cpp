@@ -3,6 +3,9 @@
 #include "Orders.h"
 #include "Player.h"
 
+#include <iostream>
+#include <vector>
+
 // Automatic loadmap, validatemap, addplayer, gamestart without user input
 void setupGame(GameEngine& gameEngine);
 
@@ -14,37 +17,69 @@ int main()
 
     Player& player1 = *gameEngine.getPlayers().at(0);
     Player& player2 = *gameEngine.getPlayers().at(1);
+    Territory& player1Territory = *player1.getPlayerTerritories().at(0);
+    Territory& player2Territory = *player2.getPlayerTerritories().at(0);
 
     // Deploy on other player's territory
-    Deploy badDeploy(1, player1, *player2.getPlayerTerritories().at(0));
+    Deploy badDeploy(1, player1, player2Territory);
     badDeploy.execute();
     std::cout << badDeploy << endl;
 
     // Advance with source territory not belonging to the player
-    Advance badAdvance(1, player1, *player2.getPlayerTerritories().at(0), *player2.getPlayerTerritories().at(0));
+    Advance badAdvance(1, player1, player2Territory, player2Territory);
     badAdvance.execute();
     std::cout << badAdvance << endl;
 
     // Advance with target territory not adjacent
-    Territory* firstTerritory = player1.getPlayerTerritories().at(0);
-    Territory* notAdjacentTerritory = nullptr;
-    // Find not adjacenet territory
-    for (Territory* territory : player1.getPlayerTerritories())
+    Territory* notAdjacentPlayer2Territory = nullptr;
+    // Find not adjacent territory belonging to the other player
+    for (Territory* territory : player2.getPlayerTerritories())
     {
-        if (firstTerritory != territory && !firstTerritory->isNeighbor(territory))
+        if (!player1Territory.isNeighbor(territory))
         {
-            notAdjacentTerritory = territory;
+            notAdjacentPlayer2Territory = territory;
             break;
         }
     }
-    if (notAdjacentTerritory != nullptr)
+    if (notAdjacentPlayer2Territory != nullptr)
     {
-        Advance badAdvance2(1, player1, *firstTerritory, *notAdjacentTerritory);
+        Advance badAdvance2(1, player1, player1Territory, *notAdjacentPlayer2Territory);
         badAdvance2.execute();
         std::cout << badAdvance2 << endl;
     }
-    
 
+    // Airlift from source territory that doesn't belong to player
+    Airlift badAirlift(1, player1, player2Territory, player2Territory);
+    badAirlift.execute();
+    std::cout << badAirlift << endl;
+
+    // Airlift to target territory that doesn't belong to player
+    Airlift badAirlift2(1, player1, player1Territory, player2Territory);
+    badAirlift2.execute();
+    std::cout << badAirlift2 << endl;
+
+    // Bombing oneself
+    Bomb badBomb(player1, player1Territory);
+    badBomb.execute();
+    std::cout << badBomb << endl;
+
+    // Bombing a territory not adjacent to one of ours
+    std::vector<Territory*> backup = player2Territory.neighbors;
+    player2Territory.neighbors.clear();
+    Bomb badBomb2(player1, player2Territory);
+    badBomb2.execute();
+    std::cout << badBomb2 << endl;
+    player2Territory.neighbors = backup;
+
+    // Blockade a territory that doesn't belong to player
+    Blockade badBlockade(player1, player1, player2Territory);
+    badBlockade.execute();
+    std::cout << badBlockade << endl;
+
+    // Negotiate with oneself
+    Negotiate badNegotiate(player1, player1);
+    badNegotiate.execute();
+    std::cout << badNegotiate << endl;
 }
 
 void setupGame(GameEngine& gameEngine)
