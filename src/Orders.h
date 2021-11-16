@@ -183,7 +183,7 @@ public:
 
     Airlift();                                                              // Default Constructor
     Airlift(const Airlift& other);                                          // Copy Constructor
-    Airlift(int armies, Player& const player, Territory& sourceTerritory, Territory& targetTerritory);  // Parameterized Constructor
+    Airlift(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory);  // Parameterized Constructor
     ~Airlift();                                                             // Destructor
     bool execute() override;                                                // First validates the order, and if valid executes its action
     bool validate() override;                                               // Checks if the order is valid
@@ -203,16 +203,19 @@ private:
 class Negotiate : public Order
 {
 public:
+
     Negotiate();                                                                // Default Constructor
     Negotiate(const Negotiate& other);                                          // Copy Constructor
-    Negotiate(Player *player, Player *target);                                  // Parameterized Constructor
+    Negotiate(Player& player, Player& targetPlayer);                            // Parameterized Constructor
     ~Negotiate();                                                               // Destructor
     bool execute() override;                                                    // First validates the order, and if valid executes its action
     bool validate() override;                                                   // Checks if the order is valid
     Negotiate& operator = (const Negotiate& other);                             // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Negotiate& source);        // Stream Insertion Operator
     ostream& print(ostream& out) const override;                                // Prints to an output stream
+
 private:
+
     Player* player;
-    Player* target;
+    Player* targetPlayer;
 };

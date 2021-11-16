@@ -844,10 +844,10 @@ ostream& operator << (ostream& out, const Airlift& source)
 ostream& Airlift::print(ostream& out) const
 {
     Order::print(out);
-    out << "[Airlift Description]: Advance some armies from one of the current player’s territories to any another territory." << endl;
+    out << "[Airlift Description]: Airlift some armies from one of the current player's territories to any of their other territories." << endl;
     if (executed)
     {
-        out << "[Airlift Effect]: Move any number of army units from one of your territories to another territory, even if they are not adjacent." << endl;
+        out << "[Airlift Effect]: " << effect << endl;
     }
     return out;
 }
@@ -871,12 +871,12 @@ Negotiate::Negotiate(const Negotiate& other):
 }
 
 // Parameterized Constructor
-Negotiate::Negotiate(Player *player, Player *target):
-    Order()
+Negotiate::Negotiate(Player& player, Player& targetPlayer):
+    Order(),
+    player(&player),
+    targetPlayer(&targetPlayer)
 {
     this->setType(Type::Blockade);
-    this->player = player;
-    this->target = target;
 }
 
 // Destructor
@@ -888,13 +888,19 @@ Negotiate::~Negotiate()
 // Execute : First validates the order, and if valid executes its action
 bool Negotiate::execute()
 {
-    cout << "[Negotiate] Inside execute()" << endl;
-    if(validate()){
-        player->setUnattackable(target);
-        target->setUnattackable(player);
-        cout << "[Negotiate] valid order executed." << endl;
+    if (validate())
+    {
+        player->setUnattackable(targetPlayer);
+        targetPlayer->setUnattackable(player);
+
+        std::ostringstream stream;
+        stream << "Players " << player->getPlayerName() << " and " << targetPlayer->getPlayerName() << " are diplomatic allies for this turn.";
+        saveEffect(stream.str());
+
         return true;
-    }else{
+    }
+    else
+    {
         return false;
     }
 }
@@ -902,12 +908,20 @@ bool Negotiate::execute()
 // Validate : checks if an order is valid
 bool Negotiate::validate()
 {
-    cout << "[Negotiate] Inside validate()" << endl;
-    if (target->getPlayerID()!=player->getPlayerID()){
-        return true;
-    }else{
-        return false;
+    if (player == nullptr || targetPlayer == nullptr)
+    {
+        saveEffect("nullptr arguments passed");
     }
+    else if (player == targetPlayer)
+    {
+        saveEffect("Can't negotiate with oneself");
+    }
+    else
+    {
+        return true;
+    }
+
+    return false;
 }
 
 // Assignment operator
@@ -930,7 +944,7 @@ ostream& Negotiate::print(ostream& out) const
     out << "[Negotiate Description]: Prevent attacks between the current player and another player until the end of the turn." << endl;
     if (executed)
     {
-        out << "[Negotiate Effect]: until the end of the turn, you and the target player cannot attack each other." << endl;
+        out << "[Negotiate Effect]: " << effect << endl;
     }
     return out;
 }
