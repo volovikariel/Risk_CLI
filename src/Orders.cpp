@@ -27,20 +27,27 @@ std::ostream& operator << (std::ostream& out, const Order::Type source)
 }
 
 // Default Constructor
-Order::Order()
+Order::Order():
+    orderType(Type::Order),
+    executed(false),
+    effect()
 {
-    this->orderType = Type::Order;
+
 }
 
 // Copy Constructor
 Order::Order(const Order& copy):
-    orderType(copy.orderType)
+    orderType(copy.orderType),
+    executed(copy.executed),
+    effect(copy.effect)
 {
 }
 
 // Parameterized Constructor
 Order::Order(const Type orderType):
-    orderType(orderType)
+    orderType(orderType),
+    executed(false),
+    effect()
 {
 
 }
@@ -58,9 +65,10 @@ void Order::setType(Type orderType)
 }
 
 // Setter the execution effect
-void Order::saveEffect(const std::string& effect)
+void Order::saveEffect(const std::string& effect, bool executed)
 {
     this->effect = effect;
+    this->executed = executed;
     // Notify the observers that the Command object has changed
     notify();
 }
@@ -81,17 +89,9 @@ ostream& operator << (ostream& out, const Order& order)
 Order& Order::operator = (const Order& order)
 {
     this->orderType = order.orderType;
+    this->executed = order.executed;
+    this->effect = order.effect;
     return *this;
-}
-
-// Execute method (Pure virtual)
-bool Order::execute()
-{
-    // TODO: How will it get this info though, how does it know if we're about to execute?
-    // Maybe set executed -> true
-    // Notify the observers that an Order was executed
-    notify();
-    return true;
 }
 
 // Validate method
@@ -112,16 +112,16 @@ bool Order::getExecuted() const
     return this->executed;
 }
 
-// Setter for bool executed
-void Order::setExecuted(bool value)
-{
-    this->executed = value;
-}
-
 string Order::stringToLog()
 {
-    //TODO: Return a Command specific string
-    return "Order: UNFINISHED\n";
+    std::ostringstream stream;
+    stream << "Order [" << getType() << "]";
+    if (executed)
+    {
+        stream << " executed";
+    }
+    stream << ": " << effect;
+    return stream.str();
 }
 
 
@@ -280,15 +280,21 @@ string OrdersList::stringToLog()
 //==================== Deploy Class ====================
 
 // Default Constructor
-Deploy::Deploy()
+Deploy::Deploy():
+    Order(),
+    armies(0),
+    player(nullptr),
+    territory(nullptr)
 {
     this->setType(Type::Deploy);
-    this->setExecuted(true);
 }
 
 // Copy Constructor
 Deploy::Deploy(const Deploy& source):
-    Order(source)
+    Order(source),
+    armies(source.armies),
+    player(source.player),
+    territory(source.territory)
 {
     this->setType(Type::Deploy);
 }
@@ -334,15 +340,15 @@ bool Deploy::validate()
 {
     if (player == nullptr || territory == nullptr)
     {
-        saveEffect("nullptr arguments passed");
+        saveEffect("nullptr arguments passed", false);
     }
     else if (armies <= 0)
     {
-        saveEffect("Not enough armies");
+        saveEffect("Not enough armies", false);
     }
     else if (!player->hasTerritory(territory))
     {
-        saveEffect("Territory doesn't belong to player");
+        saveEffect("Territory doesn't belong to player", false);
     }
     else
     {
@@ -356,6 +362,9 @@ bool Deploy::validate()
 Deploy& Deploy::operator = (const Deploy& other)
 {
     Order::operator = (other);
+    armies = other.armies;
+    player = other.player;
+    territory = other.territory;
     return *this;
 }
 
@@ -382,26 +391,34 @@ ostream& Deploy::print(ostream& out) const
 // ==================== Advance Class ====================
 
 // Default Constructor
-Advance::Advance()
+Advance::Advance():
+    Order(),
+    armies(0),
+    player(nullptr),
+    sourceTerritory(nullptr),
+    targetTerritory(nullptr)
 {
     this->setType(Type::Advance);
 }
 
 // Copy Constructor
 Advance::Advance(const Advance &other):
-    Order(other)
+    Order(other),
+    armies(other.armies),
+    player(other.player),
+    sourceTerritory(other.sourceTerritory),
+    targetTerritory(other.targetTerritory)
 {
     this->setType(Type::Advance);
 }
 
 // Parameterized Constructor
-Advance::Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, Map& map):
+Advance::Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory):
     Order(),
     armies(armies),
     player(&player),
     sourceTerritory(&sourceTerritory),
-    targetTerritory(&targetTerritory),
-    map(&map)
+    targetTerritory(&targetTerritory)
 {
     this->setType(Type::Advance);
 }
@@ -499,23 +516,23 @@ bool Advance::validate()
 {
     if (player == nullptr || sourceTerritory == nullptr || targetTerritory == nullptr)
     {
-        saveEffect("nullptr arguments passed");
+        saveEffect("nullptr arguments passed", false);
     }
     else if (armies <= 0)
     {
-        saveEffect("Not enough armies");
+        saveEffect("Not enough armies", false);
     }
     else if (std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory->player) != player->getUnattackable().end())
     {
-        saveEffect("Can't attack diplomatic ally");
+        saveEffect("Can't attack diplomatic ally", false);
     }
     else if (!player->hasTerritory(sourceTerritory))
     {
-        saveEffect("The source territory does not belong to the player that issued the order");
+        saveEffect("The source territory does not belong to the player that issued the order", false);
     }
     else if (!targetTerritory->isNeighbor(sourceTerritory))
     {
-        saveEffect("The target territory is not adjacent to the source territory");
+        saveEffect("The target territory is not adjacent to the source territory", false);
     }
     else
     {
@@ -529,6 +546,10 @@ bool Advance::validate()
 Advance& Advance::operator = (const Advance& other)
 {
     Order::operator = (other);
+    armies = other.armies;
+    player = other.player;
+    sourceTerritory = other.sourceTerritory;
+    targetTerritory = other.targetTerritory;
     return *this;
 }
 
@@ -555,15 +576,19 @@ ostream& Advance::print(ostream& out) const
 // ==================== Bomb Class ====================
 
 // Default Constructor
-Bomb::Bomb()
+Bomb::Bomb():
+    Order(),
+    player(nullptr),
+    territory(nullptr)
 {
     this->setType(Type::Bomb);
-    this->setExecuted(true);
 }
 
 // Copy Constructor
 Bomb::Bomb(const Bomb& other):
-    Order(other)
+    Order(other),
+    player(other.player),
+    territory(other.territory)
 {
     this->setType(Type::Bomb);
 }
@@ -608,15 +633,15 @@ bool Bomb::validate()
 {
     if (player == nullptr || territory == nullptr)
     {
-        saveEffect("nullptr arguments passed");
+        saveEffect("nullptr arguments passed", false);
     }
     else if (player == territory->player)
     {
-        saveEffect("Can't bomb own territory");
+        saveEffect("Can't bomb own territory", false);
     }
     else if (std::find(player->getUnattackable().begin(), player->getUnattackable().end(), territory->player) != player->getUnattackable().end())
     {
-        saveEffect("Can't bomb a diplomatic ally");
+        saveEffect("Can't bomb a diplomatic ally", false);
     }
     else
     {
@@ -630,6 +655,8 @@ bool Bomb::validate()
 Bomb& Bomb::operator = (const Bomb& other)
 {
     Order::operator = (other);
+    player = other.player;
+    territory = other.territory;
     return *this;
 }
 
@@ -656,14 +683,21 @@ ostream& Bomb::print(ostream& out) const
 // ==================== Blockade Class ====================
 
 // Default Constructor
-Blockade::Blockade()
+Blockade::Blockade():
+    Order(),
+    player(nullptr),
+    neutralPlayer(nullptr),
+    territory(nullptr)
 {
     this->setType(Type::Blockade);
 }
 
 // Copy Constructor
 Blockade::Blockade(const Blockade& other):
-    Order(other)
+    Order(other),
+    player(other.player),
+    neutralPlayer(other.neutralPlayer),
+    territory(other.territory)
 {
     this->setType(Type::Blockade);
 }
@@ -710,11 +744,11 @@ bool Blockade::validate()
 {
     if (player == nullptr || neutralPlayer == nullptr || territory == nullptr)
     {
-        saveEffect("nullptr arguments passed");
+        saveEffect("nullptr arguments passed", false);
     }
     else if (player != territory->player)
     {
-        saveEffect("Can't blockade another player's territory");
+        saveEffect("Can't blockade another player's territory", false);
     }
     else
     {
@@ -728,6 +762,9 @@ bool Blockade::validate()
 Blockade& Blockade::operator = (const Blockade& other)
 {
     Order::operator = (other);
+    player = other.player;
+    neutralPlayer = other.neutralPlayer;
+    territory = other.territory;
     return *this;
 }
 
@@ -754,14 +791,23 @@ ostream &Blockade::print(ostream& out) const
 // ==================== Airlift Class ====================
 
 // Default Constructor
-Airlift::Airlift()
+Airlift::Airlift():
+    Order(),
+    armies(0),
+    player(nullptr),
+    sourceTerritory(nullptr),
+    targetTerritory(nullptr)
 {
     this->setType(Type::Airlift);
 }
 
 // Copy Constructor
 Airlift::Airlift(const Airlift& other):
-    Order(other)
+    Order(other),
+    armies(other.armies),
+    player(other.player),
+    sourceTerritory(other.sourceTerritory),
+    targetTerritory(other.targetTerritory)
 {
     this->setType(Type::Airlift);
 }
@@ -805,19 +851,19 @@ bool Airlift::validate()
 {
     if (player == nullptr || sourceTerritory == nullptr || targetTerritory == nullptr)
     {
-        saveEffect("nullptr arguments passed");
+        saveEffect("nullptr arguments passed", false);
     }
     else if (armies < 0)
     {
-        saveEffect("Not enough armies");
+        saveEffect("Not enough armies", false);
     }
     else if (player != sourceTerritory->player)
     {
-        saveEffect("Source territory doesn't belong to player");
+        saveEffect("Source territory doesn't belong to player", false);
     }
     else if (player != targetTerritory->player)
     {
-        saveEffect("Target territory doesn't belong to player");
+        saveEffect("Target territory doesn't belong to player", false);
     }
     else
     {
@@ -831,6 +877,10 @@ bool Airlift::validate()
 Airlift &Airlift::operator = (const Airlift& other)
 {
     Order::operator = (other);
+    armies = other.armies;
+    player = other.player;
+    sourceTerritory = other.sourceTerritory;
+    targetTerritory = other.targetTerritory;
     return *this;
 }
 
@@ -858,14 +908,19 @@ ostream& Airlift::print(ostream& out) const
 // ==================== Negotiate Class ====================
 
 // Default Constructor
-Negotiate::Negotiate()
+Negotiate::Negotiate():
+    Order(),
+    player(nullptr),
+    targetPlayer(nullptr)
 {
     this->setType(Type::Negotiate);
 }
 
 // Copy Constructor
 Negotiate::Negotiate(const Negotiate& other):
-    Order(other)
+    Order(other),
+    player(other.player),
+    targetPlayer(other.targetPlayer)
 {
     this->setType(Type::Negotiate);
 }
@@ -910,11 +965,11 @@ bool Negotiate::validate()
 {
     if (player == nullptr || targetPlayer == nullptr)
     {
-        saveEffect("nullptr arguments passed");
+        saveEffect("nullptr arguments passed", false);
     }
     else if (player == targetPlayer)
     {
-        saveEffect("Can't negotiate with oneself");
+        saveEffect("Can't negotiate with oneself", false);
     }
     else
     {
@@ -928,6 +983,8 @@ bool Negotiate::validate()
 Negotiate& Negotiate::operator = (const Negotiate& other)
 {
     Order::operator = (other);
+    player = other.player;
+    targetPlayer = other.targetPlayer;
     return *this;
 }
 

@@ -3,43 +3,46 @@
 #include "CommandProcessing.h"
 #include "Orders.h"
 
+// Exposes protected function saveCommand for use by this driver
 class CommandProcessorTest : public CommandProcessor
 {
-    public:
-        void saveCommandTest(Command* command) {
-            this->saveCommand(*command);
-        }
+public:
+
+    void saveCommandTest(Command* command)
+    {
+        saveCommand(*command);
+    }
 };
 
 int main()
 {
     // The Observer we'll be attaching
-    LogObserver lo;
+    LogObserver logObserver;
 
     // The Subjects we'll be observing
-    Command c;
-    CommandProcessorTest cp;
-    // Order o; // TODO
-    OrdersList ol;
-    GameEngine ge;
+    Command command;
+    CommandProcessorTest commandProcessor;
+    Bomb order;
+    OrdersList ordersList;
+    GameEngine gameEngine;
 
     // Attaching the Observer to each Subject
-    c.attach(lo);
-    cp.attach(lo);
-    // o.attach(lo); // TODO
-    ol.attach(lo);
-    ge.attach(lo);
+    command.attach(logObserver);
+    commandProcessor.attach(logObserver);
+    order.attach(logObserver);
+    ordersList.attach(logObserver);
+    gameEngine.attach(logObserver);
 
     // Calling CommandProcessor's "saveCommand" method to test the Observer
-    cp.saveCommandTest(new Command(Command::Type::GameStart));
+    commandProcessor.saveCommandTest(new Command(Command::Type::GameStart));
     // Calling Order's "execute" method to test the Observer
-    // o.execute(); // TODO
+    order.execute();
     // Calling Command's "saveEffect" method to test the Observer
-    c.saveEffect("Command's effect");
+    command.saveEffect("Command's effect");
     // Calling OrderList's "addOrder" method to test the Observer
-    // ol.addOrder(new Order()); // TODO
+    ordersList.addOrder(&order);
     // Calling GameEngine's "transition" method to test the Observer
-    ge.transitionState(GameEngine::State::MapLoaded);
+    gameEngine.transitionState(GameEngine::State::MapLoaded);
     
     // Expected:
     /*

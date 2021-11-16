@@ -42,14 +42,13 @@ public:
     virtual bool validate();                                            // Checks if the order is valid
     virtual ostream& print(ostream& out) const;                         // Prints to an output stream
     bool getExecuted() const;                                           // Getter for executed boolean
-    void setExecuted(bool value);                                       // Setter for executed boolean
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
 
 protected:
 
     void setType(Type orderType);                                       // Setter for the order type
-    void saveEffect(const std::string& effect);                          // Sets execution effect
+    void saveEffect(const std::string& effect, bool executed = true);   // Sets execution effect
 
     bool executed;                                                      // Boolean to check if order has been executed or not
     string effect;                                                      // Holds the execution effect
@@ -116,7 +115,7 @@ public:
 
     Advance();                                                          // Default Constructor
     Advance(const Advance& other);                                      // Copy Constructor
-    Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, Map& map);    // Parameterized Constructor
+    Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory);    // Parameterized Constructor
     ~Advance();                                                         // Destructor
     bool execute() override;                                            // First validates the order, and if valid executes its action
     bool validate() override;                                           // Checks if the order is valid
@@ -130,7 +129,6 @@ private:
     Player* player;
     Territory* sourceTerritory;
     Territory* targetTerritory;
-    Map* map;
 };
 
 // ==================== Bomb Class ====================
