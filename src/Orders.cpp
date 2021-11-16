@@ -316,7 +316,7 @@ bool Deploy::validate()
 {
     cout << "[Deploy] Validating Order..." << endl;
 
-    if(targetTerritory != nullptr && armies >= 0 && std::find(player->getPlayerTerritories().begin(), player->getPlayerTerritories().end(), targetTerritory) != player->getPlayerTerritories().end()){
+    if(targetTerritory != nullptr && armies >= 0 && player->hasTerritory(targetTerritory)){
         return true;
     }
     else {

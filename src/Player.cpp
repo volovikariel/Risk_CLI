@@ -130,6 +130,16 @@ void Player::addPlayerTerritory(Territory* territory)
     this->playerTerritories.push_back(territory);
 }
 
+//Checks if a player has a target territory
+bool Player::hasTerritory(Territory* target) {
+    if(std::find(playerTerritories.begin(), playerTerritories.end(), target) != playerTerritories.end()){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+
 // Operator overloading
 // Assignment operator overloading
 void Player::operator = (const Player& other)

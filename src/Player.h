@@ -40,6 +40,8 @@ public:
     vector<Territory*>& toAttack();
     // Returns the player's name
     const std::string& getPlayerName() const;
+    // Checks if player owns a specific territory
+    bool hasTerritory(Territory* target);
 
     // Mutators
     void setPlayerTerritories(vector<Territory*> playerTerritories);
