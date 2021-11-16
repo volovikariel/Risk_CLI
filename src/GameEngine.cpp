@@ -200,11 +200,26 @@ bool GameEngine::executeCommand(Command& command)
         }
         case Command::Type::AddPlayer:
         {
+            const std::string& newPlayerName = command.getArgument();
+
+            // Make sure the player name is unique
+            for (const Player* player : players)
+            {
+                if (player->getPlayerName() == newPlayerName)
+                {
+                    std::ostringstream stream;
+                    stream << "There is already a player with the name: " << newPlayerName;
+
+                    command.saveEffect(stream.str());
+                    return false;
+                }
+            }
+
             Player* player = new Player();
-            player->setPlayerName(command.getArgument());
+            player->setPlayerName(newPlayerName);
 
             players.push_back(player);
-            string effect = "Added player " + command.getArgument();
+            string effect = "Added player " + newPlayerName;
             command.saveEffect(effect);
 
             return transitionState(Transition::AddPlayer);
