@@ -491,7 +491,8 @@ bool Bomb::execute()
 bool Bomb::validate()
 {
     cout << "[Bomb] Inside validate()" << endl;
-     if (targetTerritory != nullptr && player->hasTerritory(sourceTerritory) && !(player->hasTerritory(targetTerritory)) && targetTerritory->isNeighbor(sourceTerritory)){
+     if (targetTerritory != nullptr && player->hasTerritory(sourceTerritory) && !(player->hasTerritory(targetTerritory)) && targetTerritory->isNeighbor(sourceTerritory)
+        && std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory) == player->getUnattackable().end()){
         return true;
     }else{
         return false;
@@ -562,7 +563,7 @@ bool Blockade::execute()
     cout << "[Blockade] Inside execute()" << endl;
     if(validate()){
         targetTerritory->armies *= 2;
-        //Change ownership to neutral
+        targetTerritory->player=nullptr;
         cout << "[Blockade] valid order executed." << endl;
         return true;
     }else{
@@ -712,8 +713,10 @@ bool Negotiate::execute()
 {
     cout << "[Negotiate] Inside execute()" << endl;
     if(validate()){
-        //---------------IMPLEMENT NEEDED------------------
-        cout << "[Blockade] valid order executed." << endl;
+        player->setUnattackable(target);
+        target->setUnattackable(player);
+        cout << "[Negotiate] valid order executed." << endl;
+        return true;
     }else{
         return false;
     }
