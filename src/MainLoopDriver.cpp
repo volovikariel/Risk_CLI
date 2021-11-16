@@ -9,8 +9,6 @@ int main()
 {
     std::cout << "======================================= Part 3  ======================================= " << std::endl;
 
-    //Will need to initialize eliminated as false for all players for testing, should be implemented in startupPhase later.
-
     // Startup parameters
     const char* mapFilePath = "../maps/canada.map";
     const int numPlayers = 2;
@@ -24,18 +22,17 @@ int main()
     mainDeck.addCard(*new Card(Card::Type::Blockade));
     mainDeck.addCard(*new Card(Card::Type::Bomb));
     mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-    //mainDeck.addCard(*new Card(Card::Type::Reinforcement));
+    mainDeck.addCard(*new Card(Card::Type::Reinforcement));
     mainDeck.addCard(*new Card(Card::Type::Airlift));
     mainDeck.addCard(*new Card(Card::Type::Blockade));
     mainDeck.addCard(*new Card(Card::Type::Bomb));
     mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-    //mainDeck.addCard(*new Card(Card::Type::Reinforcement));
+    mainDeck.addCard(*new Card(Card::Type::Reinforcement));
     mainDeck.addCard(*new Card(Card::Type::Airlift));
     mainDeck.addCard(*new Card(Card::Type::Blockade));
     mainDeck.addCard(*new Card(Card::Type::Bomb));
     mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-   //mainDeck.addCard(*new Card(Card::Type::Reinforcement));
-
+    mainDeck.addCard(*new Card(Card::Type::Reinforcement));
 
     // Load map
     int errorLine;
@@ -100,10 +97,6 @@ int main()
     //Hardcode for full continent bonus test
     //gameEngine.getPlayers().front()->addPlayerTerritory(gameEngine.getMap().territories.at(1));
     //gameEngine.getPlayers().front()->addPlayerTerritory(gameEngine.getMap().territories.at(3));
-
-
-    // Determine randomly the order of play
-    // Skipping this one XD
 
 
     // Giving initial 50 reinforcements to players

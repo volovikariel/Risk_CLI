@@ -54,7 +54,7 @@ std::ostream& operator << (std::ostream& out, const Card& source)
     return out;
 }
 
-// Adds an order to the player's order's list based on the type of card
+// Adds an order to the player's order's list based on the type of card (Deprecated)
 /*void Card::play()
 {
     switch (type)
@@ -84,19 +84,17 @@ std::ostream& operator << (std::ostream& out, const Card& source)
     mainDeck.addCard(*this);
 }*/
 
+// Return Order based on Card
 Order* Card::play()
 {
-    // Removes the card from the hand
-    hand->removeCard(*this);
-    // Add the card back to the deck
-    mainDeck.addCard(*this);
     switch (type)
     {
         case Card::Type::Bomb:
             return new Bomb();
         case Card::Type::Reinforcement:
-            // This card doesn't create an order
-            break;
+            // Adds 5 armies to player pool
+            this->getHand()->getPlayer()->setPlayerArmies(this->getHand()->getPlayer()->getPlayerArmies() + 5);
+            return nullptr;
         case Card::Type::Blockade:
             return new Blockade();
         case Card::Type::Airlift:
@@ -104,6 +102,11 @@ Order* Card::play()
         case Card::Type::Diplomacy:
             return new Negotiate();
     }
+
+    // Removes the card from the hand
+    hand->removeCard(*this);
+    // Add the card back to the deck
+    mainDeck.addCard(*this);
 }
 
 // Returns the type of the card

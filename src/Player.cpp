@@ -124,6 +124,7 @@ void Player::setPlayerName(std::string& name)
     playerName = name;
 }
 
+// Adds a new owned territory to player
 void Player::addPlayerTerritory(Territory* territory)
 {
     this->playerTerritories.push_back(territory);
@@ -202,34 +203,40 @@ ostream& operator << (ostream& out, const Player& source)
     return out;
 }
 
+// Old version of issue order based on return from old version of Card toPlay method (Maybe deprecated?)
 void Player::issueOrder(Order* order)
 {
     playerOrdersList->addOrder(order);
 }
 
+// Provides Player with an order based on available options
 Order* Player::issueOrder() {
     srand(time(nullptr));
 
+    // Prepare Territory options based on attacking or defending
     std::vector <Territory*> def = toDefend();
     std::vector<Territory *> atk = toAttack();
 
     // If player still has available armies keep deploying
     if (playerArmies > 0)
     {
+        unsigned int amount = 0;
 
         Territory* destination = def[0];
         def.erase(def.begin());
         def.push_back(destination);
 
-        unsigned int amount = 1 + (rand() % 9);
+        // Chose random amount of armies between 1 to 10
+        amount = 1 + (rand() % 9);
 
         if (amount > playerArmies){
             amount = playerArmies;
         }
 
+        // Remove armies we will deploy from the player pool
         playerArmies -= amount;
 
-        Deploy* deploy = new Deploy();
+        Deploy* deploy = new Deploy(amount, this, destination);
         return deploy;
     }
         // Chose card and play it.
@@ -239,7 +246,10 @@ Order* Player::issueOrder() {
 
             Card* toPlay = this->getPlayerCards()->getCard(0);
 
-            // Might need different order info depending on type (using the order set info require)
+            // Returns order based on Card
+            Order* order = toPlay->play();
+
+            // TODO Will need to set order info based on card type. (Using toAttack and toDefend)
             if (toPlay->getType() == Card::Type::Airlift) {
                 cout << "Played Airlift" << endl;
             }
@@ -252,11 +262,12 @@ Order* Player::issueOrder() {
             if (toPlay->getType() == Card::Type::Diplomacy) {
                 cout << "Played Diplomacy" << endl;
             }
-
-            // no Clue if this method will be the one to use for make the order
-            return toPlay->play();
+            if (toPlay->getType() == Card::Type::Reinforcement) {
+                cout << "Played Reinforcement" << endl;
+            }
+            return order;
         }
-            //If player has no cards do an advance order
+        //If player has no cards do an advance order
         else {
             Territory* src;
             Territory* target;
@@ -281,21 +292,21 @@ Order* Player::issueOrder() {
                 }
             }
 
-            //return new AdvanceOrder(this, src, target, src.armies);
+            // TODO Add proper Advance method "return new AdvanceOrder(this, src, target, src.armies);"
             cout << "Played Advance" << endl;
             return new Advance();
         }
     }
 }
 
-
-// Return a list of territories that the player already owns to defend them.
+// Returns a list of territories that the player already owns to defend them
 vector<Territory*>& Player::toDefend()
 {
     territoriesToDefend = this->getPlayerTerritories();
     return territoriesToDefend;
 }
 
+// Returns a list of territories that the player can attack
 vector<Territory*>& Player::toAttack()
 {
     vector<Territory*> toAttack = vector<Territory*>();
@@ -317,7 +328,7 @@ vector<Territory*>& Player::toAttack()
                         break;
                     }
                 }
-                // if the territoryname wasn't found
+                // if the territory name wasn't found
                 if (!found) {
                     toAttack.push_back(adjacentList.at(j));
                 }
