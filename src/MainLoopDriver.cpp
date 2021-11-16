@@ -119,10 +119,10 @@ int main()
 
 
     // Fast-forward states
-    gameEngine.transitionState(GameEngine::Transition::LoadMap);
-    gameEngine.transitionState(GameEngine::Transition::ValidateMap);
-    gameEngine.transitionState(GameEngine::Transition::AddPlayer);
-    gameEngine.transitionState(GameEngine::Transition::GameStart);
+    gameEngine.transition(GameEngine::Transition::LoadMap);
+    gameEngine.transition(GameEngine::Transition::ValidateMap);
+    gameEngine.transition(GameEngine::Transition::AddPlayer);
+    gameEngine.transition(GameEngine::Transition::GameStart);
 
 
     std::cout << "Ready with " << numPlayers << " players" << std::endl;

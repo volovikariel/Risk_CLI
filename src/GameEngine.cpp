@@ -109,7 +109,7 @@ const StateInfo& GameEngine::getStateInfo() const
     return stateGraphInfo.getStateInfo(state);
 }
 
-bool GameEngine::transitionState(State state)
+bool GameEngine::transition(State state)
 {
     // Check if the requested transition is valid
     if (getStateInfo().canDoState(state))
@@ -125,7 +125,7 @@ bool GameEngine::transitionState(State state)
     }
 }
 
-bool GameEngine::transitionState(Transition transition)
+bool GameEngine::transition(Transition transition)
 {
     // Check if the requested transition is valid, and retrieve the requested new state
     State newState;
@@ -182,7 +182,7 @@ bool GameEngine::executeCommand(Command& command)
                 return false;
             }
 
-            return transitionState(Transition::LoadMap);
+            return transition(Transition::LoadMap);
         }
         case Command::Type::ValidateMap:
         {
@@ -198,7 +198,7 @@ bool GameEngine::executeCommand(Command& command)
                 return false;
             }
 
-            return transitionState(Transition::ValidateMap);
+            return transition(Transition::ValidateMap);
         }
         case Command::Type::AddPlayer:
         {
@@ -224,7 +224,7 @@ bool GameEngine::executeCommand(Command& command)
             string effect = "Added player " + newPlayerName;
             command.saveEffect(effect);
 
-            return transitionState(Transition::AddPlayer);
+            return transition(Transition::AddPlayer);
         }
         case Command::Type::GameStart:
         {
@@ -276,7 +276,7 @@ bool GameEngine::executeCommand(Command& command)
 
             command.saveEffect("Started game and performed initial setup");
 
-            return transitionState(Transition::GameStart);
+            return transition(Transition::GameStart);
         }
         case Command::Type::Replay:
         {
@@ -284,7 +284,7 @@ bool GameEngine::executeCommand(Command& command)
 
             command.saveEffect("Replaying new game");
 
-            return transitionState(Transition::Replay);
+            return transition(Transition::Replay);
         }
         case Command::Type::Quit:
         {
@@ -292,7 +292,7 @@ bool GameEngine::executeCommand(Command& command)
 
             command.saveEffect("Quitting game");
 
-            return transitionState(Transition::Quit);
+            return transition(Transition::Quit);
         }
     }
 
@@ -317,15 +317,15 @@ void GameEngine::mainGameLoop() {
         GameEngine::executeOrdersPhase();
     }
     // If game is won by a player provide replay or quit options
-    if (this->transitionState(GameEngine::State::Win)) {
+    if (this->transition(GameEngine::State::Win)) {
         cout << "Game Won, enter 'replay' to play again or 'quit' to stop playing" << endl;
         string input;
         cin >> input;
-        while (this->transitionState(GameEngine::State::Win)) {
+        while (this->transition(GameEngine::State::Win)) {
             if (input == "replay") {
-                this->transitionState(GameEngine::Transition::Replay);
+                this->transition(GameEngine::Transition::Replay);
             } else if (input == "quit") {
-                this->transitionState(GameEngine::Transition::Quit);
+                this->transition(GameEngine::Transition::Quit);
             } else {
                 cout << "Invalid Command, try again." << endl;
                 cin >> input;
@@ -337,7 +337,7 @@ void GameEngine::mainGameLoop() {
 // Give players armies based on territories owns and bonus from continent
 void GameEngine::reinforcementPhase() {
 
-    this->transitionState(GameEngine::State::AssignReinforcements);
+    this->transition(GameEngine::State::AssignReinforcements);
 
     int playerIndex = 0;
     for(auto i : players) {
@@ -372,7 +372,7 @@ void GameEngine::reinforcementPhase() {
 // Issues orders to players based on the player's criteria
 void GameEngine::issueOrdersPhase() {
 
-    this->transitionState(GameEngine::State::IssueOrders);
+    this->transition(GameEngine::State::IssueOrders);
     // Determines when to stop issuing orders
     while (keepIssuing()) {
         for (size_t i = 0; i < this->getPlayers().size(); i++) {
@@ -390,7 +390,7 @@ void GameEngine::issueOrdersPhase() {
 // Executes orders from each player one by one
 void GameEngine::executeOrdersPhase() {
 
-    this->transitionState(GameEngine::State::ExecuteOrders);
+    this->transition(GameEngine::State::ExecuteOrders);
 
     // Verify if theres more order to execute
     while (this->moreOrders()) {
@@ -415,7 +415,7 @@ void GameEngine::executeOrdersPhase() {
                             order->execute();
                         // Verify if player has won the game
                         if (this->getPlayers().at(i)->getPlayerTerritories().size() == this->getMap().territories.size()) {
-                            this->transitionState(GameEngine::State::Win);
+                            this->transition(GameEngine::State::Win);
                             return;
                         } else
                             cout << "Order Invalid" << endl;

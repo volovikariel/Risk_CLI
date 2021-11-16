@@ -42,7 +42,7 @@ int main()
     // Calling OrderList's "addOrder" method to test the Observer
     ordersList.addOrder(order);
     // Calling GameEngine's "transition" method to test the Observer
-    gameEngine.transitionState(GameEngine::State::MapLoaded);
+    gameEngine.transition(GameEngine::State::MapLoaded);
     
     // Expected:
     /*

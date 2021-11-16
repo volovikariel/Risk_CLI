@@ -74,10 +74,10 @@ public :
     const StateInfo& getStateInfo() const;
 
     // Transitions to the provided state, if valid. Returns the valid status.
-    bool transitionState(State state);
+    bool transition(State state);
 
     // Performs the provided state transition, if valid. Returns the valid status.
-    bool transitionState(Transition transition);
+    bool transition(Transition transition);
 
     // Returns the currently loaded map
     Map& getMap();
