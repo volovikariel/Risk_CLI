@@ -473,14 +473,13 @@ Bomb::~Bomb()
 // Execute : First validates the order, and if valid executes its action
 bool Bomb::execute()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Bomb] Inside execute()" << endl;
     if(validate()){
         targetTerritory->armies /= 2;
-        cout << "[Deploy] valid order executed." << endl;
+        cout << "[Bomb] valid order executed." << endl;
         return true;
     } else {
-        cout << "[Deploy] invalid order." << endl;
+        cout << "[Bomb] invalid order." << endl;
         return false;
     }
 }
@@ -539,6 +538,15 @@ Blockade::Blockade(const Blockade& other):
     this->setType(Type::Blockade);
 }
 
+// Parameterized Constructor
+Blockade::Blockade(Player *player, Territory *targetTerritory):
+    Order()
+{
+    this->setType(Type::Blockade);
+    this->player = player;
+    this->targetTerritory = targetTerritory;
+}
+
 // Destructor
 Blockade::~Blockade()
 {
@@ -548,20 +556,26 @@ Blockade::~Blockade()
 // Execute : First validates the order, and if valid executes its action
 bool Blockade::execute()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Blockade] Inside execute()" << endl;
-//    if(validate()){
-//
-//    }
-    return false;
+    if(validate()){
+        targetTerritory->armies *= 2;
+        //Change ownership to neutral
+        cout << "[Blockade] valid order executed." << endl;
+        return true;
+    }else{
+        return false;
+    }
 }
 
 // Validate : checks if an order is valid
 bool Blockade::validate()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Blockade] Inside validate()" << endl;
-    return false;
+    if(targetTerritory != nullptr && player->hasTerritory(targetTerritory)){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 // Assignment operator
@@ -675,6 +689,15 @@ Negotiate::Negotiate(const Negotiate& other):
     this->setType(Type::Negotiate);
 }
 
+// Parameterized Constructor
+Negotiate::Negotiate(Player *player, Player *target):
+    Order()
+{
+    this->setType(Type::Blockade);
+    this->player = player;
+    this->target = target;
+}
+
 // Destructor
 Negotiate::~Negotiate()
 {
@@ -684,20 +707,24 @@ Negotiate::~Negotiate()
 // Execute : First validates the order, and if valid executes its action
 bool Negotiate::execute()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Negotiate] Inside execute()" << endl;
-//    if(validate()){
-//
-//    }
-    return false;
+    if(validate()){
+        //---------------IMPLEMENT NEEDED------------------
+        cout << "[Blockade] valid order executed." << endl;
+    }else{
+        return false;
+    }
 }
 
 // Validate : checks if an order is valid
 bool Negotiate::validate()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Negotiate] Inside validate()" << endl;
-    return false;
+    if (target->getPlayerID()!=player->getPlayerID()){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 // Assignment operator

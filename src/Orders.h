@@ -142,10 +142,10 @@ public:
     Bomb& operator = (const Bomb& other);                               // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Bomb& source);     // Stream Insertion Operator
     ostream& print(ostream& out) const override;             
-    private:
-        Player* player;
-        Territory* sourceTerritory;
-        Territory* targetTerritory;
+private:
+    Player* player;
+    Territory* sourceTerritory;
+    Territory* targetTerritory;
 };
 
 // ==================== Blockade Class ====================
@@ -155,12 +155,16 @@ public:
 
     Blockade();                                                             // Default Constructor
     Blockade(const Blockade& other);                                        // Copy Constructor
+    Blockade(Player *player, Territory *targetTerritory);                   // Parameterized Constructor
     ~Blockade();                                                            // Destructor
     bool execute() override;                                                // First validates the order, and if valid executes its action
     bool validate() override;                                               // Checks if the order is valid
     Blockade& operator = (const Blockade& other);                           // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Blockade& source);     // Stream Insertion Operator
     ostream& print(ostream& out) const override;                            // Prints to an output stream
+    private:
+        Player* player;
+        Territory* targetTerritory;
 };
 
 // ==================== Airlift Class ====================
@@ -182,13 +186,16 @@ public:
 class Negotiate : public Order
 {
 public:
-
     Negotiate();                                                                // Default Constructor
     Negotiate(const Negotiate& other);                                          // Copy Constructor
+    Negotiate(Player *player, Player *target);                                  // Parameterized Constructor
     ~Negotiate();                                                               // Destructor
     bool execute() override;                                                    // First validates the order, and if valid executes its action
     bool validate() override;                                                   // Checks if the order is valid
     Negotiate& operator = (const Negotiate& other);                             // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Negotiate& source);        // Stream Insertion Operator
     ostream& print(ostream& out) const override;                                // Prints to an output stream
+private:
+    Player* player;
+    Player* target;
 };
