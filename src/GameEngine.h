@@ -103,8 +103,23 @@ public :
     // Executes queued player orders.
     void executeOrdersPhase();
 
+    // Verifies if players have any armies remaining
+    bool keepIssuing();
+
+    // Verifies if players still have more deploy orders
+    bool moreDeploy();
+
+    // Verifies if players still have more orders
+    bool moreOrders();
+
+    // Verifies if a player need to be eliminated
+    void eliminatePlayer();
+
+    // Check if player has been eliminated
+    bool isEliminated(Player*);
+
     // Holds elimination status for each player
-    vector<bool> eliminated;
+    vector<Player*> eliminated;
 
 private:
 

@@ -257,9 +257,27 @@ string GameEngine::stringToLog()
 }
 
 void GameEngine::mainGameLoop() {
-    GameEngine::reinforcementPhase();
-    GameEngine::issueOrdersPhase();
-    GameEngine::executeOrdersPhase();
+    eliminatePlayer();
+    while (eliminated.size() < this->getPlayers().size()-1) {
+        GameEngine::reinforcementPhase();
+        GameEngine::issueOrdersPhase();
+        GameEngine::executeOrdersPhase();
+    }
+    if (this->transitionState(GameEngine::State::Win)) {
+        cout << "Game Won, enter 'replay' to play again or 'quit' to stop playing" << endl;
+        string input;
+        cin >> input;
+        while (this->transitionState(GameEngine::State::Win)) {
+            if (input == "replay") {
+                this->transitionState(GameEngine::Transition::Replay);
+            } else if (input == "quit") {
+                this->transitionState(GameEngine::Transition::Quit);
+            } else {
+                cout << "Invalid Command, try again." << endl;
+                cin >> input;
+            }
+        }
+    }
 }
 
 void GameEngine::reinforcementPhase() {
@@ -268,7 +286,7 @@ void GameEngine::reinforcementPhase() {
 
     int playerIndex = 0;
     for(auto i : players) {
-        if (eliminated[playerIndex] == false) {
+        if (!isEliminated(i)) {
             i->setPlayerArmies(i->getPlayerArmies() + floor(i->getPlayerTerritories().size() /3));
 
             vector<int> numTerritoriesPerContinent(this->getMap().continents.size());
@@ -294,13 +312,10 @@ void GameEngine::reinforcementPhase() {
 void GameEngine::issueOrdersPhase() {
 
     this->transitionState(GameEngine::State::IssueOrders);
-    for (size_t i = 0; i < this->getPlayers().size(); i++) {
-        int turn = 0;
-        if (eliminated[i] == false) {
-            while (turn < 3) {
-                if (this->getPlayers().at(i)->getPlayerArmies() == 0) {
-                    turn ++;
-                }
+    // Determines when to stop issuing orders
+    while (keepIssuing()) {
+        for (size_t i = 0; i < this->getPlayers().size(); i++) {
+            if (!isEliminated(this->getPlayers().at(i))) {
                 Order *currOrder = this->getPlayers().at(i)->issueOrder();
                 this->getPlayers().at(i)->getPlayerOrders()->addOrder(currOrder);
             }
@@ -312,32 +327,81 @@ void GameEngine::executeOrdersPhase() {
 
     this->transitionState(GameEngine::State::ExecuteOrders);
 
-    bool moreOrders = true;
-    while (moreOrders) {
-        moreOrders = false;
+    while (this->moreOrders()) {
         for (size_t i = 0; i < this->getPlayers().size(); i++) {
-            bool isDeploy = true;
-            OrdersList* ol = this->getPlayers().at(i)->getPlayerOrders();
-            vector<Order*> &orders = this->getPlayers().at(i)->getPlayerOrders()->getOrdersList();
-            if (orders.size() > 0) {
-                int count = 0;
-                for (size_t j = 0; j < orders.size(); j++) {
-                    Order *order = orders.at(j);
+            if (!isEliminated(this->getPlayers().at(i))) {
+                OrdersList *ol = this->getPlayers().at(i)->getPlayerOrders();
+                vector<Order *> &orders = this->getPlayers().at(i)->getPlayerOrders()->getOrdersList();
+                if (orders.size() > 0) {
+                    Order *order = orders.front();
                     if (order->getType() == Order::Type::Deploy) {
-                        count ++;
-                        cout << "Execute Deploy " << j << endl;
+                        cout << "Execute Deploy" << endl;
                         if (order->validate())
                             order->execute();
-                        ol->remove(j);
-                        j--;
+                        else
+                            cout << "Order Invalid" << endl;
+                        ol->remove(0);
+                    } else if (!moreDeploy()) {
+                        if (order->validate())
+                            order->execute();
+                        if (this->getPlayers().at(i)->getPlayerTerritories().size() == this->getMap().territories.size()) {
+                            this->transitionState(GameEngine::State::Win);
+                            return;
+                        } else
+                            cout << "Order Invalid" << endl;
+                        ol->remove(0);
                     }
                 }
-            } else {
-                moreOrders = false;
             }
 
         }
     }
+}
+
+bool GameEngine::keepIssuing() {
+    for (auto p : this->getPlayers()) {
+        if (p->getPlayerArmies() > 0) {
+            return true;
+        }
+        if (p->getPlayerOrders()->getOrdersList().at(p->getPlayerOrders()->getOrdersList().size()-4)->getType() == Order::Type::Deploy) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool GameEngine::moreDeploy() {
+    for (auto p : this->getPlayers()) {
+        if (p->getPlayerOrders()->getOrdersList().front()->getType() == Order::Type::Deploy) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool GameEngine::moreOrders() {
+    for (auto p : this->getPlayers()) {
+        if (p->getPlayerOrders()->getOrdersList().size() > 0)
+            return true;
+    }
+    return false;
+}
+
+void GameEngine::eliminatePlayer() {
+    for (auto p : this->getPlayers()) {
+        if (p->getPlayerTerritories().size() == 0) {
+            eliminated.push_back(p);
+        }
+    }
+}
+
+bool GameEngine::isEliminated(Player* p) {
+    for (auto ep : eliminated) {
+        if (ep->getPlayerName() == p->getPlayerName()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 

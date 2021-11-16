@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "Cards.h"
 
 // Constructors
 // Default constructor
@@ -230,22 +229,17 @@ Order* Player::issueOrder() {
 
         playerArmies -= amount;
 
-        // Need to update
         Deploy* deploy = new Deploy();
         return deploy;
     }
-    // Chose card and play it.
+        // Chose card and play it.
     else {
 
         if (!this->playerCards->getCards().empty()) {
 
+            Card* toPlay = this->getPlayerCards()->getCard(0);
 
-            Card *toPlay = this->playerCards->getCard(0);
-            this->getPlayerCards()->removeCard(0);
-            // no Clue if this method will be the one to use for make the order
-            //toPlay->play();
-
-            // Might need different order info depending on type (Need to implement when order are complete)
+            // Might need different order info depending on type (using the order set info require)
             if (toPlay->getType() == Card::Type::Airlift) {
                 cout << "Played Airlift" << endl;
             }
@@ -259,11 +253,10 @@ Order* Player::issueOrder() {
                 cout << "Played Diplomacy" << endl;
             }
 
-            delete toPlay;
-            // modify with order type when order logic is complete
-            return new Order();
+            // no Clue if this method will be the one to use for make the order
+            return toPlay->play();
         }
-        //If player has no cards do an advance order
+            //If player has no cards do an advance order
         else {
             Territory* src;
             Territory* target;
@@ -273,11 +266,11 @@ Order* Player::issueOrder() {
 
             if(r==0) {
                 target = atk[0];
-               for(auto option : target->neighbors) {
-                   if (option->player == this && option->armies > 0)
-                       src = option;
-                        break;
-               }
+                for(auto option : target->neighbors) {
+                    if (option->player == this && option->armies > 0)
+                        src = option;
+                    break;
+                }
             }
             else {
                 target = def[0];
@@ -290,7 +283,7 @@ Order* Player::issueOrder() {
 
             //return new AdvanceOrder(this, src, target, src.armies);
             cout << "Played Advance" << endl;
-            return new Order();
+            return new Advance();
         }
     }
 }

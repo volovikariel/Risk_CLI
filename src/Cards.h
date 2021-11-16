@@ -39,7 +39,7 @@ public:
     // Stream insertion operator
     friend std::ostream& operator << (std::ostream& out, const Card& source);
     // Adds an order to the player's order's list based on the type of card
-    void play();
+    Order* play();
     // Returns the type of the card
     Type getType() const;
     // Returns the hand which the card is part of

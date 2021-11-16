@@ -24,17 +24,17 @@ int main()
     mainDeck.addCard(*new Card(Card::Type::Blockade));
     mainDeck.addCard(*new Card(Card::Type::Bomb));
     mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-    mainDeck.addCard(*new Card(Card::Type::Reinforcement));
+    //mainDeck.addCard(*new Card(Card::Type::Reinforcement));
     mainDeck.addCard(*new Card(Card::Type::Airlift));
     mainDeck.addCard(*new Card(Card::Type::Blockade));
     mainDeck.addCard(*new Card(Card::Type::Bomb));
     mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-    mainDeck.addCard(*new Card(Card::Type::Reinforcement));
+    //mainDeck.addCard(*new Card(Card::Type::Reinforcement));
     mainDeck.addCard(*new Card(Card::Type::Airlift));
     mainDeck.addCard(*new Card(Card::Type::Blockade));
     mainDeck.addCard(*new Card(Card::Type::Bomb));
     mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-    mainDeck.addCard(*new Card(Card::Type::Reinforcement));
+   //mainDeck.addCard(*new Card(Card::Type::Reinforcement));
 
 
     // Load map
@@ -83,7 +83,6 @@ int main()
         newPlayer->setPlayerName(playerName);
 
         gameEngine.getPlayers().push_back(newPlayer);
-        gameEngine.eliminated.push_back(false);
     }
 
 
@@ -139,7 +138,7 @@ int main()
         gameEngine.mainGameLoop();
     }
     catch (exception& ex) {
-        cout << "Error starting game!";
+        cout << "Error starting game! " << ex.what();
     }
 
 
