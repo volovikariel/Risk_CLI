@@ -412,18 +412,21 @@ Advance::~Advance()
 
 }
 
+float random01()
+{
+    return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+}
+
 //Execute : First validates the order, and if valid executes its action
 bool Advance::execute()
 {
     if (validate())
     {
-        // Since the advance is valid, we will remove the specified number of armies from the source territory
-        sourceTerritory->armies -= this->armies;
-
         // If the source and target territories both belong to the player, then we just move the armies there
         if (player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
         {
-            targetTerritory->armies += this->armies; // Move the number of armies to the target territory
+            sourceTerritory->armies -= this->armies; // Move the number of armies to the target territory
+            targetTerritory->armies += this->armies;
 
             std::ostringstream stream;
             stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name << " to territory " << targetTerritory->name << " for player " << player->getPlayerName();
@@ -435,61 +438,55 @@ bool Advance::execute()
         else if (!player->hasTerritory(targetTerritory))
         {
             int armiesAttacking = armies;
-            int randomNumber = 0;
+            int armiesDefending = targetTerritory->armies;
 
-            // Loop until one of the armies loses
-            while (armies > 0 && targetTerritory->armies > 0)
+            int armiesDefendingKilled = 0;
+            for (int i = 0; i < armiesAttacking; ++i)
             {
-                // Attacking Army: 60% chance of killing the defending army.
-                for (int i = 0; i < armies; i++)
+                if (random01() <= 0.6f)
                 {
-                    randomNumber = (rand() % 100) + 1;
-
-                    //If the random number generated is between 1 and 60: we have 60% chance, so we kill 1
-                    if(randomNumber >= 60){
-                        targetTerritory->armies -= 1;
-                    }
-                }
-
-                //Defending Army: 70% chance of killing the attacking army.
-                for(int i = 0; i < targetTerritory->armies; i++){
-                    randomNumber = (rand() % 100) + 1;
-
-                    //If the random number generated is between 1 and 70: we have 70% chance, so we kill 1
-                    if(randomNumber >= 70){
-                        armies -= 1;
-                    }
+                    armiesDefendingKilled++;
                 }
             }
 
-            // After the attack, 3 cases are possible. 1)Attacker won, 2)Defender won, 3)They both lost
-
-            // CASE 1: Attacker won
-            if (targetTerritory->armies <= 0)
+            int armiesAttackingKilled = 0;
+            for (int i = 0; i < armiesDefending; ++i)
             {
-                // Add the armies that was won
-                targetTerritory->armies = armies;
-                cout << "[Advance] Advance order was executed, attack was a SUCCESS!" << endl;
-                // Player won, so add the new territory
+                if (random01() <= 0.7f)
+                {
+                    armiesAttackingKilled++;
+                }
+            }
+
+            int armiesAttackingLeft = max(0, armiesAttacking - armiesAttackingKilled);
+            int armiesDefendingLeft = max(0, armiesDefending - armiesDefendingKilled);
+
+            if (armiesDefendingLeft <= 0)
+            {
+                sourceTerritory->armies -= armiesAttacking;
+                targetTerritory->armies = armiesAttackingLeft;
+
                 player->addPlayerTerritory(targetTerritory);
-                // TODO: PLAYER MUST GET A CARD SINCE THEY WON. IS IT A RANDOM CARD?
+                targetTerritory->player = player;
 
-                return true;
+                std::ostringstream stream;
+                stream << "Player " << player->getPlayerName() << " attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
+                    " with " << armies << " armies. The territory was conquered. " << armiesAttackingLeft << " attacking armies are left and have occupied the territory.";
+                saveEffect(stream.str());
+
+                // TODO: PLAYER MUST GET A CARD SINCE THEY WON.
             }
-            // CASE 2: Defender won
-            else if (armies <= 0)
+            else
             {
-                cout << "[Advance] Advance order was executed, but failed to capture the target territory" << endl;
-                return false;
-            }
-            // CASE 3: Both attacker and defender lost
-            else if (targetTerritory->armies <= 0 && armies <= 0)
-            {
-                cout << "[Advance] Advance order was executed, the attack was not successful. " << player->getPlayerName() << " lost their army." << endl;
-                return false;
+                sourceTerritory->armies -= armiesAttackingKilled;
+                targetTerritory->armies = armiesDefendingLeft;
+
+                std::ostringstream stream;
+                stream << "Player " << player->getPlayerName() << " attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
+                    " with " << armies << " armies. " << armiesAttackingLeft << " attacking armies are left and " << armiesDefendingLeft << " defending armies are left.";
+                saveEffect(stream.str());
             }
         }
-
     }
     else
     {
