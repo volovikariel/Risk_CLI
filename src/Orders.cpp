@@ -431,8 +431,6 @@ bool Advance::execute()
             std::ostringstream stream;
             stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name << " to territory " << targetTerritory->name << " for player " << player->getPlayerName();
             saveEffect(stream.str());
-
-            return true;
         }
         // If the target territory does not belong to the player, then we attack.
         else if (!player->hasTerritory(targetTerritory))
@@ -487,6 +485,8 @@ bool Advance::execute()
                 saveEffect(stream.str());
             }
         }
+
+        return true;
     }
     else
     {
@@ -541,11 +541,10 @@ ostream& operator<<(ostream& out, const Advance& source)
 // Print method to display the description and effect of the order
 ostream& Advance::print(ostream& out) const
 {
-    Order::print(out);
     out << "[Advance Description]: Move some armies from one of the current player's territories to an adjacent territory." << endl;
     if (executed)
     {
-        out << "[Advance Effect]: If the territory belongs to the player, the armies move there. If it belongs to an other player, an attack happens." << endl;
+        out << "[Advance Effect]: " << effect << endl;
     }
     return out;
 }
@@ -556,7 +555,8 @@ ostream& Advance::print(ostream& out) const
 // ==================== Bomb Class ====================
 
 // Default Constructor
-Bomb::Bomb() {
+Bomb::Bomb()
+{
     this->setType(Type::Bomb);
     this->setExecuted(true);
 }
@@ -569,31 +569,36 @@ Bomb::Bomb(const Bomb& other):
 }
 
 // Parameterized Constructor
-Bomb::Bomb(Player *player, Territory *source, Territory *targetTerritory):
-    Order() 
+Bomb::Bomb(Player& player, Territory& territory):
+    Order(),
+    player(&player),
+    territory(&territory)
 {
     this->setType(Type::Bomb);
-    this->player = player;
-    this->sourceTerritory = source;
-    this->targetTerritory = targetTerritory;
 }
 
 // Destructor
 Bomb::~Bomb()
 {
-    cout << "Destroying order: bomb." << endl;
+
 }
 
 // Execute : First validates the order, and if valid executes its action
 bool Bomb::execute()
 {
-    cout << "[Bomb] Inside execute()" << endl;
-    if(validate()){
-        targetTerritory->armies /= 2;
-        cout << "[Bomb] valid order executed." << endl;
+    if (validate())
+    {
+        int initialArmies = territory->armies;
+        territory->armies /= 2;
+
+        std::ostringstream stream;
+        stream << "Player " << player->getPlayerName() << " bombed territory " << territory->name << ". It had " << initialArmies << " armies, now " << territory->armies << " are left.";
+        saveEffect(stream.str());
+
         return true;
-    } else {
-        cout << "[Bomb] invalid order." << endl;
+    }
+    else
+    {
         return false;
     }
 }
@@ -601,13 +606,24 @@ bool Bomb::execute()
 // Validate : checks if an order is valid
 bool Bomb::validate()
 {
-    cout << "[Bomb] Inside validate()" << endl;
-     if (targetTerritory != nullptr && player->hasTerritory(sourceTerritory) && !(player->hasTerritory(targetTerritory)) && targetTerritory->isNeighbor(sourceTerritory)
-        && std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory->player) == player->getUnattackable().end()){
-        return true;
-    }else{
-        return false;
+    if (player == nullptr || territory == nullptr)
+    {
+        saveEffect("nullptr arguments passed");
     }
+    else if (player == territory->player)
+    {
+        saveEffect("Can't bomb own territory");
+    }
+    else if (std::find(player->getUnattackable().begin(), player->getUnattackable().end(), territory->player) != player->getUnattackable().end())
+    {
+        saveEffect("Can't bomb a diplomatic ally");
+    }
+    else
+    {
+        return true;
+    }
+
+    return false;
 }
 
 // Assignment operator

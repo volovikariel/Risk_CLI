@@ -47,6 +47,7 @@ public:
     string stringToLog();
 
 protected:
+
     void setType(Type orderType);                                       // Setter for the order type
     void saveEffect(const std::string& effect);                          // Sets execution effect
 
@@ -54,6 +55,7 @@ protected:
     string effect;                                                      // Holds the execution effect
 
 private:
+
     Type orderType;
 };
 
@@ -138,17 +140,18 @@ public:
 
     Bomb();                                                             // Default Constructor
     Bomb(const Bomb& other);                                            // Copy Constructor
-    Bomb(Player *player, Territory *source, Territory *targetTerritory);// Parameterized Constructor
+    Bomb(Player& player, Territory& territory);                         // Parameterized Constructor
     ~Bomb();                                                            // Destructor
     bool execute() override;                                            // First validates the order, and if valid executes its action
     bool validate() override;                                           // Checks if the order is valid
     Bomb& operator = (const Bomb& other);                               // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Bomb& source);     // Stream Insertion Operator
-    ostream& print(ostream& out) const override;             
+    ostream& print(ostream& out) const override;      
+
 private:
+
     Player* player;
-    Territory* sourceTerritory;
-    Territory* targetTerritory;
+    Territory* territory;
 };
 
 // ==================== Blockade Class ====================
