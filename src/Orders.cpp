@@ -693,6 +693,14 @@ Airlift::Airlift(const Airlift& other):
     this->setType(Type::Airlift);
 }
 
+//Parameterized Constructor
+Airlift::Airlift(const int &playerArmies, Player *const player, Territory *source, Territory *target) : Order() {
+    this->armies = playerArmies;
+    this->player = player;
+    this->sourceTerritory = source;
+    this->targetTerritory = target;
+}
+
 // Destructor
 Airlift::~Airlift()
 {
@@ -702,19 +710,27 @@ Airlift::~Airlift()
 // Execute : First validates the order, and if valid executes its action
 bool Airlift::execute()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
-    cout << "[Airlift] Inside execute()" << endl;
-//    if(validate()){
-//
-//    }
+    if(validate()){
+        //TODO: THE AIRLIFT IS ONLY FOR THE PLAYER WHO OWNS THE SOURCE AND TARGET TERRITORIES RIGHT? DOESN'T PRODUCE AN ATTACK IF ITS NOT THEIRS
+        //TODO: MAKE SURE THAT THIS IS ALL THAT NEEDS TO BE DONE HERE
+        sourceTerritory->armies -= this->armies;
+        targetTerritory->armies += armies;
+
+        cout << "[AirLift] Airlift order executed, armies were moved from source to target territory." << endl;
+    }
     return false;
 }
 
 // Validate : checks if an order is valid
 bool Airlift::validate()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
-    cout << "[Airlift] Inside validate()" << endl;
+    if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)){
+        return true;
+    }
+    else {
+        cout << "[Airlift] Invalid airlift order. Source or target territory does not belong to player." << endl;
+        return false;
+    }
     return false;
 }
 

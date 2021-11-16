@@ -163,9 +163,9 @@ public:
     Blockade& operator = (const Blockade& other);                           // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Blockade& source);     // Stream Insertion Operator
     ostream& print(ostream& out) const override;                            // Prints to an output stream
-    private:
-        Player* player;
-        Territory* targetTerritory;
+private:
+    Player* player;
+    Territory* targetTerritory;
 };
 
 // ==================== Airlift Class ====================
@@ -175,12 +175,18 @@ public:
 
     Airlift();                                                              // Default Constructor
     Airlift(const Airlift& other);                                          // Copy Constructor
+    Airlift(const int& playerArmies, Player* const player, Territory* source, Territory* target);
     ~Airlift();                                                             // Destructor
     bool execute() override;                                                // First validates the order, and if valid executes its action
     bool validate() override;                                               // Checks if the order is valid
     Airlift& operator = (const Airlift& other);                             // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Airlift& source);      // Stream Insertion Operator
     ostream& print(ostream& out) const override;                            // Prints to an output stream
+private:
+    Territory* targetTerritory;
+    Territory* sourceTerritory;
+    Player* player;
+    int armies;
 };
 
 // ==================== Negotiate Class ====================
