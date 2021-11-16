@@ -85,6 +85,9 @@ public :
     // Returns the current players
     vector<Player*>& getPlayers();
 
+    // Performs initial setup
+    void startupPhase();
+
     // Executes a command. Returns a success status.
     bool executeCommand(Command& command);
 

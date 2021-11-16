@@ -20,7 +20,7 @@ public:
 
     // Constructor(s) and destructor
     Player();
-    Player(vector<Territory*>& playerTerritories, int playerArmies, int playerID, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend);
+    Player(vector<Territory*>& playerTerritories, int playerArmies, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend);
     Player(const Player& other);
     ~Player();
 
@@ -33,8 +33,6 @@ public:
     OrdersList* getPlayerOrders();
     // Returns the armies of the player
     int getPlayerArmies() const;
-    // Returns the player ID
-    int getPlayerID() const;
     // Returns a list of territories owned by the player that need to be defended
     vector<Territory*>& toDefend();
     // Returns a list of territories that are attacked by the player
@@ -90,8 +88,6 @@ private:
     // Helper attributes
     // Represent the number of armies of the player
     int playerArmies;
-    // Represents the player ID's
-    int playerID;
     // Represents the player's name
     string playerName;
 };

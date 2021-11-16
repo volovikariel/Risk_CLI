@@ -7,7 +7,6 @@ Player::Player():
     playerCards(new Hand(*this)),
     playerOrdersList(new OrdersList()),
     playerArmies(0),
-    playerID(0),
     territoriesToAttack(),
     territoriesToDefend(),
     hasConqueredThisTurn(false)
@@ -16,12 +15,11 @@ Player::Player():
 }
 
 // Parametrized constructor
-Player::Player(vector<Territory*>& playerTerritories, int playerArmies, int playerID, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend):
+Player::Player(vector<Territory*>& playerTerritories, int playerArmies, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend):
     playerTerritories(playerTerritories),
     playerCards(new Hand(*this)),
     playerOrdersList(new OrdersList()),
     playerArmies(playerArmies),
-    playerID(playerID),
     territoriesToAttack(territoriesToAttack),
     territoriesToDefend(territoriesToDefend),
     hasConqueredThisTurn(false)
@@ -33,7 +31,6 @@ Player::Player(vector<Territory*>& playerTerritories, int playerArmies, int play
 Player::Player(const Player& other):
     playerTerritories(other.playerTerritories),
     playerArmies(other.playerArmies),
-    playerID(other.playerID),
     territoriesToAttack(other.territoriesToAttack),
     territoriesToDefend(other.territoriesToDefend),
     hasConqueredThisTurn(other.hasConqueredThisTurn)
@@ -76,10 +73,6 @@ int Player::getPlayerArmies() const
 const std::string& Player::getPlayerName() const
 {
     return playerName;
-}
-
-int Player::getPlayerID() const {
-    return playerID;
 }
 
 //Get the list of players that this player cannot attack
@@ -172,7 +165,6 @@ void Player::operator = (const Player& other)
     playerCards = new Hand(*(other.playerCards));
     playerOrdersList = new OrdersList(*(other.playerOrdersList));
     playerArmies = other.playerArmies;
-    playerID = other.playerID;
     territoriesToAttack = other.territoriesToAttack;
     territoriesToDefend = other.territoriesToDefend;
     hasConqueredThisTurn = other.hasConqueredThisTurn;
@@ -181,7 +173,7 @@ void Player::operator = (const Player& other)
 //stream insertion operator overloading
 ostream& operator << (ostream& out, const Player& source)
 {
-    out << "\nPlayer ID: " << source.playerID << endl;
+    out << "\nPlayer Name: " << source.playerName << endl;
 
     out << "\nPlayer's Reinforcement Pool: " << source.playerArmies << endl;
 
