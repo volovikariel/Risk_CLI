@@ -89,7 +89,7 @@ public:
 
     Deploy();                                                                                           // Default Constructor
     Deploy(const Deploy& other);                                                                        // Copy Constructor
-    Deploy(const int& playerArmies, Player* player, Territory* targetTerritory);                        // Parameterized Constructor
+    Deploy(int armies, Player& player, Territory& territory);                                           // Parameterized Constructor
     ~Deploy();                                                                                          // Destructor
     bool execute() override;                                                                            // First validates the order, and if valid executes its action
     bool validate() override;                                                                           // Checks if the order is valid
@@ -98,10 +98,10 @@ public:
     ostream& print(ostream& out) const override;                                                        // Prints to an output stream
 
 private:
-    int playerID;
-    Player* player;
-    Territory* targetTerritory;
+
     int armies;
+    Player* player;
+    Territory* territory;
 };
 
 // ==================== Advance Class ====================

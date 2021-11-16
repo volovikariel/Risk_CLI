@@ -285,31 +285,32 @@ Deploy::Deploy(const Deploy& source):
 }
 
 // Parameterized Constructor
-Deploy::Deploy(const int &playerArmies, Player *player, Territory *targetTerritory) : Order() {
+Deploy::Deploy(int armies, Player& player, Territory& territory):
+    Order()
+{
     this->setType(Type::Deploy);
-    this->playerID = player->getPlayerID();
-    this->player = player;
-    this->armies = playerArmies;
-    this->targetTerritory = targetTerritory;
+    this->armies = armies;
+    this->player = &player;
+    this->territory = &territory;
 }
 
 // Destructor
 Deploy::~Deploy()
 {
-    cout << "Destroying order: deploy." << endl;
+
 }
 
 // Execute : First validates the order, and if valid executes its action
 bool Deploy::execute()
 {
-    if(validate()){
-        player->setPlayerArmies(player->getPlayerArmies() - this->armies);
-        targetTerritory->armies += this->armies;
-
-        cout << "[Deploy] valid order executed." << endl;
+    if (validate())
+    {
+        player->setPlayerArmies(player->getPlayerArmies() - armies);
+        territory->armies += armies;
         return true;
-    } else {
-        cout << "[Deploy] invalid order." << endl;
+    }
+    else
+    {
         return false;
     }
 }
@@ -317,14 +318,7 @@ bool Deploy::execute()
 // Validate : checks if an order is valid
 bool Deploy::validate()
 {
-    cout << "[Deploy] Validating Order..." << endl;
-
-    if(targetTerritory != nullptr && armies >= 0 && player->hasTerritory(targetTerritory)){
-        return true;
-    }
-    else {
-        return false;
-    }
+    return armies > 0 && territory != nullptr && player->hasTerritory(territory);
 }
 
 // Assignment operator
@@ -344,10 +338,10 @@ ostream& operator<<(ostream& out, const Deploy& source)
 ostream& Deploy::print(ostream& out) const
 {
     Order::print(out);
-    out << "[Deploy Description]: Places some armies on one of the current player's territories" << endl;
+    out << "[Deploy Description]: Places some armies on one of the player's territories" << endl;
     if (executed)
     {
-        out << "[Deploy Effect]: Places armies on territories" << endl;
+        out << "[Deploy Effect]: Placed " << armies << " armies on territory " << territory->name << " for player " << player->getPlayerName() << endl;
     }
     return out;
 }

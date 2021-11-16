@@ -256,7 +256,7 @@ Order* Player::issueOrder() {
         // Remove armies we will deploy from the player pool
         playerArmies -= amount;
 
-        Deploy* deploy = new Deploy(amount, this, destination);
+        Deploy* deploy = new Deploy(amount, *this, *destination);
         return deploy;
     }
         // Chose card and play it.
