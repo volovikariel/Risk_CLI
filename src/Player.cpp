@@ -179,6 +179,8 @@ ostream& operator << (ostream& out, const Player& source)
 {
     out << "\nPlayer ID: " << source.playerID << endl;
 
+    out << "\nPlayer's Reinforcement Pool: " << source.playerArmies << endl;
+
     if (!source.playerTerritories.empty())
     {
         out << "\nPlayer's territories:\n";

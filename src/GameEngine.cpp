@@ -277,14 +277,6 @@ bool GameEngine::executeCommand(Command& command)
                 }
             }
 
-            // Showing off what the players have
-            cout << endl;
-            for (const Player* player : players)
-            {
-                cout << "Player " << player->getPlayerName() << endl;
-                cout << *player << endl;
-            }
-
             command.saveEffect("Started game and performed initial setup");
 
             return transitionState(Transition::GameStart);

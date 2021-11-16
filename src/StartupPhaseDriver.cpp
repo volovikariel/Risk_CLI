@@ -1,5 +1,6 @@
 #include "CommandProcessing.h"
 #include "GameEngine.h"
+#include "Player.h"
 
 #include <iostream>
 #include <sstream>
@@ -44,6 +45,18 @@ int main()
                 std::cout << "Command execution failed:" << std::endl;
             }
             std::cout << (*command) << std::endl;
+
+            // Show players' state at startup
+            if (success && command->getType() == Command::Type::GameStart)
+            {
+                // Showing off what the players have
+                cout << endl;
+                for (const Player* player : gameEngine.getPlayers())
+                {
+                    cout << "Player " << player->getPlayerName() << ":" << endl;
+                    cout << *player << endl;
+                }
+            }
         }
     }
 }
