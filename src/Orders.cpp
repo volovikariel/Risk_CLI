@@ -365,10 +365,14 @@ ostream& operator<<(ostream& out, const Deploy& source)
 // Print method to display the description and effect of the order
 ostream& Deploy::print(ostream& out) const
 {
-    out << "[Deploy Description]: Places some armies on one of the player's territories." << endl;
+    out << "[" << getType() << "]";
     if (executed)
     {
-        out << "[Deploy Effect]: " << effect << endl;
+        out << " executed";
+    }
+    if (effect.size() > 0)
+    {
+        out << ": " << effect;
     }
     return out;
 }
@@ -552,10 +556,14 @@ ostream& operator<<(ostream& out, const Advance& source)
 // Print method to display the description and effect of the order
 ostream& Advance::print(ostream& out) const
 {
-    out << "[Advance Description]: Move some armies from one of the current player's territories to an adjacent territory." << endl;
+    out << "[" << getType() << "]";
     if (executed)
     {
-        out << "[Advance Effect]: " << effect << endl;
+        out << " executed";
+    }
+    if (effect.size() > 0)
+    {
+        out << ": " << effect;
     }
     return out;
 }
@@ -659,10 +667,14 @@ ostream& operator << (ostream& out, const Bomb& source)
 // Print method to display the description and effect of the order
 ostream& Bomb::print(ostream& out) const
 {
-    out << "[Bomb Description]: Destroy half of the armies on an opponent's territory." << endl;
+    out << "[" << getType() << "]";
     if (executed)
     {
-        out << "[Bomb Effect]: " << effect << endl;
+        out << " executed";
+    }
+    if (effect.size() > 0)
+    {
+        out << ": " << effect;
     }
     return out;
 }
@@ -767,10 +779,14 @@ ostream& operator << (ostream& out, const Blockade& source)
 // Print method to display the description and effect of the order
 ostream &Blockade::print(ostream& out) const
 {
-    out << "[Blockade Description]: Double the number of armies on one of the current player's territories and make it a neutral territory." << endl;
+    out << "[" << getType() << "]";
     if (executed)
     {
-        out << "[Blockade Effect]: " << effect << endl;
+        out << " executed";
+    }
+    if (effect.size() > 0)
+    {
+        out << ": " << effect;
     }
     return out;
 }
@@ -883,11 +899,14 @@ ostream& operator << (ostream& out, const Airlift& source)
 // Print method to display the description and effect of the order
 ostream& Airlift::print(ostream& out) const
 {
-    Order::print(out);
-    out << "[Airlift Description]: Airlift some armies from one of the current player's territories to any of their other territories." << endl;
+    out << "[" << getType() << "]";
     if (executed)
     {
-        out << "[Airlift Effect]: " << effect << endl;
+        out << " executed";
+    }
+    if (effect.size() > 0)
+    {
+        out << ": " << effect;
     }
     return out;
 }
@@ -987,11 +1006,14 @@ ostream& operator << (ostream& out, const Negotiate& source)
 // Print method to display the description and effect of the order
 ostream& Negotiate::print(ostream& out) const
 {
-    Order::print(out);
-    out << "[Negotiate Description]: Prevent attacks between the current player and another player until the end of the turn." << endl;
+    out << "[" << getType() << "]";
     if (executed)
     {
-        out << "[Negotiate Effect]: " << effect << endl;
+        out << " executed";
+    }
+    if (effect.size() > 0)
+    {
+        out << ": " << effect;
     }
     return out;
 }

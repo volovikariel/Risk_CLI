@@ -42,7 +42,7 @@ public:
     // Checks if player owns a specific territory
     bool hasTerritory(Territory* target);
     // Returns a list of players that the player can't attack
-    vector<Player *> getUnattackable();
+    vector<Player*>& getUnattackable();
 
     // Mutators
     void setPlayerTerritories(vector<Territory*> playerTerritories);

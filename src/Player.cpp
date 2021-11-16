@@ -76,7 +76,8 @@ const std::string& Player::getPlayerName() const
 }
 
 //Get the list of players that this player cannot attack
-vector<Player *> Player::getUnattackable() {
+vector<Player*>& Player::getUnattackable()
+{
     return unattackable;
 }
 
@@ -134,25 +135,22 @@ void Player::addPlayerTerritory(Territory* territory)
 }
 
 //Sets a player in the list of players that this player cannot attack
-void Player::setUnattackable(Player* player) {
+void Player::setUnattackable(Player* player)
+{
     this->unattackable.push_back(player);
 }
 
 // Empties the unattackable vector of all players, to be called after every turn
-void Player::clearUnattackable() {
+void Player::clearUnattackable()
+{
     this->unattackable.clear();
 }
 
-
 //Checks if a player has a target territory
-bool Player::hasTerritory(Territory* target) {
-    if(std::find(playerTerritories.begin(), playerTerritories.end(), target) != playerTerritories.end()){
-        return true;
-    } else{
-        return false;
-    }
+bool Player::hasTerritory(Territory* target)
+{
+    return std::find(playerTerritories.begin(), playerTerritories.end(), target) != playerTerritories.end();
 }
-
 
 // Operator overloading
 // Assignment operator overloading

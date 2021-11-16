@@ -12,6 +12,38 @@ int main()
     setupGame(gameEngine);
     std::cout << endl;
 
+    Player& player1 = *gameEngine.getPlayers().at(0);
+    Player& player2 = *gameEngine.getPlayers().at(1);
+
+    // Deploy on other player's territory
+    Deploy badDeploy(1, player1, *player2.getPlayerTerritories().at(0));
+    badDeploy.execute();
+    std::cout << badDeploy << endl;
+
+    // Advance with source territory not belonging to the player
+    Advance badAdvance(1, player1, *player2.getPlayerTerritories().at(0), *player2.getPlayerTerritories().at(0));
+    badAdvance.execute();
+    std::cout << badAdvance << endl;
+
+    // Advance with target territory not adjacent
+    Territory* firstTerritory = player1.getPlayerTerritories().at(0);
+    Territory* notAdjacentTerritory = nullptr;
+    // Find not adjacenet territory
+    for (Territory* territory : player1.getPlayerTerritories())
+    {
+        if (firstTerritory != territory && !firstTerritory->isNeighbor(territory))
+        {
+            notAdjacentTerritory = territory;
+            break;
+        }
+    }
+    if (notAdjacentTerritory != nullptr)
+    {
+        Advance badAdvance2(1, player1, *firstTerritory, *notAdjacentTerritory);
+        badAdvance2.execute();
+        std::cout << badAdvance2 << endl;
+    }
+    
 
 }
 
