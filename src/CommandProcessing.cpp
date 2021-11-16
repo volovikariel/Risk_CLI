@@ -115,7 +115,9 @@ void Command::saveEffect(const char* description)
 
 string Command::stringToLog()
 {
-    return "Command: Effect has been changed to '" + this->effect + "'\n";
+    std::ostringstream stream;
+    stream << "Command executed: " << *this << endl;
+    return stream.str();
 }
 
 
@@ -172,6 +174,11 @@ Command* CommandProcessor::getCommand()
     if (command != nullptr)
     {
         saveCommand(*command);
+
+        for (Observer* observer : observers)
+        {
+            command->attach(*observer);
+        }
     }
     return command;
 }

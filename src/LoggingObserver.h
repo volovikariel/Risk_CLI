@@ -62,7 +62,7 @@ class Subject {
         // Method which calls the "update" method for each Observer in "observers"
         virtual void notify();
        
-    private:
+    protected:
         list<Observer*> observers;
 };
 
