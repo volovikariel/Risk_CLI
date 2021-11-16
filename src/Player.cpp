@@ -79,6 +79,13 @@ int Player::getPlayerID() const {
     return playerID;
 }
 
+//Get the list of players that this player cannot attack
+vector<Player *> Player::getUnattackable() {
+    return unattackable;
+}
+
+
+
 // Mutators
 void Player::setPlayerTerritories(vector<Territory*> playerTerritories)
 {
@@ -129,6 +136,12 @@ void Player::addPlayerTerritory(Territory* territory)
 {
     this->playerTerritories.push_back(territory);
 }
+
+//Sets a player in the list of players that this player cannot attack
+void Player::setUnattackable(vector<Player *> unattackble) {
+    this->unattackable = unattackble;
+}
+
 
 //Checks if a player has a target territory
 bool Player::hasTerritory(Territory* target) {

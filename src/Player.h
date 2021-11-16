@@ -43,6 +43,8 @@ public:
     const std::string& getPlayerName() const;
     // Checks if player owns a specific territory
     bool hasTerritory(Territory* target);
+    // Returns a list of players that the player can't attack
+    vector<Player *> getUnattackable();
 
     // Mutators
     void setPlayerTerritories(vector<Territory*> playerTerritories);
@@ -53,6 +55,7 @@ public:
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend);
     void setPlayerName(std::string& name);
     void addPlayerTerritory(Territory* territory);
+    void setUnattackable(vector<Player *> unattackble);
 
     // Operator overloading
     // Assignment operator overloading
@@ -78,6 +81,8 @@ private:
     vector<Territory*> territoriesToAttack;
     // Represents the collection of territories to defend
     vector<Territory*> territoriesToDefend;
+    // Represents the collection of players that the player can't attack when a Negotiation Order is issued.
+    vector<Player*> unattackable;
 
     // Helper attributes
     // Represent the number of armies of the player
