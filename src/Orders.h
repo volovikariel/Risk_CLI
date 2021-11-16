@@ -1,11 +1,12 @@
 #pragma once
 #include "LoggingObserver.h"
-#include "Player.h"
 #include "Cards.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
+class Map;
+class Player;
 class Territory;
 
 using namespace std;

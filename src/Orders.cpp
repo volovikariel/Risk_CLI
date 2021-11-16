@@ -1,4 +1,7 @@
 #include "Orders.h"
+#include "Map.h"
+#include "Player.h"
+
 #include <algorithm>
 
 //==================== Order Class ====================
@@ -390,7 +393,7 @@ bool Advance::execute()
     if(validate()){
         //If the source and target territories both belong to the player, then we just move the armies there
         if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)){
-            player->
+            // player->
         }
     }
     return false;
@@ -399,15 +402,15 @@ bool Advance::execute()
 //Validate : checks if an order is valid
 bool Advance::validate()
 {
-    if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
-        cout << "[Advance] The source territory does not belong to the player that issued the order. Order invalid." << endl;
-        return false;
-    }
-    else if(!targetTerritory->isNeighbor(sourceTerritory)){
-        cout << "[Advance] The target territory is not adjacent to the source territory. Order invalid." << endl;
-        return false;
-    }
-    else if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
+    // if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
+    //     cout << "[Advance] The source territory does not belong to the player that issued the order. Order invalid." << endl;
+    //     return false;
+    // }
+    // else if(!targetTerritory->isNeighbor(sourceTerritory)){
+    //     cout << "[Advance] The target territory is not adjacent to the source territory. Order invalid." << endl;
+    //     return false;
+    // }
+    // else if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
     return false;
 }
 
