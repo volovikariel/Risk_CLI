@@ -69,7 +69,7 @@ void Order::saveEffect(const std::string& effect, bool executed)
 {
     this->effect = effect;
     this->executed = executed;
-    // Notify the observers that the Command object has changed
+    // Notify the observers that the Order object has changed
     notify();
 }
 
@@ -259,7 +259,7 @@ string OrdersList::stringToLog()
     Order* lastOrder = orderList.back();
 
     std::ostringstream stream;
-    stream << "OrdersList new element: " << *lastOrder;
+    stream << "OrdersList new element: " << lastOrder->stringToLog();
     return stream.str();
 }
 
