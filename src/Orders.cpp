@@ -388,13 +388,74 @@ Advance::~Advance()
 }
 
 //Execute : First validates the order, and if valid executes its action
-bool Advance::execute()
+bool Advance::execute() //TODO: NEED TO GO OVER THE LOGIC FOR THIS ORDER
 {
     if(validate()){
+        //Since the advance is valid, we will remove the specified number of armies from the source territory
+        sourceTerritory->armies -= this->armies;
+
         //If the source and target territories both belong to the player, then we just move the armies there
         if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)){
-            // player->
+            targetTerritory->armies += this->armies; //Move the number of armies to the target territory
+            cout << "[Advance] Moved armies from source to target territory." << endl;
+            return true;
         }
+
+        //If the target territory does not belong to the player, then we attack.
+        if(!player->hasTerritory(targetTerritory)){
+            cout << "[Advance] Attack has been initiated!" << endl;
+
+            int armiesAttacking = armies;
+            int randomNumber = 0;
+
+            //Loop until one of the armies loses
+            while(armies > 0 && targetTerritory->armies > 0){
+                //Attacking Army: 60% chance of killing the defending army.
+                for(int i = 0; i < armies; i++){
+                    randomNumber = (rand() % 100) + 1;
+
+                    //If the random number generated is between 1 and 60: we have 60% chance, so we kill 1
+                    if(randomNumber >= 60){
+                        targetTerritory->armies -= 1;
+                    }
+                }
+
+                //Defending Army: 70% chance of killing the attacking army.
+                for(int i = 0; i < targetTerritory->armies; i++){
+                    randomNumber = (rand() % 100) + 1;
+
+                    //If the random number generated is between 1 and 70: we have 70% chance, so we kill 1
+                    if(randomNumber >= 70){
+                        armies -= 1;
+                    }
+                }
+            }
+
+            //After the attack, 3 cases are possible. 1)Attacker won, 2)Defender won, 3)They both lost
+
+            //CASE 1: Attacker won
+            if(targetTerritory->armies <= 0){
+                //add the armies that was won
+                targetTerritory->armies = armies;
+                cout << "[Advance] Advance order was executed, attack was a SUCCESS!" << endl;
+                //player won, so add the new territory
+                player->addPlayerTerritory(targetTerritory);
+                //TODO: PLAYER MUST GET A CARD SINCE THEY WON. IS IT A RANDOM CARD?
+
+                return true;
+            }
+            //CASE 2: Defender won
+            else if(armies <= 0){
+                cout << "[Advance] Advance order was executed, but failed to capture the target territory" << endl;
+                return false;
+            }
+            //CASE 3: Both attacker and defender lost
+            else if(targetTerritory->armies <= 0 && armies <= 0){
+                cout << "[Advance] Advance order was executed, the attack was not successful. " << playerID << " lost their army." << endl;
+                return false;
+            }
+        }
+
     }
     return false;
 }
@@ -402,16 +463,23 @@ bool Advance::execute()
 //Validate : checks if an order is valid
 bool Advance::validate()
 {
-    // if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
-    //     cout << "[Advance] The source territory does not belong to the player that issued the order. Order invalid." << endl;
-    //     return false;
-    // }
-    // else if(!targetTerritory->isNeighbor(sourceTerritory)){
-    //     cout << "[Advance] The target territory is not adjacent to the source territory. Order invalid." << endl;
-    //     return false;
-    // }
-    // else if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
-    return false;
+    //If the player is on the unattackable list, then we can't attack.
+    if(std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory) == player->getUnattackable().end()){
+        return false;
+    }
+    else if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
+        cout << "[Advance] The source territory does not belong to the player that issued the order. Order invalid." << endl;
+        return false;
+    }
+    else if(!targetTerritory->isNeighbor(sourceTerritory)){
+        cout << "[Advance] The target territory is not adjacent to the source territory. Order invalid." << endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+
+
 }
 
 // Assignment operator
