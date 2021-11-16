@@ -56,6 +56,7 @@ public:
     void setPlayerName(std::string& name);
     void addPlayerTerritory(Territory* territory);
     void setUnattackable(Player* player);
+    void clearUnattackable();
 
     // Operator overloading
     // Assignment operator overloading

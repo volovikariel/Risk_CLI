@@ -372,6 +372,8 @@ void GameEngine::executeOrdersPhase() {
                         ol->remove(0);
                     }
                 }
+                // Clear all negotiations between players
+                this->getPlayers().at(i)->clearUnattackable();
             }
 
         }

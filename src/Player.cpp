@@ -142,6 +142,11 @@ void Player::setUnattackable(Player* player) {
     this->unattackable.push_back(player);
 }
 
+// Empties the unattackable vector of all players, to be called after every turn
+void Player::clearUnattackable() {
+    this->unattackable.clear();
+}
+
 
 //Checks if a player has a target territory
 bool Player::hasTerritory(Territory* target) {
