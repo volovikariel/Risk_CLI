@@ -368,7 +368,7 @@ ostream& operator<<(ostream& out, const Deploy& source)
 // Print method to display the description and effect of the order
 ostream& Deploy::print(ostream& out) const
 {
-    out << "[Deploy Description]: Places some armies on one of the player's territories" << endl;
+    out << "[Deploy Description]: Places some armies on one of the player's territories." << endl;
     if (executed)
     {
         out << "[Deploy Effect]: " << effect << endl;
@@ -642,11 +642,10 @@ ostream& operator << (ostream& out, const Bomb& source)
 // Print method to display the description and effect of the order
 ostream& Bomb::print(ostream& out) const
 {
-    Order::print(out);
-    out << "[Bomb Description]: Destroy half of the armies on opponent's territory which is adjacent to one of the current player's territory." << endl;
+    out << "[Bomb Description]: Destroy half of the armies on an opponent's territory." << endl;
     if (executed)
     {
-        out << "[Bomb Effect]: Target country loses half of their army units." << endl;
+        out << "[Bomb Effect]: " << effect << endl;
     }
     return out;
 }
@@ -670,30 +669,38 @@ Blockade::Blockade(const Blockade& other):
 }
 
 // Parameterized Constructor
-Blockade::Blockade(Player *player, Territory *targetTerritory):
-    Order()
+Blockade::Blockade(Player& player, Player& neutralPlayer, Territory& territory):
+    Order(),
+    player(&player),
+    neutralPlayer(&neutralPlayer),
+    territory(&territory)
 {
     this->setType(Type::Blockade);
-    this->player = player;
-    this->targetTerritory = targetTerritory;
 }
 
 // Destructor
 Blockade::~Blockade()
 {
-    cout << "Destroying order: blockade." << endl;
+
 }
 
 // Execute : First validates the order, and if valid executes its action
 bool Blockade::execute()
 {
-    cout << "[Blockade] Inside execute()" << endl;
-    if(validate()){
-        targetTerritory->armies *= 2;
-        targetTerritory->player=nullptr;
-        cout << "[Blockade] valid order executed." << endl;
+    if (validate())
+    {
+        int initialArmies = territory->armies;
+        territory->armies *= 2;
+        territory->player = neutralPlayer;
+
+        std::ostringstream stream;
+        stream << "Player " << player->getPlayerName() << " blockaded territory " << territory->name << ". It had " << initialArmies << " armies, now it has " << territory->armies << ".";
+        saveEffect(stream.str());
+
         return true;
-    }else{
+    }
+    else
+    {
         return false;
     }
 }
@@ -701,12 +708,20 @@ bool Blockade::execute()
 // Validate : checks if an order is valid
 bool Blockade::validate()
 {
-    cout << "[Blockade] Inside validate()" << endl;
-    if(targetTerritory != nullptr && player->hasTerritory(targetTerritory)){
-        return true;
-    }else{
-        return false;
+    if (player == nullptr || neutralPlayer == nullptr || territory == nullptr)
+    {
+        saveEffect("nullptr arguments passed");
     }
+    else if (player != territory->player)
+    {
+        saveEffect("Can't blockade another player's territory");
+    }
+    else
+    {
+        return true;
+    }
+
+    return false;
 }
 
 // Assignment operator
@@ -725,11 +740,10 @@ ostream& operator << (ostream& out, const Blockade& source)
 // Print method to display the description and effect of the order
 ostream &Blockade::print(ostream& out) const
 {
-    Order::print(out);
-    out << "[Blockade Description]: Triple the number of armies on one of the current player’s territories and make it a neutral territory." << endl;
+    out << "[Blockade Description]: Double the number of armies on one of the current player's territories and make it a neutral territory." << endl;
     if (executed)
     {
-        out << "[Blockade Effect]: the target territory’s army units count is tripled, and the territory becomes neutral." << endl;
+        out << "[Blockade Effect]: " << effect << endl;
     }
     return out;
 }
