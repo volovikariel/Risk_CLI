@@ -48,7 +48,10 @@ public:
 
 protected:
     void setType(Type orderType);                                       // Setter for the order type
-    bool executed{};                                                    // Boolean to check if order has been executed or not
+    void saveEffect(const std::string& effect);                          // Sets execution effect
+
+    bool executed;                                                      // Boolean to check if order has been executed or not
+    string effect;                                                      // Holds the execution effect
 
 private:
     Type orderType;
@@ -111,7 +114,7 @@ public:
 
     Advance();                                                          // Default Constructor
     Advance(const Advance& other);                                      // Copy Constructor
-    Advance(const int& playerArmies, Player* const player, Territory* source, Territory* target, Map* map, Deck* const deck);
+    Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, Map& map);    // Parameterized Constructor
     ~Advance();                                                         // Destructor
     bool execute() override;                                            // First validates the order, and if valid executes its action
     bool validate() override;                                           // Checks if the order is valid
@@ -120,13 +123,12 @@ public:
     ostream& print(ostream& out) const override;                        // Prints to an output stream
 
 private:
-    int playerID;
-    Player* player;
-    Territory* targetTerritory;
-    Territory* sourceTerritory;
-    Map* map;
-    Deck* deck;
+
     int armies;
+    Player* player;
+    Territory* sourceTerritory;
+    Territory* targetTerritory;
+    Map* map;
 };
 
 // ==================== Bomb Class ====================

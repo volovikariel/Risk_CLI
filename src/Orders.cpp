@@ -3,6 +3,7 @@
 #include "Player.h"
 
 #include <algorithm>
+#include <sstream>
 
 //==================== Order Class ====================
 
@@ -54,6 +55,14 @@ Order::Type Order::getType() const
 void Order::setType(Type orderType)
 {
     this->orderType = orderType;
+}
+
+// Setter the execution effect
+void Order::saveEffect(const std::string& effect)
+{
+    this->effect = effect;
+    // Notify the observers that the Command object has changed
+    notify();
 }
 
 // Destructor
@@ -286,12 +295,12 @@ Deploy::Deploy(const Deploy& source):
 
 // Parameterized Constructor
 Deploy::Deploy(int armies, Player& player, Territory& territory):
-    Order()
+    Order(),
+    armies(armies),
+    player(&player),
+    territory(&territory)
 {
     this->setType(Type::Deploy);
-    this->armies = armies;
-    this->player = &player;
-    this->territory = &territory;
 }
 
 // Destructor
@@ -307,6 +316,11 @@ bool Deploy::execute()
     {
         player->setPlayerArmies(player->getPlayerArmies() - armies);
         territory->armies += armies;
+
+        std::ostringstream stream;
+        stream << "Deployed " << armies << " armies on territory " << territory->name << " for player " << player->getPlayerName();
+        saveEffect(stream.str());
+
         return true;
     }
     else
@@ -318,7 +332,24 @@ bool Deploy::execute()
 // Validate : checks if an order is valid
 bool Deploy::validate()
 {
-    return armies > 0 && territory != nullptr && player->hasTerritory(territory);
+    if (player == nullptr || territory == nullptr)
+    {
+        saveEffect("nullptr arguments passed");
+    }
+    else if (armies <= 0)
+    {
+        saveEffect("Not enough armies");
+    }
+    else if (!player->hasTerritory(territory))
+    {
+        saveEffect("Territory doesn't belong to player");
+    }
+    else
+    {
+        return true;
+    }
+
+    return false;
 }
 
 // Assignment operator
@@ -337,11 +368,10 @@ ostream& operator<<(ostream& out, const Deploy& source)
 // Print method to display the description and effect of the order
 ostream& Deploy::print(ostream& out) const
 {
-    Order::print(out);
     out << "[Deploy Description]: Places some armies on one of the player's territories" << endl;
     if (executed)
     {
-        out << "[Deploy Effect]: Placed " << armies << " armies on territory " << territory->name << " for player " << player->getPlayerName() << endl;
+        out << "[Deploy Effect]: " << effect << endl;
     }
     return out;
 }
@@ -365,47 +395,54 @@ Advance::Advance(const Advance &other):
 }
 
 // Parameterized Constructor
-Advance::Advance(const int &playerArmies, Player *const player, Territory *source, Territory *target, Map *map,
-                 Deck *const deck) :Order() {
-    this->armies = playerArmies;
-    this->player = player;
-    this->sourceTerritory = source;
-    this->targetTerritory = target;
-    this->map = map;
-    this->deck = deck;
+Advance::Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, Map& map):
+    Order(),
+    armies(armies),
+    player(&player),
+    sourceTerritory(&sourceTerritory),
+    targetTerritory(&targetTerritory),
+    map(&map)
+{
+    this->setType(Type::Advance);
 }
 
 // Destructor
 Advance::~Advance()
 {
-    cout << "Destroying order: advance." << endl;
+
 }
 
 //Execute : First validates the order, and if valid executes its action
-bool Advance::execute() //TODO: NEED TO GO OVER THE LOGIC FOR THIS ORDER
+bool Advance::execute()
 {
-    if(validate()){
-        //Since the advance is valid, we will remove the specified number of armies from the source territory
+    if (validate())
+    {
+        // Since the advance is valid, we will remove the specified number of armies from the source territory
         sourceTerritory->armies -= this->armies;
 
-        //If the source and target territories both belong to the player, then we just move the armies there
-        if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)){
-            targetTerritory->armies += this->armies; //Move the number of armies to the target territory
-            cout << "[Advance] Moved armies from source to target territory." << endl;
+        // If the source and target territories both belong to the player, then we just move the armies there
+        if (player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
+        {
+            targetTerritory->armies += this->armies; // Move the number of armies to the target territory
+
+            std::ostringstream stream;
+            stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name << " to territory " << targetTerritory->name << " for player " << player->getPlayerName();
+            saveEffect(stream.str());
+
             return true;
         }
-
-        //If the target territory does not belong to the player, then we attack.
-        if(!player->hasTerritory(targetTerritory)){
-            cout << "[Advance] Attack has been initiated!" << endl;
-
+        // If the target territory does not belong to the player, then we attack.
+        else if (!player->hasTerritory(targetTerritory))
+        {
             int armiesAttacking = armies;
             int randomNumber = 0;
 
-            //Loop until one of the armies loses
-            while(armies > 0 && targetTerritory->armies > 0){
-                //Attacking Army: 60% chance of killing the defending army.
-                for(int i = 0; i < armies; i++){
+            // Loop until one of the armies loses
+            while (armies > 0 && targetTerritory->armies > 0)
+            {
+                // Attacking Army: 60% chance of killing the defending army.
+                for (int i = 0; i < armies; i++)
+                {
                     randomNumber = (rand() % 100) + 1;
 
                     //If the random number generated is between 1 and 60: we have 60% chance, so we kill 1
@@ -425,55 +462,70 @@ bool Advance::execute() //TODO: NEED TO GO OVER THE LOGIC FOR THIS ORDER
                 }
             }
 
-            //After the attack, 3 cases are possible. 1)Attacker won, 2)Defender won, 3)They both lost
+            // After the attack, 3 cases are possible. 1)Attacker won, 2)Defender won, 3)They both lost
 
-            //CASE 1: Attacker won
-            if(targetTerritory->armies <= 0){
-                //add the armies that was won
+            // CASE 1: Attacker won
+            if (targetTerritory->armies <= 0)
+            {
+                // Add the armies that was won
                 targetTerritory->armies = armies;
                 cout << "[Advance] Advance order was executed, attack was a SUCCESS!" << endl;
-                //player won, so add the new territory
+                // Player won, so add the new territory
                 player->addPlayerTerritory(targetTerritory);
-                //TODO: PLAYER MUST GET A CARD SINCE THEY WON. IS IT A RANDOM CARD?
+                // TODO: PLAYER MUST GET A CARD SINCE THEY WON. IS IT A RANDOM CARD?
 
                 return true;
             }
-            //CASE 2: Defender won
-            else if(armies <= 0){
+            // CASE 2: Defender won
+            else if (armies <= 0)
+            {
                 cout << "[Advance] Advance order was executed, but failed to capture the target territory" << endl;
                 return false;
             }
-            //CASE 3: Both attacker and defender lost
-            else if(targetTerritory->armies <= 0 && armies <= 0){
-                cout << "[Advance] Advance order was executed, the attack was not successful. " << playerID << " lost their army." << endl;
+            // CASE 3: Both attacker and defender lost
+            else if (targetTerritory->armies <= 0 && armies <= 0)
+            {
+                cout << "[Advance] Advance order was executed, the attack was not successful. " << player->getPlayerName() << " lost their army." << endl;
                 return false;
             }
         }
 
     }
-    return false;
+    else
+    {
+        return false;
+    }
 }
 
 //Validate : checks if an order is valid
 bool Advance::validate()
 {
-    //If the player is on the unattackable list, then we can't attack.
-    if(std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory->player) != player->getUnattackable().end()){
-        return false;
+    if (player == nullptr || sourceTerritory == nullptr || targetTerritory == nullptr)
+    {
+        saveEffect("nullptr arguments passed");
     }
-    else if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
-        cout << "[Advance] The source territory does not belong to the player that issued the order. Order invalid." << endl;
-        return false;
+    else if (armies <= 0)
+    {
+        saveEffect("Not enough armies");
     }
-    else if(!targetTerritory->isNeighbor(sourceTerritory)){
-        cout << "[Advance] The target territory is not adjacent to the source territory. Order invalid." << endl;
-        return false;
+    else if (std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory->player) != player->getUnattackable().end())
+    {
+        saveEffect("Can't attack diplomatic ally");
     }
-    else {
+    else if (!player->hasTerritory(sourceTerritory))
+    {
+        saveEffect("The source territory does not belong to the player that issued the order");
+    }
+    else if (!targetTerritory->isNeighbor(sourceTerritory))
+    {
+        saveEffect("The target territory is not adjacent to the source territory");
+    }
+    else
+    {
         return true;
     }
 
-
+    return false;
 }
 
 // Assignment operator
