@@ -177,6 +177,38 @@ std::ostream& operator << (std::ostream& out, const Deck& source)
     return out;
 }
 
+// Adds a random amount of cards (with even distribution of card types)
+void Deck::addRandomCards(int numCards)
+{
+    const static Card::Type types[] = {
+        Card::Type::Bomb,
+        Card::Type::Reinforcement,
+        Card::Type::Blockade,
+        Card::Type::Airlift,
+        Card::Type::Diplomacy
+    };
+    const static int numTypes = sizeof(types) / sizeof((types)[0]);
+
+    vector<Card*> toAdd;
+
+    // Even card type distribution
+    for (int i = 0; i < numCards; i++)
+    {
+        Card::Type type = types[i % numTypes];
+        Card* newCard = new Card(type);
+        toAdd.push_back(newCard);
+    }
+
+    // Random order
+    random_shuffle(toAdd.begin(), toAdd.end());
+
+    // Add to deck
+    for (Card* card : toAdd)
+    {
+        cards.push_back(card);
+    }
+}
+
 // Adds a card to the deck given its reference
 // Adds the card to allCards as well if it's not already present
 // This allows us to later call a single destructor for all the cards

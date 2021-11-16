@@ -249,15 +249,8 @@ bool GameEngine::executeCommand(Command& command)
                 player->setPlayerArmies(50);
             }
 
-            // Initialize deck
-            for (int i = 0; i < 10; i++)
-            {
-                mainDeck.addCard(*new Card(Card::Type::Airlift));
-                mainDeck.addCard(*new Card(Card::Type::Blockade));
-                mainDeck.addCard(*new Card(Card::Type::Bomb));
-                mainDeck.addCard(*new Card(Card::Type::Diplomacy));
-                mainDeck.addCard(*new Card(Card::Type::Reinforcement));
-            }
+            // Initialize deck with 50 randomly shuffled cards (of even card type distribution)
+            mainDeck.addRandomCards(50);
 
             //Allows players to draw 2 cards from the deck
             for (Player* player : players)

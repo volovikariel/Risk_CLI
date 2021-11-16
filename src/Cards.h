@@ -70,6 +70,8 @@ public:
     void operator = (const Deck& other);
     // Stream insertion operator
     friend std::ostream& operator << (std::ostream& out, const Deck& source);
+    // Adds a random amount of cards (with even distribution of card types)
+    void addRandomCards(int numCards);
     // Adds a card to the deck given its reference (adds the card to mainDeck.allCards as well if it's not already present)
     void addCard(Card& card);
     // Removes and returns a card at random from the deck (returns NULL if trying to draw a card when the deck is empty)
