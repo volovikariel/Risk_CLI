@@ -48,10 +48,6 @@ public:
 protected:
     void setType(Type orderType);                                       // Setter for the order type
     bool executed{};                                                    // Boolean to check if order has been executed or not
-    int playerID;
-    Player* player;
-    Territory* targetTerritory;
-    int armies;
 
 private:
     Type orderType;
@@ -99,6 +95,12 @@ public:
     Deploy& operator = (const Deploy& other);                                                           // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Deploy& source);                                   // Stream Insertion Operator
     ostream& print(ostream& out) const override;                                                        // Prints to an output stream
+
+private:
+    int playerID;
+    Player* player;
+    Territory* targetTerritory;
+    int armies;
 };
 
 // ==================== Advance Class ====================
@@ -115,6 +117,15 @@ public:
     Advance& operator = (const Advance& advance);                       // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Advance& source);  // Stream Insertion Operator
     ostream& print(ostream& out) const override;                        // Prints to an output stream
+
+private:
+    int playerID;
+    Player* player;
+    Territory* targetTerritory;
+    Territory* sourceTerritory;
+    Map* map;
+    Deck* deck;
+    int armies;
 };
 
 // ==================== Bomb Class ====================

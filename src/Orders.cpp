@@ -367,6 +367,17 @@ Advance::Advance(const Advance &other):
     this->setType(Type::Advance);
 }
 
+// Parameterized Constructor
+Advance::Advance(const int &playerArmies, Player *const player, Territory *source, Territory *target, Map *map,
+                 Deck *const deck) :Order() {
+    this->armies = playerArmies;
+    this->player = player;
+    this->sourceTerritory = source;
+    this->targetTerritory = target;
+    this->map = map;
+    this->deck = deck;
+}
+
 // Destructor
 Advance::~Advance()
 {
@@ -377,7 +388,10 @@ Advance::~Advance()
 bool Advance::execute()
 {
     if(validate()){
-
+        //If the source and target territories both belong to the player, then we just move the armies there
+        if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)){
+            player->
+        }
     }
     return false;
 }
@@ -385,8 +399,15 @@ bool Advance::execute()
 //Validate : checks if an order is valid
 bool Advance::validate()
 {
-
-
+    if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
+        cout << "[Advance] The source territory does not belong to the player that issued the order. Order invalid." << endl;
+        return false;
+    }
+    else if(!targetTerritory->isNeighbor(sourceTerritory)){
+        cout << "[Advance] The target territory is not adjacent to the source territory. Order invalid." << endl;
+        return false;
+    }
+    else if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
     return false;
 }
 

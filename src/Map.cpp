@@ -138,6 +138,15 @@ std::ostream& operator << (std::ostream &out, const Territory& source)
     return out;
 }
 
+bool Territory::isNeighbor(Territory *territory) {
+    if(std::find(neighbors.begin(), neighbors.end(), territory) != neighbors.end()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 
 /* --- Map --- */
 

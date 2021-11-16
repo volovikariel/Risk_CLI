@@ -78,6 +78,8 @@ public:
     std::vector<Territory*> neighbors;
     // IDs of bordering territories, as defined in the map file
     std::vector<int> neighborIDs;
+    // Check if a territory is in the list of neighbors
+    bool isNeighbor(Territory* territory);
 
     // Direct pointer to the player who owns this territory
     Player* player;
