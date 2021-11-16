@@ -9,14 +9,16 @@
 
 std::ostream& operator << (std::ostream& out, const Command::Type source)
 {
-    static const char* names[6] =
+    static const char* names[8] =
     {
         "LoadMap",
         "ValidateMap",
         "AddPlayer",
         "GameStart",
         "Replay",
-        "Quit"
+        "Quit",
+        "NumTypes",
+        "Invalid"
     };
 
     out << names[static_cast<size_t>(source)];
@@ -182,8 +184,6 @@ bool CommandProcessor::validate(Command& command)
 // TODO: Ohmnivore, notify of what command was entered into the console
 Command* CommandProcessor::readCommand()
 {
-    Command* requestedCommand = nullptr;
-
     // Output available commands and current state
     std::cout << std::endl;
     std::cout << "Input one of the following commands [current state is " << gameEngine->getState() << "]:" << std::endl;
@@ -258,14 +258,14 @@ Command* CommandProcessor::readCommand()
     if (!StringUtils::ToGameEngineTransition(command, transition))
     {
         std::cout << "Unknown command" << std::endl;
-        return nullptr;
+        return new Command(Command::Type::Invalid, line);
     }
     // Resolve the GameEngine::Transition to Command::Type mapping
     Command::Type commandType;
     if (!CommandProcessingUtils::transitionToCommand(transition, commandType))
     {
         std::cout << "Unknown command" << std::endl;
-        return nullptr;
+        return new Command(Command::Type::Invalid, line);
     }
 
     if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
@@ -275,19 +275,17 @@ Command* CommandProcessor::readCommand()
         if (lineStream.fail())
         {
             std::cout << "Missing the argument for this command" << std::endl;
-            return nullptr;
+            return new Command(Command::Type::Invalid, line);
         }
 
         // Create the command
-        requestedCommand = new Command(commandType, argument);
+        return new Command(commandType, argument);
     }
     else
     {
         // Create the command
-        requestedCommand = new Command(commandType);
+        return new Command(commandType);
     }
-    
-    return requestedCommand;
 }
 
 void CommandProcessor::saveCommand(Command& command)
@@ -299,19 +297,11 @@ void CommandProcessor::saveCommand(Command& command)
 
 string CommandProcessor::stringToLog()
 {
-    // A subset of GameEngine::Transition
-    string type[] =
-    {
-        "LoadMap",
-        "ValidateMap",
-        "AddPlayer",
-        "GameStart",
-        "Replay",
-        "Quit",
-        "NumTypes"
-    };
-    Command* most_recently_saved_command = this->commands[this->commands.size() - 1];
-    return "CommandProcessor: Last saved command has a type of '" + type[(int)most_recently_saved_command->getType()] + "'\n";
+    Command* lastCommand = commands.back();
+
+    std::ostringstream stream;
+    stream << "CommandProcessor: Last saved command has a type of '" << lastCommand->getType() << "'" << endl;
+    return stream.str();
 }
 
 
@@ -424,8 +414,6 @@ std::ostream& operator << (std::ostream& out, const FileCommandProcessorAdapter&
 
 Command* FileCommandProcessorAdapter::readCommand()
 {
-    Command* requestedCommand = nullptr;
-
     // Read one line
     std::string line = fileLineReader->readLineFromFile();
 
@@ -451,13 +439,13 @@ Command* FileCommandProcessorAdapter::readCommand()
     GameEngine::Transition transition;
     if (!StringUtils::ToGameEngineTransition(command, transition))
     {
-        return nullptr;
+        return new Command(Command::Type::Invalid, line);
     }
     // Resolve the GameEngine::Transition to Command::Type mapping
     Command::Type commandType;
     if (!CommandProcessingUtils::transitionToCommand(transition, commandType))
     {
-        return nullptr;
+        return new Command(Command::Type::Invalid, line);
     }
 
     if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
@@ -466,19 +454,17 @@ Command* FileCommandProcessorAdapter::readCommand()
         lineStream >> argument;
         if (lineStream.fail())
         {
-            return nullptr;
+            return new Command(Command::Type::Invalid, line);
         }
 
         // Create the command
-        requestedCommand = new Command(commandType, argument);
+        return new Command(commandType, argument);
     }
     else
     {
         // Create the command
-        requestedCommand = new Command(commandType);
+        return new Command(commandType);
     }
-
-    return requestedCommand;
 }
 
 bool FileCommandProcessorAdapter::good() const

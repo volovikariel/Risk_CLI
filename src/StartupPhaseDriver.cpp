@@ -20,7 +20,7 @@ int main()
     {
         // Read command from input until we obtain a well-formed command
         Command* command = nullptr;
-        while (command == nullptr)
+        while (command == nullptr || command->getType() == Command::Type::Invalid)
         {
             command = commandProcessor.getCommand();
         }

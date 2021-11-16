@@ -20,7 +20,8 @@ public:
         GameStart,
         Replay,
         Quit,
-        NumTypes
+        NumTypes,
+        Invalid
     };
 
     // Stream output operator of Type
@@ -55,6 +56,7 @@ public:
 
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
+
 private:
 
     // The type of command
@@ -93,6 +95,7 @@ public:
 
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
+
 protected:
 
     // Prompts the user to input a well-formed command

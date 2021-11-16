@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
             {
                 // Read command from input until we obtain a well-formed command
                 Command* command = nullptr;
-                while (command == nullptr)
+                while (command == nullptr || command->getType() == Command::Type::Invalid)
                 {
                     command = commandProcessor.getCommand();
                 }
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
             {
                 // Get a command from the next line in the file
                 Command* command = commandProcessor.getCommand();
-                if (command == nullptr)
+                if (command == nullptr || command->getType() == Command::Type::Invalid)
                 {
                     // Skip badly-formed commands
                     continue;
