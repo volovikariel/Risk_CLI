@@ -76,7 +76,7 @@ int main()
         vector<Territory*> territoriesToAttack;
 
 
-        Player* newPlayer = new Player(territories, 0, i, territoriesToAttack, territoriesToDefend);
+        Player* newPlayer = new Player(territories, 0, territoriesToAttack, territoriesToDefend);
         newPlayer->setPlayerName(playerName);
 
         gameEngine.getPlayers().push_back(newPlayer);
