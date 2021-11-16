@@ -454,6 +454,16 @@ Bomb::Bomb(const Bomb& other):
     this->setType(Type::Bomb);
 }
 
+// Parameterized Constructor
+Bomb::Bomb(Player *player, Territory *source, Territory *targetTerritory):
+    Order() 
+{
+    this->setType(Type::Bomb);
+    this->player = player;
+    this->sourceTerritory = source;
+    this->targetTerritory = targetTerritory;
+}
+
 // Destructor
 Bomb::~Bomb()
 {
@@ -465,18 +475,25 @@ bool Bomb::execute()
 {
     //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Bomb] Inside execute()" << endl;
-//    if(validate()){
-//
-//    }
-    return false;
+    if(validate()){
+        targetTerritory->armies /= 2;
+        cout << "[Deploy] valid order executed." << endl;
+        return true;
+    } else {
+        cout << "[Deploy] invalid order." << endl;
+        return false;
+    }
 }
 
 // Validate : checks if an order is valid
 bool Bomb::validate()
 {
-    //----- NO DESCRIPTION TO IMPLEMENT THIS FOR A1 -----
     cout << "[Bomb] Inside validate()" << endl;
-    return false;
+     if (targetTerritory != nullptr && player->hasTerritory(sourceTerritory) && !(player->hasTerritory(targetTerritory)) && targetTerritory->isNeighbor(sourceTerritory)){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 // Assignment operator
