@@ -152,8 +152,6 @@ vector<Player*>& GameEngine::getPlayers()
 
 bool GameEngine::executeCommand(Command& command)
 {
-    // TODO complete all cases
-
     switch (command.getType())
     {
         case Command::Type::LoadMap:
@@ -213,8 +211,13 @@ bool GameEngine::executeCommand(Command& command)
         }
         case Command::Type::GameStart:
         {
+            // Validate number of players
             if (players.size() < 2 || players.size() > 6)
             {
+                std::ostringstream stream;
+                stream << "Number of players must be between 2 and 6, currently: " << players.size();
+
+                command.saveEffect(stream.str());
                 return false;
             }
 
@@ -274,7 +277,7 @@ bool GameEngine::executeCommand(Command& command)
                 cout << *player << endl;
             }
 
-            command.saveEffect("Started game, performed initial setup");
+            command.saveEffect("Started game and performed initial setup");
 
             return transitionState(Transition::GameStart);
         }
@@ -288,7 +291,7 @@ bool GameEngine::executeCommand(Command& command)
         }
         case Command::Type::Quit:
         {
-            // TODO
+            exit(0);
 
             command.saveEffect("Quitting game");
 
