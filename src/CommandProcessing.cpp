@@ -235,6 +235,7 @@ Command* CommandProcessor::readCommand()
     // Get console line input
     std::string line;
     std::getline(std::cin, line);
+
     if (line.length() == 0)
     {
         return nullptr;

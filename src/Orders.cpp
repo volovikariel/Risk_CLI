@@ -464,7 +464,7 @@ bool Advance::execute() //TODO: NEED TO GO OVER THE LOGIC FOR THIS ORDER
 bool Advance::validate()
 {
     //If the player is on the unattackable list, then we can't attack.
-    if(std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory) == player->getUnattackable().end()){
+    if(std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory->player) != player->getUnattackable().end()){
         return false;
     }
     else if(sourceTerritory == nullptr || armies <= 0 || !player->hasTerritory(sourceTerritory)){
@@ -560,7 +560,7 @@ bool Bomb::validate()
 {
     cout << "[Bomb] Inside validate()" << endl;
      if (targetTerritory != nullptr && player->hasTerritory(sourceTerritory) && !(player->hasTerritory(targetTerritory)) && targetTerritory->isNeighbor(sourceTerritory)
-        && std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory) == player->getUnattackable().end()){
+        && std::find(player->getUnattackable().begin(), player->getUnattackable().end(), targetTerritory->player) == player->getUnattackable().end()){
         return true;
     }else{
         return false;

@@ -126,7 +126,7 @@ void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend)
     }
 }
 
-void Player::setPlayerName(std::string& name)
+void Player::setPlayerName(const std::string& name)
 {
     playerName = name;
 }

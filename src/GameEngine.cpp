@@ -202,16 +202,77 @@ bool GameEngine::executeCommand(Command& command)
         }
         case Command::Type::AddPlayer:
         {
-            // TODO
+            Player* player = new Player();
+            player->setPlayerName(command.getArgument());
 
-            std::string effect = "Added player " + command.getArgument();
+            players.push_back(player);
+            string effect = "Added player " + command.getArgument();
             command.saveEffect(effect);
 
             return transitionState(Transition::AddPlayer);
         }
         case Command::Type::GameStart:
         {
-            // TODO
+            if (players.size() < 2 || players.size() > 6)
+            {
+                return false;
+            }
+
+            // Will help assign a random territory to a player
+            vector<Territory*> copyTerritories = map->territories;
+            int territoryRand; // Will store a random index to a territory
+
+            for (int i = 0; i < map->territories.size(); i++)
+            {
+                territoryRand = rand() % copyTerritories.size(); // Generate the random index of the territory
+                Territory* territory = copyTerritories.at(territoryRand); // Store the specific territory
+                Player* playerToAssign = players[i % players.size()];
+                territory->player = playerToAssign;
+                playerToAssign->addPlayerTerritory(territory);
+                copyTerritories.erase(copyTerritories.begin() + territoryRand); // Will delete the territory assigned from the temporary vector
+            }
+
+            // Shuffle in a random manner the order of players
+            std::random_shuffle(players.begin(), players.end());
+            cout << "Random order of players:" << endl;
+            for (const Player* player : players)
+            {
+                cout << "Player " << player->getPlayerName() << endl;
+            }
+
+            // Gives the players 50 armies
+            for (Player* player : players)
+            {
+                player->setPlayerArmies(50);
+            }
+
+            // Initialize deck
+            for (int i = 0; i < 10; i++)
+            {
+                mainDeck.addCard(*new Card(Card::Type::Airlift));
+                mainDeck.addCard(*new Card(Card::Type::Blockade));
+                mainDeck.addCard(*new Card(Card::Type::Bomb));
+                mainDeck.addCard(*new Card(Card::Type::Diplomacy));
+                mainDeck.addCard(*new Card(Card::Type::Reinforcement));
+            }
+
+            //Allows players to draw 2 cards from the deck
+            for (Player* player : players)
+            {
+                Hand& hand = *player->getPlayerCards();
+                for (int i = 0; i < 2; i++)
+                {
+                    hand.addCard(*mainDeck.draw());
+                }
+            }
+
+            // Showing off what the players have
+            cout << endl;
+            for (const Player* player : players)
+            {
+                cout << "Player " << player->getPlayerName() << endl;
+                cout << *player << endl;
+            }
 
             command.saveEffect("Started game, performed initial setup");
 
