@@ -767,29 +767,35 @@ Airlift::Airlift(const Airlift& other):
 }
 
 //Parameterized Constructor
-Airlift::Airlift(const int &playerArmies, Player *const player, Territory *source, Territory *target) : Order() {
-    this->armies = playerArmies;
-    this->player = player;
-    this->sourceTerritory = source;
-    this->targetTerritory = target;
+Airlift::Airlift(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory):
+    Order(),
+    armies(armies),
+    player(&player),
+    sourceTerritory(&sourceTerritory),
+    targetTerritory(&targetTerritory)
+{
+    this->setType(Type::Airlift);
 }
 
 // Destructor
 Airlift::~Airlift()
 {
-    cout << "Destroying order: airlift." << endl;
+
 }
 
 // Execute : First validates the order, and if valid executes its action
 bool Airlift::execute()
 {
-    if(validate()){
-        //TODO: THE AIRLIFT IS ONLY FOR THE PLAYER WHO OWNS THE SOURCE AND TARGET TERRITORIES RIGHT? DOESN'T PRODUCE AN ATTACK IF ITS NOT THEIRS
-        //TODO: MAKE SURE THAT THIS IS ALL THAT NEEDS TO BE DONE HERE
-        sourceTerritory->armies -= this->armies;
+    if (validate())
+    {
+        sourceTerritory->armies -= armies;
         targetTerritory->armies += armies;
 
-        cout << "[AirLift] Airlift order executed, armies were moved from source to target territory." << endl;
+        std::ostringstream stream;
+        stream << "Player " << player->getPlayerName() << " airlifted " << armies << " armies from territory " << sourceTerritory->name << " to " << targetTerritory->name;
+        saveEffect(stream.str());
+
+        return true;
     }
     return false;
 }
@@ -797,13 +803,27 @@ bool Airlift::execute()
 // Validate : checks if an order is valid
 bool Airlift::validate()
 {
-    if(player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)){
+    if (player == nullptr || sourceTerritory == nullptr || targetTerritory == nullptr)
+    {
+        saveEffect("nullptr arguments passed");
+    }
+    else if (armies < 0)
+    {
+        saveEffect("Not enough armies");
+    }
+    else if (player != sourceTerritory->player)
+    {
+        saveEffect("Source territory doesn't belong to player");
+    }
+    else if (player != targetTerritory->player)
+    {
+        saveEffect("Target territory doesn't belong to player");
+    }
+    else
+    {
         return true;
     }
-    else {
-        cout << "[Airlift] Invalid airlift order. Source or target territory does not belong to player." << endl;
-        return false;
-    }
+
     return false;
 }
 
