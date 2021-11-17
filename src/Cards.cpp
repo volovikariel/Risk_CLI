@@ -209,13 +209,7 @@ const vector<Card*>& Deck::getCards() const
 void Deck::deepCopy(const Deck& other)
 {
     // We'll be replacing the deck so delete all the references to the cards
-    for (const Card* card : allCards)
-    {
-        delete card;
-    }
-
-    allCards.clear();
-    cards.clear();
+    releaseAllocs();
 
     for (const Card* card : other.allCards)
     {
@@ -228,6 +222,17 @@ void Deck::deepCopy(const Deck& other)
             cards.push_back(copiedCard);
         }
     }
+}
+
+void Deck::releaseAllocs()
+{
+    for (const Card* card : allCards)
+    {
+        delete card;
+    }
+
+    allCards.clear();
+    cards.clear();
 }
 
 // Hand

@@ -80,6 +80,8 @@ public:
     vector<Card*>& getCards();
     // Const version
     const vector<Card*>& getCards() const;
+    // Clears all the cards owned by this deck
+    void releaseAllocs();
 
 private:
 

@@ -115,9 +115,6 @@ public :
     // Check if player has been eliminated
     bool isEliminated(Player*);
 
-    // Holds elimination status for each player
-    vector<Player*> eliminated;
-
 private:
 
     // Holds the current state
@@ -128,6 +125,9 @@ private:
 
     // Holds the players
     vector<Player*> players;
+
+    // Holds elimination status for each player
+    vector<Player*> eliminated;
 
     // Neutral player
     Player* neutralPlayer;

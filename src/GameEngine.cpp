@@ -379,7 +379,20 @@ bool GameEngine::executeCommand(Command& command)
         }
         case Command::Type::Replay:
         {
-            // TODO
+            map->releaseAllocs();
+
+            delete neutralPlayer;
+            neutralPlayer = new Player();
+            neutralPlayer->setPlayerName("Neutral");
+
+            for (Player* player : players)
+            {
+                delete player;
+            }
+            players.clear();
+            eliminated.clear();
+
+            mainDeck.releaseAllocs();
 
             command.saveEffect("Replaying new game");
 
