@@ -72,7 +72,7 @@ int main()
     player2Territory.neighbors = backup;
 
     // Blockade a territory that doesn't belong to player
-    Blockade badBlockade(player1, player1, player2Territory);
+    Blockade badBlockade(player1, gameEngine.getNeutralPlayer(), player2Territory);
     badBlockade.execute();
     std::cout << badBlockade << endl;
 
@@ -101,6 +101,8 @@ int main()
     }
     if (adjacentPlayer1Territory != nullptr && adjacentPlayer2Territory != nullptr)
     {
+        // Test conquering
+
         adjacentPlayer1Territory->armies = 200;
         adjacentPlayer2Territory->armies = 2;
 
@@ -113,6 +115,8 @@ int main()
         std::cout << player2.getPlayerName() << " has conquered this turn flag: " << (player2.hasConqueredThisTurn ? "true" : "false") << std::endl;
 
         std::cout << endl;
+
+        // Test that player can't attack diplomatic ally
 
         // Reset territory ownership
         adjacentPlayer2Territory->player = &player2;
@@ -127,6 +131,12 @@ int main()
         badAdvance.execute();
         std::cout << badAdvance << endl;
     }
+
+    // Check that blockade gives territories to the neutral player
+    Blockade blockadeTest(player1, gameEngine.getNeutralPlayer(), player1Territory);
+    blockadeTest.execute();
+    std::cout << blockadeTest << endl;
+    std::cout << player1Territory.name << " now belongs to player " << player1Territory.player->getPlayerName();
 
     std::cout << endl;
 }

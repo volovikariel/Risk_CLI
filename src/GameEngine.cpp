@@ -61,7 +61,8 @@ GameEngine::GameEngine():
     players(),
     eliminated()
 {
-
+    neutralPlayer = new Player();
+    neutralPlayer->setPlayerName("Neutral");
 }
 
 GameEngine::~GameEngine()
@@ -72,6 +73,8 @@ GameEngine::~GameEngine()
     {
         delete player;
     }
+
+    delete neutralPlayer;
 }
 
 ostream& operator << (ostream& out, const GameEngine& source)
@@ -84,6 +87,7 @@ GameEngine::GameEngine(const GameEngine& other):
     state(other.state),
     map(other.map),
     players(other.players),
+    neutralPlayer(other.neutralPlayer),
     eliminated(other.eliminated)
 {
 
@@ -94,6 +98,7 @@ GameEngine& GameEngine::operator = (const GameEngine& other)
     state = other.state;
     map = other.map;
     players = other.players;
+    neutralPlayer = other.neutralPlayer;
     eliminated = other.eliminated;
     return *this;
 }
@@ -150,6 +155,11 @@ Map& GameEngine::getMap()
 vector<Player*>& GameEngine::getPlayers()
 {
     return players;
+}
+
+Player& GameEngine::getNeutralPlayer()
+{
+    return *neutralPlayer;
 }
 
 bool tryExecuteCommand(GameEngine& gameEngine, CommandProcessor& commandProcessor, Command& command)

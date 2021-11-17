@@ -85,6 +85,9 @@ public :
     // Returns the current players
     vector<Player*>& getPlayers();
 
+    // Returns the neutral player
+    Player& getNeutralPlayer();
+
     // Performs initial setup
     void startupPhase();
 
@@ -134,6 +137,9 @@ private:
 
     // Holds the players
     vector<Player*> players;
+
+    // Neutral player
+    Player* neutralPlayer;
 };
 
 // Describes a State's graph connectivity
