@@ -9,11 +9,19 @@
 // Automatic loadmap, validatemap, addplayer, gamestart without user input
 void setupGame(GameEngine& gameEngine);
 
+void testGoodOrder(Order* order);
+
 int main()
 {
     GameEngine gameEngine;
     setupGame(gameEngine);
     std::cout << endl;
+
+    // Means map wasn't loaded
+    if (gameEngine.getPlayers().size() == 0)
+    {
+        exit(1);
+    }
 
     Player& player1 = *gameEngine.getPlayers().at(0);
     Player& player2 = *gameEngine.getPlayers().at(1);
@@ -130,15 +138,39 @@ int main()
         Advance badAdvance(200, player1, *adjacentPlayer1Territory, *adjacentPlayer2Territory);
         badAdvance.execute();
         std::cout << badAdvance << endl;
+
+        // Clear diplomatic status
+        player1.clearUnattackable();
+        player2.clearUnattackable();
     }
 
     // Check that blockade gives territories to the neutral player
     Blockade blockadeTest(player1, gameEngine.getNeutralPlayer(), player1Territory);
     blockadeTest.execute();
     std::cout << blockadeTest << endl;
-    std::cout << player1Territory.name << " now belongs to player " << player1Territory.player->getPlayerName();
+    std::cout << player1Territory.name << " now belongs to player " << player1Territory.player->getPlayerName() << std::endl;
 
     std::cout << endl;
+
+    // Test correct order execution
+    Deploy goodDeploy(1, player2, player2Territory);
+    goodDeploy.execute();
+    std::cout << goodDeploy << endl;
+
+    // Basic AI will generate valid orders
+    testGoodOrder(player1.playAirlift(gameEngine));
+    testGoodOrder(player1.playBlockade(gameEngine));
+    testGoodOrder(player1.playBomb(gameEngine));
+    testGoodOrder(player1.playDiplomacy(gameEngine));
+}
+
+void testGoodOrder(Order* order)
+{
+    if (order != nullptr)
+    {
+        order->execute();
+        std::cout << *order << endl;
+    }
 }
 
 void setupGame(GameEngine& gameEngine)
