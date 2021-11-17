@@ -115,12 +115,7 @@ bool Order::getExecuted() const
 string Order::stringToLog()
 {
     std::ostringstream stream;
-    stream << "Order [" << getType() << "]";
-    if (executed)
-    {
-        stream << " executed";
-    }
-    stream << ": " << effect;
+    print(stream);
     return stream.str();
 }
 
@@ -301,6 +296,10 @@ Deploy::Deploy(int armies, Player& player, Territory& territory):
     territory(&territory)
 {
     this->setType(Type::Deploy);
+
+    std::ostringstream stream;
+    stream << "Will deploy " << armies << " armies on territory " << territory.name;
+    effect = stream.str();
 }
 
 // Destructor
@@ -318,7 +317,7 @@ bool Deploy::execute()
         territory->armies += armies;
 
         std::ostringstream stream;
-        stream << "Deployed " << armies << " armies on territory " << territory->name << " for player " << player->getPlayerName();
+        stream << "Deployed " << armies << " armies on territory " << territory->name;
         saveEffect(stream.str());
 
         return true;
@@ -371,7 +370,8 @@ ostream& operator<<(ostream& out, const Deploy& source)
 // Print method to display the description and effect of the order
 ostream& Deploy::print(ostream& out) const
 {
-    out << "[" << getType() << "]";
+    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
         out << " executed";
@@ -419,6 +419,10 @@ Advance::Advance(int armies, Player& player, Territory& sourceTerritory, Territo
     targetTerritory(&targetTerritory)
 {
     this->setType(Type::Advance);
+
+    std::ostringstream stream;
+    stream << "Will advance " << armies << " armies from territory " << sourceTerritory.name << " to territory " << targetTerritory.name;
+    effect = stream.str();
 }
 
 // Destructor
@@ -444,7 +448,7 @@ bool Advance::execute()
             targetTerritory->armies += this->armies;
 
             std::ostringstream stream;
-            stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name << " to territory " << targetTerritory->name << " for player " << player->getPlayerName();
+            stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name << " to territory " << targetTerritory->name;
             saveEffect(stream.str());
         }
         // If the target territory does not belong to the player, then we attack.
@@ -484,7 +488,7 @@ bool Advance::execute()
                 targetTerritory->player = player;
 
                 std::ostringstream stream;
-                stream << "Player " << player->getPlayerName() << " attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
+                stream << "Attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
                     " with " << armies << " armies. The territory was conquered. " << armiesAttackingLeft << " attacking armies are left and have occupied the territory.";
                 saveEffect(stream.str());
 
@@ -498,7 +502,7 @@ bool Advance::execute()
                 targetTerritory->armies = armiesDefendingLeft;
 
                 std::ostringstream stream;
-                stream << "Player " << player->getPlayerName() << " attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
+                stream << "Attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
                     " with " << armies << " armies. " << armiesAttackingLeft << " attacking armies are left and " << armiesDefendingLeft << " defending armies are left.";
                 saveEffect(stream.str());
             }
@@ -563,7 +567,8 @@ ostream& operator<<(ostream& out, const Advance& source)
 // Print method to display the description and effect of the order
 ostream& Advance::print(ostream& out) const
 {
-    out << "[" << getType() << "]";
+    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
         out << " executed";
@@ -605,6 +610,10 @@ Bomb::Bomb(Player& player, Territory& territory):
     territory(&territory)
 {
     this->setType(Type::Bomb);
+
+    std::ostringstream stream;
+    stream << "Will bomb territory " << territory.name << ". It has " << territory.armies << " armies.";
+    effect = stream.str();
 }
 
 // Destructor
@@ -622,7 +631,7 @@ bool Bomb::execute()
         territory->armies /= 2;
 
         std::ostringstream stream;
-        stream << "Player " << player->getPlayerName() << " bombed territory " << territory->name << ". It had " << initialArmies << " armies, now " << territory->armies << " are left.";
+        stream << "Bombed territory " << territory->name << ". It had " << initialArmies << " armies, now " << territory->armies << " are left.";
         saveEffect(stream.str());
 
         return true;
@@ -689,7 +698,8 @@ ostream& operator << (ostream& out, const Bomb& source)
 // Print method to display the description and effect of the order
 ostream& Bomb::print(ostream& out) const
 {
-    out << "[" << getType() << "]";
+    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
         out << " executed";
@@ -734,6 +744,10 @@ Blockade::Blockade(Player& player, Player& neutralPlayer, Territory& territory):
     territory(&territory)
 {
     this->setType(Type::Blockade);
+
+    std::ostringstream stream;
+    stream << "Will blockade territory " << territory.name << ". It has " << territory.armies << " armies.";
+    effect = stream.str();
 }
 
 // Destructor
@@ -753,7 +767,7 @@ bool Blockade::execute()
         territory->player = neutralPlayer;
 
         std::ostringstream stream;
-        stream << "Player " << player->getPlayerName() << " blockaded territory " << territory->name << ". It had " << initialArmies << " armies, now it has " << territory->armies << ".";
+        stream << "Blockaded territory " << territory->name << ". It had " << initialArmies << " armies, now it has " << territory->armies << ".";
         saveEffect(stream.str());
 
         return true;
@@ -802,7 +816,8 @@ ostream& operator << (ostream& out, const Blockade& source)
 // Print method to display the description and effect of the order
 ostream &Blockade::print(ostream& out) const
 {
-    out << "[" << getType() << "]";
+    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
         out << " executed";
@@ -850,6 +865,10 @@ Airlift::Airlift(int armies, Player& player, Territory& sourceTerritory, Territo
     targetTerritory(&targetTerritory)
 {
     this->setType(Type::Airlift);
+
+    std::ostringstream stream;
+    stream << "Will airlift " << armies << " armies from territory " << sourceTerritory.name << " to " << targetTerritory.name;
+    effect = stream.str();
 }
 
 // Destructor
@@ -867,7 +886,7 @@ bool Airlift::execute()
         targetTerritory->armies += armies;
 
         std::ostringstream stream;
-        stream << "Player " << player->getPlayerName() << " airlifted " << armies << " armies from territory " << sourceTerritory->name << " to " << targetTerritory->name;
+        stream << "Airlifted " << armies << " armies from territory " << sourceTerritory->name << " to " << targetTerritory->name;
         saveEffect(stream.str());
 
         return true;
@@ -922,7 +941,8 @@ ostream& operator << (ostream& out, const Airlift& source)
 // Print method to display the description and effect of the order
 ostream& Airlift::print(ostream& out) const
 {
-    out << "[" << getType() << "]";
+    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
         out << " executed";
@@ -964,6 +984,10 @@ Negotiate::Negotiate(Player& player, Player& targetPlayer):
     targetPlayer(&targetPlayer)
 {
     this->setType(Type::Negotiate);
+
+    std::ostringstream stream;
+    stream << targetPlayer.getPlayerName() << " will be a diplomatic ally for this turn.";
+    effect = stream.str();
 }
 
 // Destructor
@@ -981,7 +1005,7 @@ bool Negotiate::execute()
         targetPlayer->setUnattackable(player);
 
         std::ostringstream stream;
-        stream << "Players " << player->getPlayerName() << " and " << targetPlayer->getPlayerName() << " are diplomatic allies for this turn.";
+        stream << targetPlayer->getPlayerName() << " is a diplomatic ally for this turn.";
         saveEffect(stream.str());
 
         return true;
@@ -1029,7 +1053,8 @@ ostream& operator << (ostream& out, const Negotiate& source)
 // Print method to display the description and effect of the order
 ostream& Negotiate::print(ostream& out) const
 {
-    out << "[" << getType() << "]";
+    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
         out << " executed";
