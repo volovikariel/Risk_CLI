@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include "Cards.h"
+#include "LoggingObserver.h"
 #include "Map.h"
 #include "Player.h"
 
@@ -7,6 +8,9 @@
 
 int main()
 {
+    // Random seed
+    srand(time(nullptr));
+
     std::cout << "======================================= Part 3  ======================================= " << std::endl;
 
     // Startup parameters
@@ -15,6 +19,11 @@ int main()
 
 
     GameEngine gameEngine;
+
+
+    // Attach observer
+    LogObserver logObserver;
+    gameEngine.attach(logObserver);
 
 
     // Filling the deck with cards of all types
@@ -78,6 +87,9 @@ int main()
 
         Player* newPlayer = new Player(territories, 0, territoriesToAttack, territoriesToDefend);
         newPlayer->setPlayerName(playerName);
+
+        // Attach observer
+        newPlayer->getPlayerOrders()->attach(logObserver);
 
         gameEngine.getPlayers().push_back(newPlayer);
     }

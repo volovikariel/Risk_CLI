@@ -173,6 +173,12 @@ void OrdersList::move(int from, int to)
 // Add an order to the orders list
 void OrdersList::addOrder(Order *order)
 {
+    // Attach our observers
+    for (Observer* observer : observers)
+    {
+        order->attach(*observer);
+    }
+
     orderList.push_back(order);
     // Notify the observers that an order of type etc etc was added to an orderList
     notify();

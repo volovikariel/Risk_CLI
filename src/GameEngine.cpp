@@ -219,6 +219,12 @@ void GameEngine::startupPhase()
     // Create console input command processor
     CommandProcessor commandProcessor(*this);
 
+    // Attach our observers
+    for (Observer* observer : observers)
+    {
+        commandProcessor.attach(*observer);
+    }
+
     // Keep reading commands from input
     while (true)
     {
@@ -306,6 +312,12 @@ bool GameEngine::executeCommand(Command& command)
 
             Player* player = new Player();
             player->setPlayerName(newPlayerName);
+
+            // Attach our observers
+            for (Observer* observer : observers)
+            {
+                player->getPlayerOrders()->attach(*observer);
+            }
 
             players.push_back(player);
             string effect = "Added player " + newPlayerName;

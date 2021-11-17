@@ -376,10 +376,11 @@ Negotiate* Player::playDiplomacy(GameEngine& gameEngine)
     vector<Player*>& players = gameEngine.getPlayers();
 
     Player* randomPlayer;
-    while (randomPlayer != this && !gameEngine.isEliminated(randomPlayer))
+    do
     {
         randomPlayer = players.at(rand() % players.size());
     }
+    while (randomPlayer != this && !gameEngine.isEliminated(randomPlayer));
 
     return new Negotiate(*this, *randomPlayer);
 }
