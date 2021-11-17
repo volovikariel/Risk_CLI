@@ -1,0 +1,11 @@
+[continents]
+Red 20 red
+Blue 0 blue
+
+[countries]
+1 Red-Capital 1 10 10
+2 Blue-Capital 2 50 10
+
+[borders]
+1 2
+2 1

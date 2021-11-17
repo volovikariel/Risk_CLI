@@ -341,11 +341,11 @@ bool GameEngine::executeCommand(Command& command)
             vector<Territory*> copyTerritories = map->territories;
             int territoryRand; // Will store a random index to a territory
 
-            for (int i = 0; i < map->territories.size(); i++)
+            for (size_t i = 0; i < map->territories.size(); i++)
             {
                 territoryRand = rand() % copyTerritories.size(); // Generate the random index of the territory
                 Territory* territory = copyTerritories.at(territoryRand); // Store the specific territory
-                Player* playerToAssign = players[i % players.size()];
+                Player* playerToAssign = players.at(i % players.size());
                 territory->player = playerToAssign;
                 playerToAssign->addPlayerTerritory(territory);
                 copyTerritories.erase(copyTerritories.begin() + territoryRand); // Will delete the territory assigned from the temporary vector

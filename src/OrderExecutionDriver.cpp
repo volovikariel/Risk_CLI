@@ -215,7 +215,7 @@ void setupGame(GameEngine& gameEngine)
 
 
     // Distribute territories
-    for (int i = 0; i < gameEngine.getMap().territories.size(); ++i)
+    for (size_t i = 0; i < gameEngine.getMap().territories.size(); ++i)
     {
         Player* playerToAssign = gameEngine.getPlayers().at(i % numPlayers);
 
