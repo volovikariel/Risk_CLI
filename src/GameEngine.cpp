@@ -583,11 +583,11 @@ void GameEngine::executeOrdersPhase()
 // Removes players that have no owned territories
 void GameEngine::eliminatePlayers()
 {
-    for (auto p : this->getPlayers())
+    for (Player* player : players)
     {
-        if (p->getPlayerTerritories().size() == 0)
+        if (player->getPlayerTerritories().size() == 0 && !isEliminated(player))
         {
-            eliminated.push_back(p);
+            eliminated.push_back(player);
         }
     }
 }
@@ -595,14 +595,7 @@ void GameEngine::eliminatePlayers()
 // Verify if a player is eliminated
 bool GameEngine::isEliminated(Player* p)
 {
-    for (auto ep : eliminated)
-    {
-        if (ep->getPlayerName() == p->getPlayerName())
-        {
-            return true;
-        }
-    }
-    return false;
+    return std::find(eliminated.begin(), eliminated.end(), p) != eliminated.end();
 }
 
 
