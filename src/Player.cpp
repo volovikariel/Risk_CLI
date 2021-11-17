@@ -261,36 +261,45 @@ Order* Player::issueOrder(GameEngine& gameEngine)
         Deploy* deploy = new Deploy(amount, *this, *destination);
         return deploy;
     }
-    // Choose a card and play it
-    else if (!this->playerCards->getCards().empty())
+    // Try playing a card
+    for (Card* card : playerCards->getCards())
     {
         Card* toPlay = this->getPlayerCards()->getCard(0);
         Card::Type cardType = toPlay->getType();
-        toPlay->play();
+
+        Order* result = nullptr;
 
         if (cardType == Card::Type::Airlift)
         {
-            return playAirlift(gameEngine);
+            result = playAirlift(gameEngine);
         }
         else if (cardType == Card::Type::Blockade)
         {
-            return playBlockade(gameEngine);
+            result = playBlockade(gameEngine);
         }
         else if (cardType == Card::Type::Bomb)
         {
-            return playBomb(gameEngine);
+            result = playBomb(gameEngine);
         }
         else if (cardType == Card::Type::Diplomacy)
         {
-            return playDiplomacy(gameEngine);
+            result = playDiplomacy(gameEngine);
         }
         else if (cardType == Card::Type::Reinforcement)
         {
             playReinforcement();
+            toPlay->play();
+            return nullptr;
+        }
+
+        if (result != nullptr)
+        {
+            toPlay->play();
+            return result;
         }
     }
-    // If player has no cards do an advance order
-    else if (turnAdvances > 0)
+    // If no cards can be played, do an Advance order
+    if (turnAdvances > 0)
     {
         Territory* src;
         Territory* target;
@@ -302,31 +311,33 @@ Order* Player::issueOrder(GameEngine& gameEngine)
         if (coinFlip == 0)
         {
             target = turnAttack.front();
-            for (auto option : target->neighbors)
+            for (Territory* option : target->neighbors)
             {
-                if (option->player != this)
+                if (option->player == this)
                 {
+                    turnAttack.erase(turnAttack.begin());
+                    turnAttack.push_back(target);
+
                     turnAdvances--;
-                    return new Advance(target->armies, *this, *target, *option);
+                    return new Advance(target->armies, *this, *option, *target);
                 }
             }
-            turnAttack.erase(turnAttack.begin());
-            turnAttack.push_back(target);
         }
         // Defend
         else
         {
             target = turnDefend.front();
-            for (auto option : target->neighbors)
+            for (Territory* option : target->neighbors)
             {
                 if (option->player == this)
                 {
+                    turnDefend.erase(turnDefend.begin());
+                    turnDefend.push_back(target);
+
                     turnAdvances--;
                     return new Advance(target->armies, *this, *target, *option);
                 }
             }
-            turnDefend.erase(turnDefend.begin());
-            turnDefend.push_back(target);
         }
     }
 
@@ -367,6 +378,12 @@ Airlift* Player::playAirlift(GameEngine& gameEngine)
 
 Blockade* Player::playBlockade(GameEngine& gameEngine)
 {
+    // This would kill you!
+    if (playerTerritories.size() <= 1)
+    {
+        return nullptr;
+    }
+
     Territory* randomOwnTerritory = playerTerritories.at(rand() % playerTerritories.size());
     return new Blockade(*this, gameEngine.getNeutralPlayer(), *randomOwnTerritory);
 }
