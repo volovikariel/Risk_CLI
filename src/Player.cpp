@@ -250,6 +250,7 @@ Order* Player::issueOrder(GameEngine& gameEngine)
 
         Territory* destination = turnDeploy.front();
         turnDeploy.erase(turnDeploy.begin());
+        turnDeploy.push_back(destination);
 
         // Chose random amount of armies between 1 to 10
         amount = min(playerArmies, 1 + (rand() % 9));
@@ -310,6 +311,7 @@ Order* Player::issueOrder(GameEngine& gameEngine)
                 }
             }
             turnAttack.erase(turnAttack.begin());
+            turnAttack.push_back(target);
         }
         // Defend
         else
@@ -324,6 +326,7 @@ Order* Player::issueOrder(GameEngine& gameEngine)
                 }
             }
             turnDefend.erase(turnDefend.begin());
+            turnDefend.push_back(target);
         }
     }
 

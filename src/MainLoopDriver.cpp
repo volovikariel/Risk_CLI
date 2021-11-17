@@ -10,7 +10,7 @@ int main()
     std::cout << "======================================= Part 3  ======================================= " << std::endl;
 
     // Startup parameters
-    const char* mapFilePath = "../maps/canada.map";
+    const char* mapFilePath = "../maps/redvsblue.map";
     const int numPlayers = 2;
 
 
