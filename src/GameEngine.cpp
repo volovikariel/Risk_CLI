@@ -439,7 +439,7 @@ void GameEngine::reinforcementPhase()
         if (!isEliminated(player))
         {
             // Add Armies based on territory owned divided by 3
-            player->setPlayerArmies(player->getPlayerArmies() + floor(player->getPlayerTerritories().size() / 3));
+            int armiesToAdd = player->getPlayerTerritories().size() / 3;
 
             // Check if player controls continents
             vector<int> numTerritoriesPerContinent(map->continents.size());
@@ -447,21 +447,20 @@ void GameEngine::reinforcementPhase()
             {
                 numTerritoriesPerContinent[territory->continentID - 1]++;
             }
-
             for (auto continent : map->continents)
             {
                 // If player controls continent add bonus
                 if (continent->territories.size() == numTerritoriesPerContinent[continent->ID - 1])
                 {
-                    player->setPlayerArmies(player->getPlayerArmies() + continent->bonus);
+                    armiesToAdd += continent->bonus;
                 }
             }
 
             // Set minimum armies given to 3
-            if (player->getPlayerArmies() < 3)
-            {
-                player->setPlayerArmies(3);
-            }
+            armiesToAdd = max(armiesToAdd, 3);
+
+            // Set player armies
+            player->setPlayerArmies(player->getPlayerArmies() + armiesToAdd);
         }
     }
 }
@@ -472,90 +471,113 @@ void GameEngine::issueOrdersPhase()
     this->transition(GameEngine::State::IssueOrders);
 
     // Determines when to stop issuing orders
-    while (keepIssuing()) {
-        for (size_t i = 0; i < this->getPlayers().size(); i++) {
+    while (true)
+    {
+        int skipCount = 0;
+
+        for (Player* player : players)
+        {
             // Verify if player is not eliminated
-            if (!isEliminated(this->getPlayers().at(i))) {
-                Order *currOrder = this->getPlayers().at(i)->issueOrder();
-                if (currOrder != nullptr)
-                    // Adds order to list
-                    this->getPlayers().at(i)->getPlayerOrders()->addOrder(currOrder);
+            if (!isEliminated(player))
+            {
+                Order *currOrder = player->issueOrder();
+                if (currOrder == nullptr)
+                {
+                    skipCount++;
+                }
+                else
+                {
+                    player->getPlayerOrders()->addOrder(currOrder);
+                }
             }
+        }
+
+        // All players signaled they have no more orders to issue
+        if (skipCount == players.size() - eliminated.size())
+        {
+            break;
         }
     }
 }
 
 // Executes orders from each player one by one
-void GameEngine::executeOrdersPhase() {
-
+void GameEngine::executeOrdersPhase()
+{
     this->transition(GameEngine::State::ExecuteOrders);
 
-    // Verify if theres more order to execute
-    while (this->moreOrders()) {
-        for (size_t i = 0; i < this->getPlayers().size(); i++) {
+    // Execute deploy orders from each player (round-robin)
+    while (true)
+    {
+        int skipCount = 0;
+
+        for (Player* player : players)
+        {
             // Verify if player is not eliminated
-            if (!isEliminated(this->getPlayers().at(i))) {
-                OrdersList *ol = this->getPlayers().at(i)->getPlayerOrders();
-                vector<Order *> &orders = this->getPlayers().at(i)->getPlayerOrders()->getOrdersList();
-                if (orders.size() > 0) {
-                    Order *order = orders.front();
-                    // Execute Deploy orders first
-                    if (order->getType() == Order::Type::Deploy) {
-                        cout << "Execute Deploy" << endl;
-                        if (order->validate())
-                            order->execute();
-                        else
-                            cout << "Order Invalid" << endl;
-                        ol->remove(0);
-                        // Executes Other order after all deploy order are executed
-                    } else if (!moreDeploy()) { // TODO Need to modify moreDeploy method for checking deploy orders throughout OrderList since Reinforcement creates deploy orders in the middle
-                        if (order->validate())
-                            order->execute();
-                        // Verify if player has won the game
-                        if (this->getPlayers().at(i)->getPlayerTerritories().size() == this->getMap().territories.size()) {
-                            this->transition(GameEngine::State::Win);
-                            return;
-                        } else
-                            cout << "Order Invalid" << endl;
-                        ol->remove(0);
+            if (!isEliminated(player))
+            {
+                OrdersList* ordersList = player->getPlayerOrders();
+                vector<Order*>& orders = ordersList->getOrdersList();
+
+                if (orders.size() == 0)
+                {
+                    skipCount++;
+                }
+                else
+                {
+                    Order* order = orders.front();
+
+                    if (order->getType() == Order::Type::Deploy)
+                    {
+                        order->execute();
+                        ordersList->remove(0);
+                    }
+                    else
+                    {
+                        skipCount++;
                     }
                 }
             }
         }
-    }
-}
 
-// Determines how many orders are issue to player (returns false if 5 orders after deploy orders have been created)
-bool GameEngine::keepIssuing() {
-    for (auto p : this->getPlayers()) {
-        if (p->getPlayerArmies() > 0) {
-            return true;
-        }
-        // Create 5 more orders after deploy orders (Could be changed to a random number if preferred)
-        if (p->getPlayerOrders()->getOrdersList().at(p->getPlayerOrders()->getOrdersList().size()-4)->getType() == Order::Type::Deploy) {
-            return true;
+        // All players signaled they have no more deploy orders
+        if (skipCount == players.size() - eliminated.size())
+        {
+            break;
         }
     }
-    return false;
-}
 
-// Returns true if more deploy orders need to be processed TODO modify to search whole list for deploy order if its in the middle because of reinforcement card
-bool GameEngine::moreDeploy() {
-    for (auto p : this->getPlayers()) {
-        if (p->getPlayerOrders()->getOrdersList().front()->getType() == Order::Type::Deploy) {
-            return true;
+    // Execute orders from each player (round-robin)
+    while (true)
+    {
+        int skipCount = 0;
+
+        for (Player* player : players)
+        {
+            // Verify if player is not eliminated
+            if (!isEliminated(player))
+            {
+                OrdersList* ordersList = player->getPlayerOrders();
+                vector<Order*>& orders = ordersList->getOrdersList();
+
+                if (orders.size() == 0)
+                {
+                    skipCount++;
+                }
+                else
+                {
+                    Order* order = orders.front();
+                    order->execute();
+                    ordersList->remove(0);
+                }
+            }
+        }
+
+        // All players signaled they have no more orders
+        if (skipCount == players.size() - eliminated.size())
+        {
+            break;
         }
     }
-    return false;
-}
-
-// Return true if players has more orders to be processed
-bool GameEngine::moreOrders() {
-    for (auto p : this->getPlayers()) {
-        if (p->getPlayerOrders()->getOrdersList().size() > 0)
-            return true;
-    }
-    return false;
 }
 
 // Removes players that have no owned territories
