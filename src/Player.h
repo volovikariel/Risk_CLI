@@ -12,6 +12,7 @@
 using std::vector;
 
 // Forward declarations
+class GameEngine;
 class Hand;
 
 class Player
@@ -63,11 +64,19 @@ public:
     // Stream insertion operator overloading
     friend ostream& operator << (ostream& out, const Player& source);
 
-    // Required methods
-    // Creates an Order object and adds it to playerOrdersList
-    void issueOrder(Order*);
-    Order* issueOrder();
+    // Notifies the player that a new turn has started
+    void newTurn();
+    // Asks the player to decide on a new order
+    Order* issueOrder(GameEngine& gameEngine);
 
+    // Plays a card
+    Bomb* playBomb(GameEngine& gameEngine);
+    Airlift* playAirlift(GameEngine& gameEngine);
+    Blockade* playBlockade(GameEngine& gameEngine);
+    Negotiate* playDiplomacy(GameEngine& gameEngine);
+    void playReinforcement();
+
+    // Flag that grants a card on the next turn
     bool hasConqueredThisTurn;
 
 private:
@@ -91,4 +100,10 @@ private:
     int playerArmies;
     // Represents the player's name
     string playerName;
+
+    // State relevant during a single turn of the game
+    vector<Territory*> turnAttack;
+    vector<Territory*> turnDefend;
+    vector<Territory*> turnDeploy;
+    int turnAdvances;
 };

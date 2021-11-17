@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "GameEngine.h"
 
 // Constructors
 // Default constructor
@@ -231,35 +232,27 @@ ostream& operator << (ostream& out, const Player& source)
     return out;
 }
 
-// Old version of issue order based on return from old version of Card toPlay method (Maybe deprecated?)
-void Player::issueOrder(Order* order)
+void Player::newTurn()
 {
-    playerOrdersList->addOrder(order);
+    turnAttack = toAttack();
+    turnDefend = toDefend();
+    turnDeploy = toDefend();
+    turnAdvances = min(3, static_cast<int>(playerTerritories.size()));
 }
 
 // Provides Player with an order based on available options
-Order* Player::issueOrder() {
-    srand(time(nullptr));
-
-    // Prepare Territory options based on attacking or defending
-    std::vector <Territory*> def = toDefend();
-    std::vector<Territory *> atk = toAttack();
-
+Order* Player::issueOrder(GameEngine& gameEngine)
+{
     // If player still has available armies keep deploying
     if (playerArmies > 0)
     {
-        unsigned int amount = 0;
+        int amount = 0;
 
-        Territory* destination = def[0];
-        def.erase(def.begin());
-        def.push_back(destination);
+        Territory* destination = turnDeploy.front();
+        turnDeploy.erase(turnDeploy.begin());
 
         // Chose random amount of armies between 1 to 10
-        amount = 1 + (rand() % 9);
-
-        if (amount > playerArmies){
-            amount = playerArmies;
-        }
+        amount = min(playerArmies, 1 + (rand() % 9));
 
         // Remove armies we will deploy from the player pool
         playerArmies -= amount;
@@ -267,64 +260,130 @@ Order* Player::issueOrder() {
         Deploy* deploy = new Deploy(amount, *this, *destination);
         return deploy;
     }
-        // Chose card and play it.
-    else {
+    // Choose a card and play it
+    else if (!this->playerCards->getCards().empty())
+    {
+        Card* toPlay = this->getPlayerCards()->getCard(0);
+        Card::Type cardType = toPlay->getType();
+        toPlay->play();
 
-        if (!this->playerCards->getCards().empty()) {
-
-            Card* toPlay = this->getPlayerCards()->getCard(0);
-
-            // Returns order based on Card
-            Order* order = toPlay->play();
-
-            // TODO Will need to set order info based on card type. (Using toAttack and toDefend)
-            if (toPlay->getType() == Card::Type::Airlift) {
-                cout << "Played Airlift" << endl;
-            }
-            if (toPlay->getType() == Card::Type::Blockade) {
-                cout << "Played Blockade" << endl;
-            }
-            if (toPlay->getType() == Card::Type::Bomb) {
-                cout << "Played Bomb" << endl;
-            }
-            if (toPlay->getType() == Card::Type::Diplomacy) {
-                cout << "Played Diplomacy" << endl;
-            }
-            if (toPlay->getType() == Card::Type::Reinforcement) {
-                cout << "Played Reinforcement" << endl;
-            }
-            return order;
+        if (cardType == Card::Type::Airlift)
+        {
+            return playAirlift(gameEngine);
         }
-        //If player has no cards do an advance order
-        else {
-            Territory* src;
-            Territory* target;
-
-            // Chose to either defend or attack
-            int r = rand()%2;
-
-            if(r==0) {
-                target = atk[0];
-                for(auto option : target->neighbors) {
-                    if (option->player == this && option->armies > 0)
-                        src = option;
-                    break;
-                }
-            }
-            else {
-                target = def[0];
-                for(auto option : target->neighbors) {
-                    if (option->player == this && option->armies > 0)
-                        src = option;
-                    break;
-                }
-            }
-
-            // TODO Add proper Advance method "return new AdvanceOrder(this, src, target, src.armies);"
-            cout << "Played Advance" << endl;
-            return new Advance();
+        else if (cardType == Card::Type::Blockade)
+        {
+            return playBlockade(gameEngine);
+        }
+        else if (cardType == Card::Type::Bomb)
+        {
+            return playBomb(gameEngine);
+        }
+        else if (cardType == Card::Type::Diplomacy)
+        {
+            return playDiplomacy(gameEngine);
+        }
+        else if (cardType == Card::Type::Reinforcement)
+        {
+            playReinforcement();
         }
     }
+    // If player has no cards do an advance order
+    else if (turnAdvances > 0)
+    {
+        Territory* src;
+        Territory* target;
+
+        // Chose to either defend or attack
+        int coinFlip = rand() % 2;
+
+        // Attack
+        if (coinFlip == 0)
+        {
+            target = turnAttack.front();
+            for (auto option : target->neighbors)
+            {
+                if (option->player != this)
+                {
+                    turnAdvances--;
+                    return new Advance(target->armies, *this, *target, *option);
+                }
+            }
+            turnAttack.erase(turnAttack.begin());
+        }
+        // Defend
+        else
+        {
+            target = turnDefend.front();
+            for (auto option : target->neighbors)
+            {
+                if (option->player == this)
+                {
+                    turnAdvances--;
+                    return new Advance(target->armies, *this, *target, *option);
+                }
+            }
+            turnDefend.erase(turnDefend.begin());
+        }
+    }
+
+    return nullptr;
+}
+
+Bomb* Player::playBomb(GameEngine& gameEngine)
+{
+    Territory* adajacentEnemyTerritory = nullptr;
+    for (Territory* territory : toDefend())
+    {
+        for (Territory* neighbor : territory->neighbors)
+        {
+            if (neighbor->player != this && !gameEngine.isEliminated(neighbor->player))
+            {
+                adajacentEnemyTerritory = neighbor;
+                break;
+            }
+        }
+    }
+
+    if (adajacentEnemyTerritory != nullptr)
+    {
+        return new Bomb(*this, *adajacentEnemyTerritory);
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+Airlift* Player::playAirlift(GameEngine& gameEngine)
+{
+    Territory* source = toDefend().back();
+    Territory* destination = toDefend().front();
+    return new Airlift(source->armies, *this, *source, *destination);
+}
+
+Blockade* Player::playBlockade(GameEngine& gameEngine)
+{
+    Territory* randomOwnTerritory = playerTerritories.at(rand() % playerTerritories.size());
+    return new Blockade(*this, gameEngine.getNeutralPlayer(), *randomOwnTerritory);
+}
+
+Negotiate* Player::playDiplomacy(GameEngine& gameEngine)
+{
+    vector<Player*>& players = gameEngine.getPlayers();
+
+    Player* randomPlayer;
+    while (randomPlayer != this && !gameEngine.isEliminated(randomPlayer))
+    {
+        randomPlayer = players.at(rand() % players.size());
+    }
+
+    return new Negotiate(*this, *randomPlayer);
+}
+
+void Player::playReinforcement()
+{
+    playerArmies += 5;
 }
 
 // Returns a list of territories that the player already owns to defend them
