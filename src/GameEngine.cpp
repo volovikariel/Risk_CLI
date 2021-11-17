@@ -394,64 +394,74 @@ string GameEngine::stringToLog()
 }
 
 // Controls each game phase
-void GameEngine::mainGameLoop() {
-    // Removes players with no territories
-    eliminatePlayer();
-    // Check if more than one player
-    while (eliminated.size() < this->getPlayers().size()-1) {
+void GameEngine::mainGameLoop()
+{
+    // Check if more than one player remaining
+    while (eliminated.size() < getPlayers().size() - 1)
+    {
         GameEngine::reinforcementPhase();
         GameEngine::issueOrdersPhase();
         GameEngine::executeOrdersPhase();
-    }
-    // If game is won by a player provide replay or quit options
-    if (this->transition(GameEngine::State::Win)) {
-        cout << "Game Won, enter 'replay' to play again or 'quit' to stop playing" << endl;
-        string input;
-        cin >> input;
-        while (this->transition(GameEngine::State::Win)) {
-            if (input == "replay") {
-                this->transition(GameEngine::Transition::Replay);
-            } else if (input == "quit") {
-                this->transition(GameEngine::Transition::Quit);
-            } else {
-                cout << "Invalid Command, try again." << endl;
-                cin >> input;
+
+        // Give players who conquered a territory last turn a card
+        for (Player* player : players)
+        {
+            if (player->hasConqueredThisTurn)
+            {
+                player->hasConqueredThisTurn = false;
+                player->getPlayerCards()->addCard(*mainDeck.draw());
             }
         }
+
+        // Clear diplomatic ties from last turn
+        for (Player* player : players)
+        {
+            player->clearUnattackable();
+        }
+
+        // Removes players with no territories
+        eliminatePlayers();
     }
+
+    // Will allow player to choose between quit and replay
+    transition(GameEngine::State::Win);
+    startupPhase();
 }
 
 // Give players armies based on territories owns and bonus from continent
-void GameEngine::reinforcementPhase() {
+void GameEngine::reinforcementPhase()
+{
+    transition(GameEngine::State::AssignReinforcements);
 
-    this->transition(GameEngine::State::AssignReinforcements);
-
-    int playerIndex = 0;
-    for(auto i : players) {
+    for (auto player : players)
+    {
         // Verify if player is not eliminated
-        if (!isEliminated(i)) {
+        if (!isEliminated(player))
+        {
             // Add Armies based on territory owned divided by 3
-            i->setPlayerArmies(i->getPlayerArmies() + floor(i->getPlayerTerritories().size() /3));
+            player->setPlayerArmies(player->getPlayerArmies() + floor(player->getPlayerTerritories().size() / 3));
 
-            // Check if player controls continent
-            vector<int> numTerritoriesPerContinent(this->getMap().continents.size());
-            for (auto j : i->getPlayerTerritories())
-                numTerritoriesPerContinent[j->continentID-1] += 1;
+            // Check if player controls continents
+            vector<int> numTerritoriesPerContinent(map->continents.size());
+            for (auto territory : player->getPlayerTerritories())
+            {
+                numTerritoriesPerContinent[territory->continentID - 1]++;
+            }
 
-            int index = 0;
-            for (auto j : getMap().continents) {
+            for (auto continent : map->continents)
+            {
                 // If player controls continent add bonus
-                if (j->territories.size() == numTerritoriesPerContinent[index]) {
-                    i->setPlayerArmies(i->getPlayerArmies() + getMap().continents[index]->bonus);
+                if (continent->territories.size() == numTerritoriesPerContinent[continent->ID - 1])
+                {
+                    player->setPlayerArmies(player->getPlayerArmies() + continent->bonus);
                 }
-                index++;
-                continue;
             }
 
             // Set minimum armies given to 3
-            if (i->getPlayerArmies() < 3)
-                i->setPlayerArmies(3);
-            playerIndex ++;
+            if (player->getPlayerArmies() < 3)
+            {
+                player->setPlayerArmies(3);
+            }
         }
     }
 }
@@ -513,22 +523,6 @@ void GameEngine::executeOrdersPhase() {
             }
         }
     }
-
-    // Give players who conquered a territory last turn a card
-    for (Player* player : players)
-    {
-        if (player->hasConqueredThisTurn)
-        {
-            player->hasConqueredThisTurn = false;
-            player->getPlayerCards()->addCard(*mainDeck.draw());
-        }
-    }
-
-    // Clear diplomatic ties from last turn
-    for (Player* player : players)
-    {
-        player->clearUnattackable();
-    }
 }
 
 // Determines how many orders are issue to player (returns false if 5 orders after deploy orders have been created)
@@ -565,18 +559,24 @@ bool GameEngine::moreOrders() {
 }
 
 // Removes players that have no owned territories
-void GameEngine::eliminatePlayer() {
-    for (auto p : this->getPlayers()) {
-        if (p->getPlayerTerritories().size() == 0) {
+void GameEngine::eliminatePlayers()
+{
+    for (auto p : this->getPlayers())
+    {
+        if (p->getPlayerTerritories().size() == 0)
+        {
             eliminated.push_back(p);
         }
     }
 }
 
 // Verify if a player is eliminated
-bool GameEngine::isEliminated(Player* p) {
-    for (auto ep : eliminated) {
-        if (ep->getPlayerName() == p->getPlayerName()) {
+bool GameEngine::isEliminated(Player* p)
+{
+    for (auto ep : eliminated)
+    {
+        if (ep->getPlayerName() == p->getPlayerName())
+        {
             return true;
         }
     }

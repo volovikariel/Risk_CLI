@@ -119,7 +119,7 @@ public :
     bool moreOrders();
 
     // Verifies if a player need to be eliminated
-    void eliminatePlayer();
+    void eliminatePlayers();
 
     // Check if player has been eliminated
     bool isEliminated(Player*);
