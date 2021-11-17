@@ -106,10 +106,6 @@ int main()
         playerToAssign->addPlayerTerritory(territory);
     }
 
-    //Hardcode for full continent bonus test
-    //gameEngine.getPlayers().front()->addPlayerTerritory(gameEngine.getMap().territories.at(1));
-    //gameEngine.getPlayers().front()->addPlayerTerritory(gameEngine.getMap().territories.at(3));
-
 
     // Giving initial 50 reinforcements to players
     for (Player* player : gameEngine.getPlayers())
