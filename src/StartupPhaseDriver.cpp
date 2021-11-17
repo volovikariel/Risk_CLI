@@ -1,5 +1,6 @@
 #include "CommandProcessing.h"
 #include "GameEngine.h"
+#include "LoggingObserver.h"
 #include "Player.h"
 
 #include <iostream>
@@ -11,7 +12,11 @@ int main()
     cout << "Welcome to the WarZone game.\nPlease follow the instructions." << endl;
 
     // Create a GameEngine object
-    GameEngine gameEngine = GameEngine();
+    GameEngine gameEngine;
+
+    // Create a logging observer
+    LogObserver logObserver;
+    gameEngine.attach(logObserver);
 
     // Handles user input and loadmap, validatemap, addplayer, gamestart steps
     gameEngine.startupPhase();
