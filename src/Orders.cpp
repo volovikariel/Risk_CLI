@@ -743,6 +743,7 @@ bool Blockade::execute()
     {
         int initialArmies = territory->armies;
         territory->armies *= 2;
+        territory->player->removePlayerTerritory(territory);
         territory->player = neutralPlayer;
 
         std::ostringstream stream;
