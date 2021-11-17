@@ -214,7 +214,7 @@ bool tryExecuteCommand(GameEngine& gameEngine, CommandProcessor& commandProcesso
     }
 }
 
-void GameEngine::startupPhase()
+void GameEngine::startupPhase(bool exitAfterSetup)
 {
     // Create console input command processor
     CommandProcessor commandProcessor(*this);
@@ -240,7 +240,14 @@ void GameEngine::startupPhase()
         // Setup is completed
         if (success && command->getType() == Command::Type::GameStart)
         {
-            break;
+            if (exitAfterSetup)
+            {
+                return;
+            }
+            else
+            {
+                mainGameLoop();
+            }
         }
     }
 }
@@ -379,6 +386,8 @@ bool GameEngine::executeCommand(Command& command)
         }
         case Command::Type::Replay:
         {
+            // Cleanup memory
+
             map->releaseAllocs();
 
             delete neutralPlayer;
@@ -456,7 +465,7 @@ void GameEngine::mainGameLoop()
 
     // Will allow player to choose between quit and replay
     transition(GameEngine::State::Win);
-    startupPhase();
+    startupPhase(false);
 }
 
 // Give players armies based on territories owns and bonus from continent

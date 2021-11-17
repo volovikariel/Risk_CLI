@@ -89,7 +89,7 @@ public :
     Player& getNeutralPlayer();
 
     // Performs initial setup
-    void startupPhase();
+    void startupPhase(bool exitAfterSetup = true);
 
     // Executes a command. Returns a success status.
     bool executeCommand(Command& command);
