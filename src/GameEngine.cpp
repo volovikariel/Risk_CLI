@@ -457,7 +457,7 @@ void GameEngine::reinforcementPhase()
         if (!isEliminated(player))
         {
             // Add Armies based on territory owned divided by 3
-            int armiesToAdd = player->getPlayerTerritories().size() / 3;
+            int armiesToAdd = static_cast<int>(player->getPlayerTerritories().size()) / 3;
 
             // Check if player controls continents
             vector<int> numTerritoriesPerContinent(map->continents.size());

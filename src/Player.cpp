@@ -301,16 +301,13 @@ Order* Player::issueOrder(GameEngine& gameEngine)
     // If no cards can be played, do an Advance order
     if (turnAdvances > 0)
     {
-        Territory* src;
-        Territory* target;
-
         // Chose to either defend or attack
         int coinFlip = rand() % 2;
 
         // Attack
         if (coinFlip == 0)
         {
-            target = turnAttack.front();
+            Territory* target = turnAttack.front();
             for (Territory* option : target->neighbors)
             {
                 if (option->player == this)
@@ -326,7 +323,7 @@ Order* Player::issueOrder(GameEngine& gameEngine)
         // Defend
         else
         {
-            target = turnDefend.front();
+            Territory* target = turnDefend.front();
             for (Territory* option : target->neighbors)
             {
                 if (option->player == this)

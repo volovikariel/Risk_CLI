@@ -9,7 +9,7 @@
 int main()
 {
     // Random seed
-    srand(time(nullptr));
+    srand(static_cast<unsigned int>(time(nullptr)));
 
     std::cout << "======================================= Part 3  ======================================= " << std::endl;
 
