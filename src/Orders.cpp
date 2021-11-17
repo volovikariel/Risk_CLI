@@ -473,6 +473,7 @@ bool Advance::execute()
                 sourceTerritory->armies -= armiesAttacking;
                 targetTerritory->armies = armiesAttackingLeft;
 
+                targetTerritory->player->removePlayerTerritory(targetTerritory);
                 player->addPlayerTerritory(targetTerritory);
                 targetTerritory->player = player;
 
@@ -482,7 +483,7 @@ bool Advance::execute()
                 saveEffect(stream.str());
 
                 // GameEngine will give this player a card and reset this flag to false
-                // at the start of the next turn
+                // before the start of the next turn
                 player->hasConqueredThisTurn = true;
             }
             else
@@ -961,7 +962,7 @@ Negotiate::Negotiate(Player& player, Player& targetPlayer):
 // Destructor
 Negotiate::~Negotiate()
 {
-    cout << "Destroying order: airlift." << endl;
+
 }
 
 // Execute : First validates the order, and if valid executes its action

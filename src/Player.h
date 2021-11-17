@@ -53,6 +53,7 @@ public:
     void setTerritoriesToDefend(vector<Territory*> territoriesToDefend);
     void setPlayerName(const std::string& name);
     void addPlayerTerritory(Territory* territory);
+    bool removePlayerTerritory(Territory* territory);
     void setUnattackable(Player* player);
     void clearUnattackable();
 

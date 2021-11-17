@@ -80,6 +80,55 @@ int main()
     Negotiate badNegotiate(player1, player1);
     badNegotiate.execute();
     std::cout << badNegotiate << endl;
+
+    std::cout << endl;
+
+    // Conquer territory
+    Territory* adjacentPlayer1Territory = nullptr;
+    Territory* adjacentPlayer2Territory = nullptr;
+    // Find adjacent territories belonging to different players
+    for (Territory* t1 : player1.getPlayerTerritories())
+    {
+        for (Territory* t2 : player2.getPlayerTerritories())
+        {
+            if (t1->isNeighbor(t2))
+            {
+                adjacentPlayer1Territory = t1;
+                adjacentPlayer2Territory = t2;
+                break;
+            }
+        }
+    }
+    if (adjacentPlayer1Territory != nullptr && adjacentPlayer2Territory != nullptr)
+    {
+        adjacentPlayer1Territory->armies = 200;
+        adjacentPlayer2Territory->armies = 2;
+
+        Advance advanceAndConquer(200, player1, *adjacentPlayer1Territory, *adjacentPlayer2Territory);
+        advanceAndConquer.execute();
+        std::cout << advanceAndConquer << endl;
+
+        std::cout << "Territory " << adjacentPlayer2Territory->name << " now belongs to " << adjacentPlayer2Territory->player->getPlayerName() << std::endl;
+        std::cout << player1.getPlayerName() << " has conquered this turn flag: " << (player1.hasConqueredThisTurn ? "true" : "false") << std::endl;
+        std::cout << player2.getPlayerName() << " has conquered this turn flag: " << (player2.hasConqueredThisTurn ? "true" : "false") << std::endl;
+
+        std::cout << endl;
+
+        // Reset territory ownership
+        adjacentPlayer2Territory->player = &player2;
+        player1.removePlayerTerritory(adjacentPlayer2Territory);
+        player2.addPlayerTerritory(adjacentPlayer2Territory);
+
+        Negotiate negotiateTest(player1, player2);
+        negotiateTest.execute();
+        std::cout << negotiateTest << endl;
+
+        Advance badAdvance(200, player1, *adjacentPlayer1Territory, *adjacentPlayer2Territory);
+        badAdvance.execute();
+        std::cout << badAdvance << endl;
+    }
+
+    std::cout << endl;
 }
 
 void setupGame(GameEngine& gameEngine)

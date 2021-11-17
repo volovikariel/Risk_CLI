@@ -134,6 +134,20 @@ void Player::addPlayerTerritory(Territory* territory)
     this->playerTerritories.push_back(territory);
 }
 
+bool Player::removePlayerTerritory(Territory* territory)
+{
+    std::vector<Territory*>::iterator it = std::find(playerTerritories.begin(), playerTerritories.end(), territory);
+    if (it == playerTerritories.end())
+    {
+        return false;
+    }
+    else
+    {
+        playerTerritories.erase(it);
+        return true;
+    }
+}
+
 //Sets a player in the list of players that this player cannot attack
 void Player::setUnattackable(Player* player)
 {
