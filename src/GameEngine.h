@@ -91,30 +91,42 @@ public :
     // Returns the current eliminated players
     vector<Player*>& getEliminatedPlayers();
 
+    // Add a new player to the game
+    bool addPlayer(Player& player);
+
     // Returns the neutral player
     Player& getNeutralPlayer();
 
     // Performs initial setup
     void startupPhase(bool exitAfterSetup = true);
 
+    // Performs initial setup with given map and players
+    bool start(string mapFilepath, vector<Player*>& players);
+
     // Executes a command. Returns a success status.
     bool executeCommand(Command& command);
 
-    // Creates main game loop for the game.
+    // Creates main game loop for the game
     void mainGameLoop();
+
+    // Executes a single turn of the game
+    void executeTurn();
 
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
 
 private:
 
-    // Calculates Reinforcements for players.
+    // Call before starting a new game
+    void cleanup(bool prepareNewGame);
+
+    // Calculates Reinforcements for players
     void reinforcementPhase();
 
-    // Queues players orders.
+    // Queues players orders
     void issueOrdersPhase();
 
-    // Executes queued player orders.
+    // Executes queued player orders
     void executeOrdersPhase();
 
     // Verifies if a player need to be eliminated

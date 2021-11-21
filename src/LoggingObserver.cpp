@@ -1,4 +1,6 @@
 #include "LoggingObserver.h"
+
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 
@@ -43,7 +45,11 @@ Subject::~Subject()
 // Attaches an observer to the subject
 void Subject::attach(Observer& o)
 {
-    observers.push_back(&o);
+    bool found = find(observers.begin(), observers.end(), &o) != observers.end();
+    if (!found)
+    {
+        observers.push_back(&o);
+    }
 }
 
 // Dettaches an observer from the subject

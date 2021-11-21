@@ -68,14 +68,29 @@ GameEngine::GameEngine():
 
 GameEngine::~GameEngine()
 {
-    delete map;
+    cleanup(false);
+}
 
-    for (Player* player : players)
+void GameEngine::cleanup(bool prepareNewGame)
+{
+    if (prepareNewGame)
     {
-        delete player;
-    }
+        map->releaseAllocs();
+        mainDeck.releaseAllocs();
 
-    delete neutralPlayer;
+        players.clear();
+        alivePlayers.clear();
+        eliminatedPlayers.clear();
+
+        delete neutralPlayer;
+        neutralPlayer = new Player();
+        neutralPlayer->setName("Neutral");
+    }
+    else
+    {
+        delete map;
+        delete neutralPlayer;
+    }
 }
 
 ostream& operator << (ostream& out, const GameEngine& source)
@@ -175,6 +190,29 @@ Player& GameEngine::getNeutralPlayer()
     return *neutralPlayer;
 }
 
+bool GameEngine::addPlayer(Player& player)
+{
+    // Make sure the player name is unique
+    for (const Player* existingPlayer : players)
+    {
+        if (player.getName() == existingPlayer->getName())
+        {
+            return false;
+        }
+    }
+
+    // Attach our observers
+    for (Observer* observer : observers)
+    {
+        player.getOrders()->attach(*observer);
+    }
+
+    players.push_back(&player);
+    alivePlayers.push_back(&player);
+
+    return true;
+}
+
 bool tryExecuteCommand(GameEngine& gameEngine, CommandProcessor& commandProcessor, Command& command)
 {
     // Check that the requested state transition is valid
@@ -265,6 +303,30 @@ void GameEngine::startupPhase(bool exitAfterSetup)
     }
 }
 
+bool GameEngine::start(string mapFilepath, vector<Player*>& players)
+{
+    // Cleanup memory from previous game
+    cleanup(true);
+
+    Command loadMap(Command::Type::LoadMap, mapFilepath);
+    Command validateMap(Command::Type::ValidateMap);
+    Command gameStart(Command::Type::GameStart);
+
+    bool success = true;
+
+    success = success && executeCommand(loadMap);
+    success = success && executeCommand(validateMap);
+
+    for (Player* player : players)
+    {
+        success = success && addPlayer(*player);
+    }
+
+    success = success && executeCommand(gameStart);
+
+    return success;
+}
+
 bool GameEngine::executeCommand(Command& command)
 {
     switch (command.getType())
@@ -333,15 +395,18 @@ bool GameEngine::executeCommand(Command& command)
             Player* player = new Player();
             player->setName(newPlayerName);
 
-            // Attach our observers
-            for (Observer* observer : observers)
-            {
-                player->getOrders()->attach(*observer);
-            }
+            bool success = addPlayer(*player);
 
-            players.push_back(player);
-            string effect = "Added player " + newPlayerName;
-            command.saveEffect(effect);
+            if (success)
+            {
+                string effect = "Added player " + newPlayerName;
+                command.saveEffect(effect);
+            }
+            else
+            {
+                string effect = "Failed to add player " + newPlayerName;
+                command.saveEffect(effect);
+            }
 
             return transition(Transition::AddPlayer);
         }
@@ -400,22 +465,7 @@ bool GameEngine::executeCommand(Command& command)
         case Command::Type::Replay:
         {
             // Cleanup memory
-
-            map->releaseAllocs();
-
-            delete neutralPlayer;
-            neutralPlayer = new Player();
-            neutralPlayer->setName("Neutral");
-
-            for (Player* player : players)
-            {
-                delete player;
-            }
-            players.clear();
-            alivePlayers.clear();
-            eliminatedPlayers.clear();
-
-            mainDeck.releaseAllocs();
+            cleanup(true);
 
             command.saveEffect("Replaying new game");
 
@@ -441,39 +491,43 @@ string GameEngine::stringToLog()
     return stream.str();
 }
 
-// Controls each game phase
+// Runs the game until only one player is left
 void GameEngine::mainGameLoop()
 {
     // Check if more than one player remaining
     while (alivePlayers.size() > 1)
     {
-        GameEngine::reinforcementPhase();
-        GameEngine::issueOrdersPhase();
-        GameEngine::executeOrdersPhase();
-
-        // Give players who conquered a territory last turn a card
-        for (Player* player : players)
-        {
-            if (player->hasConqueredThisTurn)
-            {
-                player->hasConqueredThisTurn = false;
-                player->getCards()->addCard(*mainDeck.draw());
-            }
-        }
-
-        // Clear diplomatic ties from last turn
-        for (Player* player : players)
-        {
-            player->clearUnattackable();
-        }
-
-        // Removes players with no territories
-        eliminatePlayers();
+        executeTurn();
     }
 
-    // Will allow player to choose between quit and replay
     transition(GameEngine::State::Win);
-    startupPhase(false);
+}
+
+// Executes a single turn of the game
+void GameEngine::executeTurn()
+{
+    GameEngine::reinforcementPhase();
+    GameEngine::issueOrdersPhase();
+    GameEngine::executeOrdersPhase();
+
+    // Give players who conquered a territory last turn a card
+    for (Player* player : alivePlayers)
+    {
+        if (player->hasConqueredThisTurn)
+        {
+            player->hasConqueredThisTurn = false;
+            player->getCards()->addCard(*mainDeck.draw());
+        }
+    }
+
+    // Clear diplomatic ties from last turn
+    for (Player* player : alivePlayers)
+    {
+        player->clearUnattackable();
+    }
+
+    // Removes players with no territories
+    eliminatePlayers();
 }
 
 // Give players armies based on territories owns and bonus from continent
