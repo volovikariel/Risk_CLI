@@ -433,12 +433,6 @@ void GameEngine::mainGameLoop()
     // Check if more than one player remaining
     while (eliminated.size() < getPlayers().size() - 1)
     {
-        // Notify players of a new turn (so they can update internal state)
-        for (Player* player : players)
-        {
-            player->newTurn();
-        }
-
         GameEngine::reinforcementPhase();
         GameEngine::issueOrdersPhase();
         GameEngine::executeOrdersPhase();

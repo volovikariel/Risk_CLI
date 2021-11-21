@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PlayerStrategies.h"
 #include "GameEngine.h"
 
 // Constructors
@@ -8,22 +9,8 @@ Player::Player():
     playerCards(new Hand(*this)),
     playerOrdersList(new OrdersList()),
     playerArmies(0),
-    territoriesToAttack(),
-    territoriesToDefend(),
-    hasConqueredThisTurn(false)
-{
-
-}
-
-// Parametrized constructor
-Player::Player(vector<Territory*>& playerTerritories, int playerArmies, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend):
-    playerTerritories(playerTerritories),
-    playerCards(new Hand(*this)),
-    playerOrdersList(new OrdersList()),
-    playerArmies(playerArmies),
-    territoriesToAttack(territoriesToAttack),
-    territoriesToDefend(territoriesToDefend),
-    hasConqueredThisTurn(false)
+    hasConqueredThisTurn(false),
+    strategy(nullptr)
 {
 
 }
@@ -32,9 +19,8 @@ Player::Player(vector<Territory*>& playerTerritories, int playerArmies, vector<T
 Player::Player(const Player& other):
     playerTerritories(other.playerTerritories),
     playerArmies(other.playerArmies),
-    territoriesToAttack(other.territoriesToAttack),
-    territoriesToDefend(other.territoriesToDefend),
-    hasConqueredThisTurn(other.hasConqueredThisTurn)
+    hasConqueredThisTurn(other.hasConqueredThisTurn),
+    strategy(other.strategy)
 {
     delete this->playerCards;
     delete this->playerOrdersList;
@@ -108,22 +94,6 @@ void Player::setPlayerArmies(int playerArmies)
     this->playerArmies = playerArmies;
 }
 
-void Player::setTerritoriesToAttack(vector<Territory*> territoriesToAttack)
-{
-    for (Territory* t : territoriesToAttack)
-    {
-        this->territoriesToAttack.push_back(t);
-    }
-}
-
-void Player::setTerritoriesToDefend(vector<Territory*> territoriesToDefend)
-{
-    for (Territory* t : territoriesToDefend)
-    {
-        this->territoriesToDefend.push_back(t);
-    }
-}
-
 void Player::setPlayerName(const std::string& name)
 {
     playerName = name;
@@ -167,6 +137,18 @@ bool Player::hasTerritory(Territory* target)
     return std::find(playerTerritories.begin(), playerTerritories.end(), target) != playerTerritories.end();
 }
 
+// Sets the issue order strategy
+void Player::setPlayerStrategy(PlayerStrategy& strategy)
+{
+    this->strategy = &strategy;
+}
+
+// Gets the issue order strategy
+PlayerStrategy& Player::getPlayerStrategy()
+{
+    return *strategy;
+}
+
 // Operator overloading
 // Assignment operator overloading
 void Player::operator = (const Player& other)
@@ -178,9 +160,8 @@ void Player::operator = (const Player& other)
     playerCards = new Hand(*(other.playerCards));
     playerOrdersList = new OrdersList(*(other.playerOrdersList));
     playerArmies = other.playerArmies;
-    territoriesToAttack = other.territoriesToAttack;
-    territoriesToDefend = other.territoriesToDefend;
     hasConqueredThisTurn = other.hasConqueredThisTurn;
+    strategy = other.strategy;
 }
 
 //stream insertion operator overloading
@@ -232,133 +213,12 @@ ostream& operator << (ostream& out, const Player& source)
     return out;
 }
 
-void Player::newTurn()
-{
-    turnAttack = toAttack();
-    turnDefend = toDefend();
-    turnDeploy = toDefend();
-    turnAdvances = min(3, static_cast<int>(playerTerritories.size()));
-}
-
-// Provides Player with an order based on available options
+// Provides an order based on the current strategy
 Order* Player::issueOrder(GameEngine& gameEngine)
 {
-    // If player still has available armies keep deploying
-    if (playerArmies > 0)
+    if (strategy != nullptr)
     {
-        int amount = 0;
-
-        Territory* destination = turnDeploy.front();
-        turnDeploy.erase(turnDeploy.begin());
-        turnDeploy.push_back(destination);
-
-        // Chose random amount of armies between 1 to 10
-        amount = min(playerArmies, 1 + (rand() % 9));
-
-        // Remove armies we will deploy from the player pool
-        playerArmies -= amount;
-
-        Deploy* deploy = new Deploy(amount, *this, *destination);
-        return deploy;
-    }
-    // Try playing a card
-    for (Card* card : playerCards->getCards())
-    {
-        Card* toPlay = this->getPlayerCards()->getCard(0);
-        Card::Type cardType = toPlay->getType();
-
-        Order* result = nullptr;
-
-        if (cardType == Card::Type::Airlift)
-        {
-            result = playAirlift(gameEngine);
-        }
-        else if (cardType == Card::Type::Blockade)
-        {
-            result = playBlockade(gameEngine);
-        }
-        else if (cardType == Card::Type::Bomb)
-        {
-            result = playBomb(gameEngine);
-        }
-        else if (cardType == Card::Type::Diplomacy)
-        {
-            result = playDiplomacy(gameEngine);
-        }
-        else if (cardType == Card::Type::Reinforcement)
-        {
-            playReinforcement();
-            toPlay->play();
-            return nullptr;
-        }
-
-        if (result != nullptr)
-        {
-            toPlay->play();
-            return result;
-        }
-    }
-    // If no cards can be played, do an Advance order
-    if (turnAdvances > 0)
-    {
-        // Chose to either defend or attack
-        int coinFlip = rand() % 2;
-
-        // Attack
-        if (coinFlip == 0)
-        {
-            Territory* target = turnAttack.front();
-            for (Territory* option : target->neighbors)
-            {
-                if (option->player == this)
-                {
-                    turnAttack.erase(turnAttack.begin());
-                    turnAttack.push_back(target);
-
-                    turnAdvances--;
-                    return new Advance(target->armies, *this, *option, *target);
-                }
-            }
-        }
-        // Defend
-        else
-        {
-            Territory* target = turnDefend.front();
-            for (Territory* option : target->neighbors)
-            {
-                if (option->player == this)
-                {
-                    turnDefend.erase(turnDefend.begin());
-                    turnDefend.push_back(target);
-
-                    turnAdvances--;
-                    return new Advance(target->armies, *this, *target, *option);
-                }
-            }
-        }
-    }
-
-    return nullptr;
-}
-
-Bomb* Player::playBomb(GameEngine& gameEngine)
-{
-    Territory* adajacentEnemyTerritory = nullptr;
-    for (Territory* territory : toDefend())
-    {
-        for (Territory* neighbor : territory->neighbors)
-        {
-            if (neighbor->player != this && !gameEngine.isEliminated(neighbor->player))
-            {
-                adajacentEnemyTerritory = neighbor;
-                break;
-            }
-        }
-    }
-
-    if (adajacentEnemyTerritory != nullptr)
-    {
-        return new Bomb(*this, *adajacentEnemyTerritory);
+        return strategy->issueOrder(gameEngine);
     }
     else
     {
@@ -366,80 +226,14 @@ Bomb* Player::playBomb(GameEngine& gameEngine)
     }
 }
 
-Airlift* Player::playAirlift(GameEngine& gameEngine)
+// Returns a list of territories that the player wants to defend them based on the current strategy
+vector<Territory*>& Player::toDefend(GameEngine& gameEngine)
 {
-    Territory* source = toDefend().back();
-    Territory* destination = toDefend().front();
-    return new Airlift(source->armies, *this, *source, *destination);
+    return strategy->toDefend(gameEngine);
 }
 
-Blockade* Player::playBlockade(GameEngine& gameEngine)
+// Returns a list of territories that the player wants to attack based on the current strategy
+vector<Territory*>& Player::toAttack(GameEngine& gameEngine)
 {
-    // This would kill you!
-    if (playerTerritories.size() <= 1)
-    {
-        return nullptr;
-    }
-
-    Territory* randomOwnTerritory = playerTerritories.at(rand() % playerTerritories.size());
-    return new Blockade(*this, gameEngine.getNeutralPlayer(), *randomOwnTerritory);
-}
-
-Negotiate* Player::playDiplomacy(GameEngine& gameEngine)
-{
-    vector<Player*>& players = gameEngine.getPlayers();
-
-    Player* randomPlayer;
-    do
-    {
-        randomPlayer = players.at(rand() % players.size());
-    }
-    while (randomPlayer == this || gameEngine.isEliminated(randomPlayer));
-
-    return new Negotiate(*this, *randomPlayer);
-}
-
-void Player::playReinforcement()
-{
-    playerArmies += 5;
-}
-
-// Returns a list of territories that the player already owns to defend them
-vector<Territory*>& Player::toDefend()
-{
-    territoriesToDefend = this->getPlayerTerritories();
-    return territoriesToDefend;
-}
-
-// Returns a list of territories that the player can attack
-vector<Territory*>& Player::toAttack()
-{
-    vector<Territory*> toAttack = vector<Territory*>();
-
-    // loop through each owned territory
-    for (size_t i = 0; i < this->getPlayerTerritories().size(); i++){
-        // get the adjacent territories to the current owned territory
-        vector<Territory*> adjacentList = this->getPlayerTerritories().at(i)->neighbors;
-        // loop through each adjacent territories
-        for (size_t j = 0; j < adjacentList.size(); j++) {
-            bool found = false;
-            //Only add to list if owned by enemy
-            if (adjacentList.at(j)->player != this) {
-                // for each territory that has been added to toAttack
-                for (size_t k = 0; k < toAttack.size(); k++) {
-                    // make sure the current adjacentTerritory is not already in the list
-                    if (toAttack.at(k)->name.compare(adjacentList.at(j)->name) == 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                // if the territory name wasn't found
-                if (!found) {
-                    toAttack.push_back(adjacentList.at(j));
-                }
-            }
-        }
-    }
-    territoriesToAttack = toAttack;
-    return territoriesToAttack;
+    return strategy->toAttack(gameEngine);
 }

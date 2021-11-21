@@ -2,6 +2,38 @@
 #include "Orders.h"
 #include "Player.h"
 
+#include <algorithm>
+
+// Utils
+
+// Returns a list of territories that the player can attack
+vector<Territory*> canAttack(Player& player)
+{
+    vector<Territory*> canAttack = vector<Territory*>();
+
+    for (Territory* ownedTerritory : player.getPlayerTerritories())
+    {
+        for (Territory* neighbor : ownedTerritory->neighbors)
+        {
+            bool found = false;
+
+            // Only add to list if not owned by self
+            if (neighbor->player != &player)
+            {
+                // Make sure the current neighbor is not already in the list
+                bool found = find(canAttack.begin(), canAttack.end(), neighbor) != canAttack.end();
+                if (!found)
+                {
+                    canAttack.push_back(neighbor);
+                }
+            }
+        }
+    }
+
+    return canAttack;
+}
+
+
 // PlayerStrategy
 
 PlayerStrategy::PlayerStrategy()

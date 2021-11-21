@@ -14,6 +14,7 @@ using std::vector;
 // Forward declarations
 class GameEngine;
 class Hand;
+class PlayerStrategy;
 
 class Player
 {
@@ -21,7 +22,6 @@ public:
 
     // Constructor(s) and destructor
     Player();
-    Player(vector<Territory*>& playerTerritories, int playerArmies, vector<Territory*>& territoriesToAttack, vector<Territory*>& territoriesToDefend);
     Player(const Player& other);
     ~Player();
 
@@ -34,10 +34,10 @@ public:
     OrdersList* getPlayerOrders();
     // Returns the armies of the player
     int getPlayerArmies() const;
-    // Returns a list of territories owned by the player that need to be defended
-    vector<Territory*>& toDefend();
-    // Returns a list of territories that are attacked by the player
-    vector<Territory*>& toAttack();
+    // Returns a list of territories that the player wants to defend based on the current strategy
+    vector<Territory*>& toDefend(GameEngine& gameEngine);
+    // Returns a list of territories that the player wants to attack based on the current strategy
+    vector<Territory*>& toAttack(GameEngine& gameEngine);
     // Returns the player's name
     const std::string& getPlayerName() const;
     // Checks if player owns a specific territory
@@ -50,8 +50,6 @@ public:
     void setPlayerCards(Hand* playerCards);
     void setPlayerOrders(OrdersList* playerOrderList);
     void setPlayerArmies(int playerArmies);
-    void setTerritoriesToAttack(vector<Territory*> territoriesToAttack);
-    void setTerritoriesToDefend(vector<Territory*> territoriesToDefend);
     void setPlayerName(const std::string& name);
     void addPlayerTerritory(Territory* territory);
     bool removePlayerTerritory(Territory* territory);
@@ -64,20 +62,16 @@ public:
     // Stream insertion operator overloading
     friend ostream& operator << (ostream& out, const Player& source);
 
-    // Notifies the player that a new turn has started
-    void newTurn();
-    // Asks the player to decide on a new order
+    // Provides an order based on the current strategy
     Order* issueOrder(GameEngine& gameEngine);
-
-    // Plays a card
-    Bomb* playBomb(GameEngine& gameEngine);
-    Airlift* playAirlift(GameEngine& gameEngine);
-    Blockade* playBlockade(GameEngine& gameEngine);
-    Negotiate* playDiplomacy(GameEngine& gameEngine);
-    void playReinforcement();
 
     // Flag that grants a card on the next turn
     bool hasConqueredThisTurn;
+
+    // Sets the issue order strategy
+    void setPlayerStrategy(PlayerStrategy& strategy);
+    // Gets the issue order strategy
+    PlayerStrategy& getPlayerStrategy();
 
 private:
 
@@ -88,10 +82,6 @@ private:
     Hand* playerCards;
     // Represents the OrderList queued by the player
     OrdersList* playerOrdersList;
-    // Represents the collection of territories to attack
-    vector<Territory*> territoriesToAttack;
-    // Represents the collection of territories to defend
-    vector<Territory*> territoriesToDefend;
     // Represents the collection of players that the player can't attack when a Negotiation Order is issued.
     vector<Player*> unattackable;
 
@@ -101,9 +91,6 @@ private:
     // Represents the player's name
     string playerName;
 
-    // State relevant during a single turn of the game
-    vector<Territory*> turnAttack;
-    vector<Territory*> turnDefend;
-    vector<Territory*> turnDeploy;
-    int turnAdvances;
+    // Strategy for issuing orders
+    PlayerStrategy* strategy;
 };
