@@ -1050,12 +1050,12 @@ std::string& StringUtils::ToLowerCase(std::string& str)
     return str;
 }
 
-std::string StringUtils::SpacePad(const std::string& str, int numSpaces)
+std::string StringUtils::SpacePad(const std::string& str, size_t numSpaces)
 {
     std::string temp = str;
 
-    int toAdd = numSpaces - str.size();
-    for (int i = 0; i < toAdd; ++i)
+    size_t toAdd = numSpaces - str.size();
+    for (size_t i = 0; i < toAdd; ++i)
     {
         temp += ' ';
     }

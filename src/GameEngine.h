@@ -238,7 +238,7 @@ namespace StringUtils
     std::string& ToLowerCase(std::string& str);
 
     // Adds spaces to a string so that it occupies exactly numSpaces of character space.
-    std::string SpacePad(const std::string& str, int numSpaces);
+    std::string SpacePad(const std::string& str, size_t numSpaces);
 
     // Extracts the filename from a filepath
     std::string Filename(const std::string& filepath);
