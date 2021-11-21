@@ -250,6 +250,52 @@ bool GameEngine::executeCommand(Command& command)
 {
     switch (command.getType())
     {
+        case Command::Type::Tournament:
+        {
+            TournamentCommandData* data = static_cast<TournamentCommandData*>(command.data);
+
+            size_t numMaps = data->maps.size();
+            if (numMaps < 1 || numMaps > 5)
+            {
+                std::ostringstream stream;
+                stream << "Must have between 1 and 5 maps, got: " << numMaps;
+
+                command.saveEffect(stream.str());
+                return false;
+            }
+
+            size_t numStrategies = data->strategies.size();
+            if (numStrategies < 2 || numStrategies > 4)
+            {
+                std::ostringstream stream;
+                stream << "Must have between 1 and 5 strategies, got: " << numStrategies;
+
+                command.saveEffect(stream.str());
+                return false;
+            }
+
+            if (data->games < 1 || data->games > 5)
+            {
+                std::ostringstream stream;
+                stream << "Must have between 1 and 5 games, got: " << data->games;
+
+                command.saveEffect(stream.str());
+                return false;
+            }
+
+            if (data->maxTurns < 10 || data->maxTurns > 50)
+            {
+                std::ostringstream stream;
+                stream << "Must have between 10 and 50 max turns per game, got: " << data->maxTurns;
+
+                command.saveEffect(stream.str());
+                return false;
+            }
+
+            // TODO command.saveEffect();
+
+            return transition(Transition::Tournament);
+        }
         case Command::Type::LoadMap:
         {
             map->releaseAllocs();
@@ -730,7 +776,7 @@ StateGraphInfo::StateGraphInfo()
 
     states[static_cast<size_t>(GameEngine::State::Start)] = new StateInfo(vector<pair<GameEngine::State, GameEngine::Transition>>
     {
-        make_pair(GameEngine::State::AssignReinforcements, GameEngine::Transition::Tournament),
+        make_pair(GameEngine::State::Start, GameEngine::Transition::Tournament),
         make_pair(GameEngine::State::MapLoaded, GameEngine::Transition::LoadMap)
     });
 
