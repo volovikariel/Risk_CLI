@@ -97,9 +97,6 @@ public :
     // Returns the neutral player
     Player& getNeutralPlayer();
 
-    // Performs initial setup
-    void startupPhase(bool exitAfterSetup = true);
-
     // Performs initial setup with given map and players
     bool start(string mapFilepath, vector<Player*>& players);
 
