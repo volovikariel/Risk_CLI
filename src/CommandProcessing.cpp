@@ -5,12 +5,108 @@
 #include <iostream>
 #include <sstream>
 
+/* --- TournamentCommandData --- */
+
+TournamentCommandData::TournamentCommandData():
+    maps(),
+    strategies(),
+    games(0),
+    maxTurns(0)
+{
+
+}
+
+TournamentCommandData::TournamentCommandData(TournamentCommandData& other):
+    maps(other.maps),
+    strategies(other.strategies),
+    games(other.games),
+    maxTurns(other.maxTurns)
+{
+
+}
+
+TournamentCommandData& TournamentCommandData::operator = (const TournamentCommandData& other)
+{
+    this->maps = other.maps;
+    this->strategies = other.strategies;
+    this->games = other.games;
+    this->maxTurns = other.maxTurns;
+    return *this;
+}
+
+std::ostream& operator << (std::ostream& out, const TournamentCommandData& source)
+{
+    out << "Tournament: " << " -M ";
+    for (const std::string& map : source.maps)
+    {
+        out << map << " ";
+    }
+    out << " -P ";
+    for (const std::string& strategy : source.strategies)
+    {
+        out << strategy << " ";
+    }
+    out << " -G " << source.games << " -D " << source.maxTurns;
+    return out;
+}
+
+bool TournamentCommandData::parseStream(std::istream& in)
+{
+    std::string word;
+    in >> word;
+
+    if (word != "-M" || !in.good())
+    {
+        return false;
+    }
+
+    while (in.good())
+    {
+        in >> word;
+        if (word.front() == '-')
+            break;
+        maps.push_back(word);
+    }
+
+    if (word != "-P" || !in.good())
+    {
+        return false;
+    }
+
+    while (in.good())
+    {
+        in >> word;
+        if (word.front() == '-')
+            break;
+        strategies.push_back(word);
+    }
+
+    if (word != "-G" || !in.good())
+    {
+        return false;
+    }
+
+    in >> games;
+    in >> word;
+
+    if (word != "-D" || !in.good())
+    {
+        return false;
+    }
+
+    in >> maxTurns;
+
+    return true;
+}
+
+
 /* --- Command --- */
 
 std::ostream& operator << (std::ostream& out, const Command::Type source)
 {
-    static const char* names[8] =
+    static const char* names[9] =
     {
+        "Tournament",
         "LoadMap",
         "ValidateMap",
         "AddPlayer",
@@ -28,7 +124,8 @@ std::ostream& operator << (std::ostream& out, const Command::Type source)
 Command::Command():
     type(),
     argument(),
-    effect()
+    effect(),
+    data(nullptr)
 {
 
 }
@@ -36,15 +133,17 @@ Command::Command():
 Command::Command(Type type):
     type(type),
     argument(),
-    effect()
+    effect(),
+    data(nullptr)
 {
 
 }
 
-Command::Command(Type type, std::string& argument) :
+Command::Command(Type type, std::string& argument):
     type(type),
     argument(argument),
-    effect()
+    effect(),
+    data(nullptr)
 {
 
 }
@@ -52,14 +151,18 @@ Command::Command(Type type, std::string& argument) :
 Command::Command(const Command& other):
     type(other.type),
     argument(other.argument),
-    effect(other.effect)
+    effect(other.effect),
+    data(other.data)
 {
 
 }
 
 Command::~Command()
 {
-
+    if (data != nullptr)
+    {
+        delete data;
+    }
 }
 
 Command& Command::operator = (const Command& other)
@@ -67,6 +170,7 @@ Command& Command::operator = (const Command& other)
     this->type = other.type;
     this->argument = other.argument;
     this->effect = other.effect;
+    this->data = other.data;
     return *this;
 }
 
@@ -100,11 +204,6 @@ void Command::saveEffect(const std::string& description)
     // Notify the observers that the Command object has changed
     notify();
 }
-
-/*void Command::saveEffect(std::string description)
-{
-    effect = description;
-}*/
 
 void Command::saveEffect(const char* description)
 {
@@ -278,7 +377,25 @@ Command* CommandProcessor::readCommand()
         return new Command(Command::Type::Invalid, line);
     }
 
-    if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
+    if (transition == GameEngine::Transition::Tournament)
+    {
+        TournamentCommandData* data = new TournamentCommandData();
+
+        bool success = data->parseStream(lineStream);
+        if (success)
+        {
+            Command* command = new Command(commandType);
+            command->data = data;
+            return command;
+        }
+        else
+        {
+            std::cout << "Invalid arguments. Format is: tournament -M <listofmapfiles> -P <listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>" << std::endl;
+            delete data;
+            return new Command(Command::Type::Invalid, line);
+        }
+    }
+    else if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
     {
         // Parse the required argument
         lineStream >> argument;
@@ -458,7 +575,24 @@ Command* FileCommandProcessorAdapter::readCommand()
         return new Command(Command::Type::Invalid, line);
     }
 
-    if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
+    if (transition == GameEngine::Transition::Tournament)
+    {
+        TournamentCommandData* data = new TournamentCommandData();
+
+        bool success = data->parseStream(lineStream);
+        if (success)
+        {
+            Command* command = new Command(commandType);
+            command->data = data;
+            return command;
+        }
+        else
+        {
+            delete data;
+            return new Command(Command::Type::Invalid, line);
+        }
+    }
+    else if (transition == GameEngine::Transition::LoadMap || transition == GameEngine::Transition::AddPlayer)
     {
         // Parse the required argument
         lineStream >> argument;
@@ -491,6 +625,8 @@ GameEngine::Transition CommandProcessingUtils::commandToTransition(Command::Type
 {
     switch (type)
     {
+    case Command::Type::Tournament:
+        return GameEngine::Transition::Tournament;
     case Command::Type::LoadMap:
         return GameEngine::Transition::LoadMap;
     case Command::Type::ValidateMap:
@@ -512,6 +648,9 @@ bool CommandProcessingUtils::transitionToCommand(GameEngine::Transition transiti
 {
     switch (transition)
     {
+    case GameEngine::Transition::Tournament:
+        result = Command::Type::Tournament;
+        break;
     case GameEngine::Transition::LoadMap:
         result = Command::Type::LoadMap;
         break;

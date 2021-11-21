@@ -6,6 +6,33 @@
 #include <string>
 #include <vector>
 
+class TournamentCommandData
+{
+public:
+
+    // Default constructor
+    TournamentCommandData();
+    // Copy constructor
+    TournamentCommandData(TournamentCommandData& other);
+
+    // Assignment operator
+    TournamentCommandData& operator = (const TournamentCommandData& other);
+    // Stream output operator
+    friend std::ostream& operator << (std::ostream& out, const TournamentCommandData& source);
+
+    // Initializes data from input stream. Returns false if couldn't parse.
+    bool parseStream(std::istream& in);
+
+    // List of map filepaths
+    std::vector<std::string> maps;
+    // List of player strategies
+    std::vector<std::string> strategies;
+    // Amount of games to play
+    int games;
+    // Amount of turns to execute before declaring a game draw
+    int maxTurns;
+};
+
 // Represents a command (may include a string parameter)
 class Command : public Subject, public ILoggable
 {
@@ -14,6 +41,7 @@ public:
     // A subset of GameEngine::Transition
     enum class Type
     {
+        Tournament,
         LoadMap,
         ValidateMap,
         AddPlayer,
@@ -57,12 +85,15 @@ public:
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
 
+    void* data;
+
 private:
 
     // The type of command
     Type type;
     // Stores the argument (if required by the command type, otherwise an empty string)
     std::string argument;
+    // Stores all flags
     // Detailed effects (set externally after execution)
     std::string effect;
 };

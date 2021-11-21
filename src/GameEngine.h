@@ -38,6 +38,7 @@ public :
     // GameEngine transitions between States
     enum class Transition
     {
+        Tournament,
         LoadMap,
         ValidateMap,
         AddPlayer,

@@ -36,8 +36,9 @@ std::ostream& operator << (std::ostream& out, const GameEngine::State source)
 
 std::ostream& operator << (std::ostream& out, const GameEngine::Transition source)
 {
-    static const char* names[11] =
+    static const char* names[12] =
     {
+        "Tournament",
         "LoadMap",
         "ValidateMap",
         "AddPlayer",
@@ -729,6 +730,7 @@ StateGraphInfo::StateGraphInfo()
 
     states[static_cast<size_t>(GameEngine::State::Start)] = new StateInfo(vector<pair<GameEngine::State, GameEngine::Transition>>
     {
+        make_pair(GameEngine::State::AssignReinforcements, GameEngine::Transition::Tournament),
         make_pair(GameEngine::State::MapLoaded, GameEngine::Transition::LoadMap)
     });
 
@@ -866,7 +868,12 @@ bool StringUtils::ToGameEngineTransition(std::string& str, GameEngine::Transitio
     std::string temp = str;
     StringUtils::ToLowerCase(temp);
 
-    if (temp == "loadmap")
+    if (temp == "tournament")
+    {
+        result = GameEngine::Transition::Tournament;
+        return true;
+    }
+    else if (temp == "loadmap")
     {
         result = GameEngine::Transition::LoadMap;
         return true;
