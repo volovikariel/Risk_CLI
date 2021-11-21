@@ -113,7 +113,7 @@ public :
     void eliminatePlayers();
 
     // Check if player has been eliminated
-    bool isEliminated(Player*);
+    bool isEliminated(Player& player);
 
 private:
 

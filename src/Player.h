@@ -30,8 +30,8 @@ public:
     vector<Territory*>& getTerritories();
     // Returns the cards owned by the player
     Hand* getCards();
-    // Returns the OrderList queued by the player
-    OrdersList* getPlayerOrders();
+    // Returns the orders queued by the player
+    OrdersList* getOrders();
     // Returns the armies of the player
     int getArmies() const;
     // Returns a list of territories that the player wants to defend based on the current strategy
@@ -46,11 +46,11 @@ public:
     vector<Player*>& getUnattackable();
 
     // Mutators
-    void setTerritories(vector<Territory*> territories);
+    void setTerritories(vector<Territory*>& territories);
     void addTerritory(Territory* territory);
     bool removeTerritory(Territory* territory);
     void setCards(Hand* cards);
-    void setPlayerOrders(OrdersList* playerOrderList);
+    void setOrders(OrdersList* orders);
     void setArmies(int armies);
     void setName(const std::string& name);
     void setUnattackable(Player* player);
@@ -80,8 +80,8 @@ private:
     vector<Territory*> territories;
     // Represents the collection of cards of the player
     Hand* cards;
-    // Represents the OrderList queued by the player
-    OrdersList* playerOrdersList;
+    // Represents the orders queued by the player
+    OrdersList* orders;
     // Represents the collection of players that the player can't attack when a Negotiation Order is issued.
     vector<Player*> unattackable;
 

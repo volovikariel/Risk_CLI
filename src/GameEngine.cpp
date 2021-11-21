@@ -323,7 +323,7 @@ bool GameEngine::executeCommand(Command& command)
             // Attach our observers
             for (Observer* observer : observers)
             {
-                player->getPlayerOrders()->attach(*observer);
+                player->getOrders()->attach(*observer);
             }
 
             players.push_back(player);
@@ -470,7 +470,7 @@ void GameEngine::reinforcementPhase()
     for (auto player : players)
     {
         // Verify if player is not eliminated
-        if (!isEliminated(player))
+        if (!isEliminated(*player))
         {
             // Add Armies based on territory owned divided by 3
             int armiesToAdd = static_cast<int>(player->getTerritories().size()) / 3;
@@ -512,7 +512,7 @@ void GameEngine::issueOrdersPhase()
         for (Player* player : players)
         {
             // Verify if player is not eliminated
-            if (!isEliminated(player))
+            if (!isEliminated(*player))
             {
                 Order *currOrder = player->issueOrder(*this);
                 if (currOrder == nullptr)
@@ -521,7 +521,7 @@ void GameEngine::issueOrdersPhase()
                 }
                 else
                 {
-                    player->getPlayerOrders()->addOrder(currOrder);
+                    player->getOrders()->addOrder(currOrder);
                 }
             }
         }
@@ -547,9 +547,9 @@ void GameEngine::executeOrdersPhase()
         for (Player* player : players)
         {
             // Verify if player is not eliminated
-            if (!isEliminated(player))
+            if (!isEliminated(*player))
             {
-                OrdersList* ordersList = player->getPlayerOrders();
+                OrdersList* ordersList = player->getOrders();
                 vector<Order*>& orders = ordersList->getOrdersList();
 
                 if (orders.size() == 0)
@@ -588,9 +588,9 @@ void GameEngine::executeOrdersPhase()
         for (Player* player : players)
         {
             // Verify if player is not eliminated
-            if (!isEliminated(player))
+            if (!isEliminated(*player))
             {
-                OrdersList* ordersList = player->getPlayerOrders();
+                OrdersList* ordersList = player->getOrders();
                 vector<Order*>& orders = ordersList->getOrdersList();
 
                 if (orders.size() == 0)
@@ -619,7 +619,7 @@ void GameEngine::eliminatePlayers()
 {
     for (Player* player : players)
     {
-        if (player->getTerritories().size() == 0 && !isEliminated(player))
+        if (player->getTerritories().size() == 0 && !isEliminated(*player))
         {
             eliminated.push_back(player);
         }
@@ -627,9 +627,9 @@ void GameEngine::eliminatePlayers()
 }
 
 // Verify if a player is eliminated
-bool GameEngine::isEliminated(Player* p)
+bool GameEngine::isEliminated(Player& player)
 {
-    return std::find(eliminated.begin(), eliminated.end(), p) != eliminated.end();
+    return std::find(eliminated.begin(), eliminated.end(), &player) != eliminated.end();
 }
 
 

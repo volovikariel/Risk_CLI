@@ -7,7 +7,7 @@
 Player::Player():
     territories(),
     cards(new Hand(*this)),
-    playerOrdersList(new OrdersList()),
+    orders(new OrdersList()),
     armies(0),
     hasConqueredThisTurn(false),
     strategy(nullptr)
@@ -23,17 +23,17 @@ Player::Player(const Player& other):
     strategy(other.strategy)
 {
     delete this->cards;
-    delete this->playerOrdersList;
+    delete this->orders;
 
     this->cards = new Hand(*(other.cards));
-    this->playerOrdersList = new OrdersList(*(other.playerOrdersList));
+    this->orders = new OrdersList(*(other.orders));
 }
 
 // Destructor
 Player::~Player()
 {
     delete cards;
-    delete playerOrdersList;
+    delete orders;
 }
 
 // Accessors
@@ -47,9 +47,9 @@ Hand* Player::getCards()
     return cards;
 }
 
-OrdersList* Player::getPlayerOrders()
+OrdersList* Player::getOrders()
 {
-    return playerOrdersList;
+    return orders;
 }
 
 int Player::getArmies() const
@@ -71,12 +71,9 @@ vector<Player*>& Player::getUnattackable()
 
 
 // Mutators
-void Player::setTerritories(vector<Territory*> playerTerritories)
+void Player::setTerritories(vector<Territory*>& territories)
 {
-    for (Territory* t : playerTerritories)
-    {
-        this->territories.push_back(t);
-    }
+    this->territories = territories;
 }
 
 void Player::setCards(Hand* cards)
@@ -84,9 +81,9 @@ void Player::setCards(Hand* cards)
     this->cards = cards;
 }
 
-void Player::setPlayerOrders(OrdersList* playerOrderList)
+void Player::setOrders(OrdersList* orders)
 {
-    this->playerOrdersList = playerOrderList;
+    this->orders = orders;
 }
 
 void Player::setArmies(int armies)
@@ -122,13 +119,13 @@ bool Player::removeTerritory(Territory* territory)
 //Sets a player in the list of players that this player cannot attack
 void Player::setUnattackable(Player* player)
 {
-    this->unattackable.push_back(player);
+    unattackable.push_back(player);
 }
 
 // Empties the unattackable vector of all players, to be called after every turn
 void Player::clearUnattackable()
 {
-    this->unattackable.clear();
+    unattackable.clear();
 }
 
 //Checks if a player has a target territory
@@ -154,11 +151,11 @@ PlayerStrategy& Player::getPlayerStrategy()
 void Player::operator = (const Player& other)
 {
     delete cards;
-    delete playerOrdersList;
+    delete orders;
 
     territories = other.territories;
     cards = new Hand(*(other.cards));
-    playerOrdersList = new OrdersList(*(other.playerOrdersList));
+    orders = new OrdersList(*(other.orders));
     armies = other.armies;
     hasConqueredThisTurn = other.hasConqueredThisTurn;
     strategy = other.strategy;
@@ -197,10 +194,10 @@ ostream& operator << (ostream& out, const Player& source)
         out << "\nHand not initialized!\n";
     }
 
-    if (source.playerOrdersList != nullptr)
+    if (source.orders != nullptr)
     {
         out << "\nPlayer's Orders:\n";
-        for (Order* o : source.playerOrdersList->getOrdersList())
+        for (Order* o : source.orders->getOrdersList())
         {
             out << *o;
         }
