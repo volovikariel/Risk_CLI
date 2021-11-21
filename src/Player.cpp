@@ -5,8 +5,8 @@
 // Constructors
 // Default constructor
 Player::Player():
-    playerTerritories(),
-    playerCards(new Hand(*this)),
+    territories(),
+    cards(new Hand(*this)),
     playerOrdersList(new OrdersList()),
     armies(0),
     hasConqueredThisTurn(false),
@@ -17,34 +17,34 @@ Player::Player():
 
 // Copy constructor
 Player::Player(const Player& other):
-    playerTerritories(other.playerTerritories),
+    territories(other.territories),
     armies(other.armies),
     hasConqueredThisTurn(other.hasConqueredThisTurn),
     strategy(other.strategy)
 {
-    delete this->playerCards;
+    delete this->cards;
     delete this->playerOrdersList;
 
-    this->playerCards = new Hand(*(other.playerCards));
+    this->cards = new Hand(*(other.cards));
     this->playerOrdersList = new OrdersList(*(other.playerOrdersList));
 }
 
 // Destructor
 Player::~Player()
 {
-    delete playerCards;
+    delete cards;
     delete playerOrdersList;
 }
 
 // Accessors
-vector<Territory*>& Player::getPlayerTerritories()
+vector<Territory*>& Player::getTerritories()
 {
-    return playerTerritories;
+    return territories;
 }
 
-Hand* Player::getPlayerCards()
+Hand* Player::getCards()
 {
-    return playerCards;
+    return cards;
 }
 
 OrdersList* Player::getPlayerOrders()
@@ -71,17 +71,17 @@ vector<Player*>& Player::getUnattackable()
 
 
 // Mutators
-void Player::setPlayerTerritories(vector<Territory*> playerTerritories)
+void Player::setTerritories(vector<Territory*> playerTerritories)
 {
     for (Territory* t : playerTerritories)
     {
-        this->playerTerritories.push_back(t);
+        this->territories.push_back(t);
     }
 }
 
-void Player::setPlayerCards(Hand* playerCards)
+void Player::setCards(Hand* cards)
 {
-    this->playerCards = playerCards;
+    this->cards = cards;
 }
 
 void Player::setPlayerOrders(OrdersList* playerOrderList)
@@ -100,21 +100,21 @@ void Player::setName(const std::string& name)
 }
 
 // Adds a new owned territory to player
-void Player::addPlayerTerritory(Territory* territory)
+void Player::addTerritory(Territory* territory)
 {
-    this->playerTerritories.push_back(territory);
+    territories.push_back(territory);
 }
 
-bool Player::removePlayerTerritory(Territory* territory)
+bool Player::removeTerritory(Territory* territory)
 {
-    std::vector<Territory*>::iterator it = std::find(playerTerritories.begin(), playerTerritories.end(), territory);
-    if (it == playerTerritories.end())
+    std::vector<Territory*>::iterator it = std::find(territories.begin(), territories.end(), territory);
+    if (it == territories.end())
     {
         return false;
     }
     else
     {
-        playerTerritories.erase(it);
+        territories.erase(it);
         return true;
     }
 }
@@ -134,7 +134,7 @@ void Player::clearUnattackable()
 //Checks if a player has a target territory
 bool Player::hasTerritory(Territory* target)
 {
-    return std::find(playerTerritories.begin(), playerTerritories.end(), target) != playerTerritories.end();
+    return std::find(territories.begin(), territories.end(), target) != territories.end();
 }
 
 // Sets the issue order strategy
@@ -153,11 +153,11 @@ PlayerStrategy& Player::getPlayerStrategy()
 // Assignment operator overloading
 void Player::operator = (const Player& other)
 {
-    delete playerCards;
+    delete cards;
     delete playerOrdersList;
 
-    playerTerritories = other.playerTerritories;
-    playerCards = new Hand(*(other.playerCards));
+    territories = other.territories;
+    cards = new Hand(*(other.cards));
     playerOrdersList = new OrdersList(*(other.playerOrdersList));
     armies = other.armies;
     hasConqueredThisTurn = other.hasConqueredThisTurn;
@@ -171,10 +171,10 @@ ostream& operator << (ostream& out, const Player& source)
 
     out << "\nPlayer's Reinforcement Pool: " << source.armies << endl;
 
-    if (!source.playerTerritories.empty())
+    if (!source.territories.empty())
     {
         out << "\nPlayer's territories:\n";
-        for (Territory *t : source.playerTerritories)
+        for (Territory *t : source.territories)
         {
             out << *t << endl;
         }
@@ -184,10 +184,10 @@ ostream& operator << (ostream& out, const Player& source)
         out << "\nTerritories not initialized!\n";
     }
 
-    if (source.playerCards != nullptr)
+    if (source.cards != nullptr)
     {
         out << "\nPlayer's Hand:\n";
-        for (Card* c : source.playerCards->getCards())
+        for (Card* c : source.cards->getCards())
         {
             out << *c << endl;
         }

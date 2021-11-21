@@ -27,9 +27,9 @@ public:
 
     // Accessors
     // Returns the collection of territories of the player
-    vector<Territory*>& getPlayerTerritories();
+    vector<Territory*>& getTerritories();
     // Returns the cards owned by the player
-    Hand* getPlayerCards();
+    Hand* getCards();
     // Returns the OrderList queued by the player
     OrdersList* getPlayerOrders();
     // Returns the armies of the player
@@ -46,13 +46,13 @@ public:
     vector<Player*>& getUnattackable();
 
     // Mutators
-    void setPlayerTerritories(vector<Territory*> playerTerritories);
-    void setPlayerCards(Hand* playerCards);
+    void setTerritories(vector<Territory*> territories);
+    void addTerritory(Territory* territory);
+    bool removeTerritory(Territory* territory);
+    void setCards(Hand* cards);
     void setPlayerOrders(OrdersList* playerOrderList);
     void setArmies(int armies);
     void setName(const std::string& name);
-    void addPlayerTerritory(Territory* territory);
-    bool removePlayerTerritory(Territory* territory);
     void setUnattackable(Player* player);
     void clearUnattackable();
 
@@ -77,9 +77,9 @@ private:
 
     // Required attributes
     // Represents the collection of territories of the player
-    vector<Territory*> playerTerritories;
+    vector<Territory*> territories;
     // Represents the collection of cards of the player
-    Hand* playerCards;
+    Hand* cards;
     // Represents the OrderList queued by the player
     OrdersList* playerOrdersList;
     // Represents the collection of players that the player can't attack when a Negotiation Order is issued.

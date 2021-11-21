@@ -483,8 +483,8 @@ bool Advance::execute()
                 sourceTerritory->armies -= armiesAttacking;
                 targetTerritory->armies = armiesAttackingLeft;
 
-                targetTerritory->player->removePlayerTerritory(targetTerritory);
-                player->addPlayerTerritory(targetTerritory);
+                targetTerritory->player->removeTerritory(targetTerritory);
+                player->addTerritory(targetTerritory);
                 targetTerritory->player = player;
 
                 std::ostringstream stream;
@@ -660,7 +660,7 @@ bool Bomb::validate()
     else
     {
         bool isAdjacent = false;
-        for (Territory* playerTerritory : player->getPlayerTerritories())
+        for (Territory* playerTerritory : player->getTerritories())
         {
             if (territory->isNeighbor(playerTerritory))
             {
@@ -763,7 +763,8 @@ bool Blockade::execute()
     {
         int initialArmies = territory->armies;
         territory->armies *= 2;
-        territory->player->removePlayerTerritory(territory);
+        territory->player->removeTerritory(territory);
+        neutralPlayer->addTerritory(territory);
         territory->player = neutralPlayer;
 
         std::ostringstream stream;

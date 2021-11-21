@@ -354,7 +354,7 @@ bool GameEngine::executeCommand(Command& command)
                 Territory* territory = copyTerritories.at(territoryRand); // Store the specific territory
                 Player* playerToAssign = players.at(i % players.size());
                 territory->player = playerToAssign;
-                playerToAssign->addPlayerTerritory(territory);
+                playerToAssign->addTerritory(territory);
                 copyTerritories.erase(copyTerritories.begin() + territoryRand); // Will delete the territory assigned from the temporary vector
             }
 
@@ -373,7 +373,7 @@ bool GameEngine::executeCommand(Command& command)
             //Allows players to draw 2 cards from the deck
             for (Player* player : players)
             {
-                Hand& hand = *player->getPlayerCards();
+                Hand& hand = *player->getCards();
                 for (int i = 0; i < 2; i++)
                 {
                     hand.addCard(*mainDeck.draw());
@@ -443,7 +443,7 @@ void GameEngine::mainGameLoop()
             if (player->hasConqueredThisTurn)
             {
                 player->hasConqueredThisTurn = false;
-                player->getPlayerCards()->addCard(*mainDeck.draw());
+                player->getCards()->addCard(*mainDeck.draw());
             }
         }
 
@@ -473,11 +473,11 @@ void GameEngine::reinforcementPhase()
         if (!isEliminated(player))
         {
             // Add Armies based on territory owned divided by 3
-            int armiesToAdd = static_cast<int>(player->getPlayerTerritories().size()) / 3;
+            int armiesToAdd = static_cast<int>(player->getTerritories().size()) / 3;
 
             // Check if player controls continents
             vector<int> numTerritoriesPerContinent(map->continents.size());
-            for (auto territory : player->getPlayerTerritories())
+            for (auto territory : player->getTerritories())
             {
                 numTerritoriesPerContinent[territory->continentID - 1]++;
             }
@@ -619,7 +619,7 @@ void GameEngine::eliminatePlayers()
 {
     for (Player* player : players)
     {
-        if (player->getPlayerTerritories().size() == 0 && !isEliminated(player))
+        if (player->getTerritories().size() == 0 && !isEliminated(player))
         {
             eliminated.push_back(player);
         }

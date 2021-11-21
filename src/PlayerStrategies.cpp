@@ -11,7 +11,7 @@ vector<Territory*> canAttack(Player& player)
 {
     vector<Territory*> canAttack = vector<Territory*>();
 
-    for (Territory* ownedTerritory : player.getPlayerTerritories())
+    for (Territory* ownedTerritory : player.getTerritories())
     {
         for (Territory* neighbor : ownedTerritory->neighbors)
         {
