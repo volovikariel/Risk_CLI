@@ -36,17 +36,17 @@ TournamentCommandData& TournamentCommandData::operator = (const TournamentComman
 
 std::ostream& operator << (std::ostream& out, const TournamentCommandData& source)
 {
-    out << "Tournament: " << " -M ";
+    out << "-M ";
     for (const std::string& map : source.maps)
     {
         out << map << " ";
     }
-    out << " -P ";
+    out << "-P ";
     for (const std::string& strategy : source.strategies)
     {
         out << strategy << " ";
     }
-    out << " -G " << source.games << " -D " << source.maxTurns;
+    out << "-G " << source.games << " -D " << source.maxTurns;
     return out;
 }
 
@@ -79,6 +79,11 @@ bool TournamentCommandData::parseStream(std::istream& in)
         if (word.front() == '-')
             break;
         strategies.push_back(word);
+    }
+
+    for (std::string& strategy : strategies)
+    {
+        StringUtils::ToLowerCase(strategy);
     }
 
     if (word != "-G" || !in.good())

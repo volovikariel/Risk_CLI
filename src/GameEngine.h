@@ -92,8 +92,10 @@ public :
     // Returns the current eliminated players
     vector<Player*>& getEliminatedPlayers();
 
-    // Add a new player to the game
-    bool addPlayer(Player& player);
+    // Add a new player to the game.
+    // If canRename is true, player name collisions are handled by adding an index.
+    // Ex Player, Player2, Player3
+    bool addPlayer(Player& player, bool canRename);
 
     // Returns the neutral player
     Player& getNeutralPlayer();

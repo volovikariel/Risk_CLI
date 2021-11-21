@@ -2,6 +2,7 @@
 #include "CommandProcessing.h"
 #include "Map.h"
 #include "Player.h"
+#include "PlayerStrategies.h"
 
 #include <algorithm>
 #include <iostream>
@@ -191,14 +192,24 @@ Player& GameEngine::getNeutralPlayer()
     return *neutralPlayer;
 }
 
-bool GameEngine::addPlayer(Player& player)
+bool GameEngine::addPlayer(Player& player, bool canRename)
 {
+    int nameIndex = 2;
+
     // Make sure the player name is unique
     for (const Player* existingPlayer : players)
     {
         if (player.getName() == existingPlayer->getName())
         {
-            return false;
+            if (canRename)
+            {
+                player.setName(player.getName() + to_string(nameIndex));
+                nameIndex++;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
@@ -238,7 +249,8 @@ bool GameEngine::start(string mapFilepath, vector<Player*>& players)
 
     for (Player* player : players)
     {
-        success = success && addPlayer(*player);
+        success = success && addPlayer(*player, true);
+        transition(Transition::AddPlayer);
     }
 
     success = success && executeCommand(gameStart);
@@ -292,9 +304,93 @@ bool GameEngine::executeCommand(Command& command)
                 return false;
             }
 
-            // TODO command.saveEffect();
+            vector<string> winningStrategies;
 
-            return transition(Transition::Tournament);
+            for (int game = 0; game < data->games; ++game)
+            {
+                for (const string& map : data->maps)
+                {
+                    vector<Player*> players;
+
+                    for (const string& strategy : data->strategies)
+                    {
+                        Player* player = new Player();
+                        players.push_back(player);
+
+                        if (strategy == "aggressive")
+                        {
+                            command.saveEffect("Aggressive player strategy not yet implemented");
+                            return false;
+                        }
+                        else if (strategy == "benevolent")
+                        {
+                            BenevolentPlayerStrategy* strategy = new BenevolentPlayerStrategy(*player);
+                            player->setPlayerStrategy(*strategy);
+                        }
+                        else if (strategy == "neutral")
+                        {
+                            command.saveEffect("Neutral player strategy not yet implemented");
+                            return false;
+                        }
+                        else if (strategy == "cheater")
+                        {
+                            command.saveEffect("Cheater player strategy not yet implemented");
+                            return false;
+                        }
+                    }
+
+                    if (start(map, players))
+                    {
+                        string winningStrategy = "Draw";
+
+                        for (int turn = 0; turn < data->maxTurns && alivePlayers.size() > 1; ++turn)
+                        {
+                            executeTurn();
+                        }
+
+                        state = State::Start;
+
+                        if (alivePlayers.size() == 1)
+                        {
+                            std::ostringstream stream;
+                            stream << alivePlayers.front()->getPlayerStrategy();
+                            winningStrategy = stream.str();
+                        }
+
+                        winningStrategies.push_back(winningStrategy);
+                    }
+                    else
+                    {
+                        command.saveEffect("Couldn't start round");
+                        return false;
+                    }
+                }
+            }
+
+            std::ostringstream stream;
+            stream << endl;
+            stream << "Tournament Mode:" << (*data) << endl << endl;
+            stream << "Results:" << endl;
+            stream << "\t\t";
+            for (int game = 0; game < data->games; ++game)
+            {
+                stream << "Game " << (game + 1) << "\t\t";
+            }
+            stream << endl;
+            for (int map = 0; map < data->maps.size(); ++map)
+            {
+                stream << "Map " << (map + 1) << "\t\t";
+                for (int game = 0; game < data->games; ++game)
+                {
+                    size_t idx = game * data->maps.size() + map;
+                    stream << winningStrategies.at(idx) << "\t\t";
+                }
+                stream << endl;
+            }
+
+            command.saveEffect(stream.str());
+
+            return true;
         }
         case Command::Type::LoadMap:
         {
@@ -360,7 +456,7 @@ bool GameEngine::executeCommand(Command& command)
             Player* player = new Player();
             player->setName(newPlayerName);
 
-            bool success = addPlayer(*player);
+            bool success = addPlayer(*player, false);
 
             if (success)
             {
