@@ -310,16 +310,22 @@ bool GameEngine::executeCommand(Command& command)
             {
                 for (const string& map : data->maps)
                 {
-                    vector<Player*> players;
+                    vector<Player*> roundPlayers;
 
+                    // Assign player strategy
                     for (const string& strategy : data->strategies)
                     {
                         Player* player = new Player();
-                        players.push_back(player);
+                        roundPlayers.push_back(player);
 
                         if (strategy == "aggressive")
                         {
+                            for (Player* player : roundPlayers)
+                            {
+                                delete player;
+                            }
                             command.saveEffect("Aggressive player strategy not yet implemented");
+                            state = State::Start;
                             return false;
                         }
                         else if (strategy == "benevolent")
@@ -329,27 +335,51 @@ bool GameEngine::executeCommand(Command& command)
                         }
                         else if (strategy == "neutral")
                         {
+                            for (Player* player : roundPlayers)
+                            {
+                                delete player;
+                            }
                             command.saveEffect("Neutral player strategy not yet implemented");
+                            state = State::Start;
                             return false;
                         }
                         else if (strategy == "cheater")
                         {
+                            for (Player* player : roundPlayers)
+                            {
+                                delete player;
+                            }
                             command.saveEffect("Cheater player strategy not yet implemented");
+                            state = State::Start;
+                            return false;
+                        }
+                        else
+                        {
+                            for (Player* player : roundPlayers)
+                            {
+                                delete player;
+                            }
+                            command.saveEffect("Unknown player strategy: " + strategy);
+                            state = State::Start;
                             return false;
                         }
                     }
 
-                    if (start(map, players))
+                    // Load map, set players, initial setup
+                    if (start(map, roundPlayers))
                     {
                         string winningStrategy = "Draw";
 
+                        // Run until we have a draw at maxTurns or a winner
                         for (int turn = 0; turn < data->maxTurns && alivePlayers.size() > 1; ++turn)
                         {
                             executeTurn();
                         }
 
+                        // Reset state
                         state = State::Start;
 
+                        // Determine winner
                         if (alivePlayers.size() == 1)
                         {
                             std::ostringstream stream;
@@ -361,29 +391,44 @@ bool GameEngine::executeCommand(Command& command)
                     }
                     else
                     {
+                        for (Player* player : roundPlayers)
+                        {
+                            delete player;
+                        }
                         command.saveEffect("Couldn't start round");
+                        state = State::Start;
                         return false;
+                    }
+
+                    for (Player* player : roundPlayers)
+                    {
+                        delete player;
                     }
                 }
             }
 
+            // Create a formatted results table
             std::ostringstream stream;
-            stream << endl;
+            stream << endl << endl;
             stream << "Tournament Mode:" << (*data) << endl << endl;
             stream << "Results:" << endl;
-            stream << "\t\t";
+            stream << StringUtils::SpacePad("", 16);
             for (int game = 0; game < data->games; ++game)
             {
-                stream << "Game " << (game + 1) << "\t\t";
+                std::string gameLabel = "Game " + std::to_string(game + 1);
+                stream << StringUtils::SpacePad(gameLabel, 16);
             }
             stream << endl;
             for (int map = 0; map < data->maps.size(); ++map)
             {
-                stream << "Map " << (map + 1) << "\t\t";
+                std::string& mapName = StringUtils::Filename(data->maps.at(map));
+                stream << StringUtils::SpacePad(mapName, 16);
+
                 for (int game = 0; game < data->games; ++game)
                 {
                     size_t idx = game * data->maps.size() + map;
-                    stream << winningStrategies.at(idx) << "\t\t";
+                    std::string& winningStrategy = winningStrategies.at(idx);
+                    stream << StringUtils::SpacePad(winningStrategy, 16);
                 }
                 stream << endl;
             }
@@ -1003,6 +1048,38 @@ std::string& StringUtils::ToLowerCase(std::string& str)
         character = tolower(character);
     }
     return str;
+}
+
+std::string StringUtils::SpacePad(const std::string& str, int numSpaces)
+{
+    std::string temp = str;
+
+    int toAdd = numSpaces - str.size();
+    for (int i = 0; i < toAdd; ++i)
+    {
+        temp += ' ';
+    }
+
+    return temp;
+}
+
+std::string StringUtils::Filename(const std::string& filepath)
+{
+    size_t sepIdx = 0;
+    size_t dotIdx = filepath.size();
+    for (size_t i = 0; i < filepath.size(); ++i)
+    {
+        const char& currentChar = filepath.at(i);
+        if (currentChar == '/' || currentChar == '\\' || currentChar == ':')
+        {
+            sepIdx = i + 1;
+        }
+        if (currentChar == '.')
+        {
+            dotIdx = i;
+        }
+    }
+    return filepath.substr(sepIdx, dotIdx - sepIdx);
 }
 
 bool StringUtils::ToGameEngineTransition(std::string& str, GameEngine::Transition& result)

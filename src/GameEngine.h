@@ -237,6 +237,12 @@ namespace StringUtils
     // Returns a reference to the same string, not a new one.
     std::string& ToLowerCase(std::string& str);
 
+    // Adds spaces to a string so that it occupies exactly numSpaces of character space.
+    std::string SpacePad(const std::string& str, int numSpaces);
+
+    // Extracts the filename from a filepath
+    std::string Filename(const std::string& filepath);
+
     // Returns the GameEngine::Transition corresponding to a user input string.
     // Handles similar words (ex: quit/exit, endissueorders/issueordersend, etc).
     // Not case sensitive.
