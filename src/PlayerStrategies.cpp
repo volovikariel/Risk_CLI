@@ -61,7 +61,7 @@ PlayerStrategy& PlayerStrategy::operator = (const PlayerStrategy& other)
 
 std::ostream& operator << (std::ostream& out, const PlayerStrategy& source)
 {
-    out << "PlayerStrategy: " << source.player;
+    out << "PlayerStrategy";
     return out;
 }
 
@@ -94,7 +94,7 @@ HumanPlayerStrategy& HumanPlayerStrategy::operator = (const HumanPlayerStrategy&
 
 std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source)
 {
-    out << "HumanPlayerStrategy: " << source.player;
+    out << "HumanPlayerStrategy";
     return out;
 }
 

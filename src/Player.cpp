@@ -8,7 +8,7 @@ Player::Player():
     playerTerritories(),
     playerCards(new Hand(*this)),
     playerOrdersList(new OrdersList()),
-    playerArmies(0),
+    armies(0),
     hasConqueredThisTurn(false),
     strategy(nullptr)
 {
@@ -18,7 +18,7 @@ Player::Player():
 // Copy constructor
 Player::Player(const Player& other):
     playerTerritories(other.playerTerritories),
-    playerArmies(other.playerArmies),
+    armies(other.armies),
     hasConqueredThisTurn(other.hasConqueredThisTurn),
     strategy(other.strategy)
 {
@@ -52,14 +52,14 @@ OrdersList* Player::getPlayerOrders()
     return playerOrdersList;
 }
 
-int Player::getPlayerArmies() const
+int Player::getArmies() const
 {
-    return playerArmies;
+    return armies;
 }
 
-const std::string& Player::getPlayerName() const
+const std::string& Player::getName() const
 {
-    return playerName;
+    return name;
 }
 
 //Get the list of players that this player cannot attack
@@ -89,14 +89,14 @@ void Player::setPlayerOrders(OrdersList* playerOrderList)
     this->playerOrdersList = playerOrderList;
 }
 
-void Player::setPlayerArmies(int playerArmies)
+void Player::setArmies(int armies)
 {
-    this->playerArmies = playerArmies;
+    this->armies = armies;
 }
 
-void Player::setPlayerName(const std::string& name)
+void Player::setName(const std::string& name)
 {
-    playerName = name;
+    this->name = name;
 }
 
 // Adds a new owned territory to player
@@ -159,7 +159,7 @@ void Player::operator = (const Player& other)
     playerTerritories = other.playerTerritories;
     playerCards = new Hand(*(other.playerCards));
     playerOrdersList = new OrdersList(*(other.playerOrdersList));
-    playerArmies = other.playerArmies;
+    armies = other.armies;
     hasConqueredThisTurn = other.hasConqueredThisTurn;
     strategy = other.strategy;
 }
@@ -167,9 +167,9 @@ void Player::operator = (const Player& other)
 //stream insertion operator overloading
 ostream& operator << (ostream& out, const Player& source)
 {
-    out << "\nPlayer Name: " << source.playerName << endl;
+    out << "\nPlayer Name: " << source.name << endl;
 
-    out << "\nPlayer's Reinforcement Pool: " << source.playerArmies << endl;
+    out << "\nPlayer's Reinforcement Pool: " << source.armies << endl;
 
     if (!source.playerTerritories.empty())
     {

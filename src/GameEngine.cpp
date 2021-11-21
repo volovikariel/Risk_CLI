@@ -62,7 +62,7 @@ GameEngine::GameEngine():
     eliminated()
 {
     neutralPlayer = new Player();
-    neutralPlayer->setPlayerName("Neutral");
+    neutralPlayer->setName("Neutral");
 }
 
 GameEngine::~GameEngine()
@@ -307,7 +307,7 @@ bool GameEngine::executeCommand(Command& command)
             // Make sure the player name is unique
             for (const Player* player : players)
             {
-                if (player->getPlayerName() == newPlayerName)
+                if (player->getName() == newPlayerName)
                 {
                     std::ostringstream stream;
                     stream << "There is already a player with the name: " << newPlayerName;
@@ -318,7 +318,7 @@ bool GameEngine::executeCommand(Command& command)
             }
 
             Player* player = new Player();
-            player->setPlayerName(newPlayerName);
+            player->setName(newPlayerName);
 
             // Attach our observers
             for (Observer* observer : observers)
@@ -364,7 +364,7 @@ bool GameEngine::executeCommand(Command& command)
             // Gives the players 50 armies
             for (Player* player : players)
             {
-                player->setPlayerArmies(50);
+                player->setArmies(50);
             }
 
             // Initialize deck with 50 randomly shuffled cards (of even card type distribution)
@@ -392,7 +392,7 @@ bool GameEngine::executeCommand(Command& command)
 
             delete neutralPlayer;
             neutralPlayer = new Player();
-            neutralPlayer->setPlayerName("Neutral");
+            neutralPlayer->setName("Neutral");
 
             for (Player* player : players)
             {
@@ -494,7 +494,7 @@ void GameEngine::reinforcementPhase()
             armiesToAdd = max(armiesToAdd, 3);
 
             // Set player armies
-            player->setPlayerArmies(player->getPlayerArmies() + armiesToAdd);
+            player->setArmies(player->getArmies() + armiesToAdd);
         }
     }
 }

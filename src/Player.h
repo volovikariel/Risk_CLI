@@ -33,13 +33,13 @@ public:
     // Returns the OrderList queued by the player
     OrdersList* getPlayerOrders();
     // Returns the armies of the player
-    int getPlayerArmies() const;
+    int getArmies() const;
     // Returns a list of territories that the player wants to defend based on the current strategy
     vector<Territory*>& toDefend(GameEngine& gameEngine);
     // Returns a list of territories that the player wants to attack based on the current strategy
     vector<Territory*>& toAttack(GameEngine& gameEngine);
     // Returns the player's name
-    const std::string& getPlayerName() const;
+    const std::string& getName() const;
     // Checks if player owns a specific territory
     bool hasTerritory(Territory* target);
     // Returns a list of players that the player can't attack
@@ -49,8 +49,8 @@ public:
     void setPlayerTerritories(vector<Territory*> playerTerritories);
     void setPlayerCards(Hand* playerCards);
     void setPlayerOrders(OrdersList* playerOrderList);
-    void setPlayerArmies(int playerArmies);
-    void setPlayerName(const std::string& name);
+    void setArmies(int armies);
+    void setName(const std::string& name);
     void addPlayerTerritory(Territory* territory);
     bool removePlayerTerritory(Territory* territory);
     void setUnattackable(Player* player);
@@ -87,9 +87,9 @@ private:
 
     // Helper attributes
     // Represent the number of armies of the player
-    int playerArmies;
+    int armies;
     // Represents the player's name
-    string playerName;
+    string name;
 
     // Strategy for issuing orders
     PlayerStrategy* strategy;

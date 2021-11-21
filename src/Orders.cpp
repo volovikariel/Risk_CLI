@@ -313,7 +313,7 @@ bool Deploy::execute()
 {
     if (validate())
     {
-        player->setPlayerArmies(player->getPlayerArmies() - armies);
+        player->setArmies(player->getArmies() - armies);
         territory->armies += armies;
 
         std::ostringstream stream;
@@ -370,7 +370,7 @@ ostream& operator<<(ostream& out, const Deploy& source)
 // Print method to display the description and effect of the order
 ostream& Deploy::print(ostream& out) const
 {
-    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    std::string playerName = player == nullptr ? "nullptr" : player->getName();
     out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
@@ -567,7 +567,7 @@ ostream& operator<<(ostream& out, const Advance& source)
 // Print method to display the description and effect of the order
 ostream& Advance::print(ostream& out) const
 {
-    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    std::string playerName = player == nullptr ? "nullptr" : player->getName();
     out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
@@ -698,7 +698,7 @@ ostream& operator << (ostream& out, const Bomb& source)
 // Print method to display the description and effect of the order
 ostream& Bomb::print(ostream& out) const
 {
-    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    std::string playerName = player == nullptr ? "nullptr" : player->getName();
     out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
@@ -816,7 +816,7 @@ ostream& operator << (ostream& out, const Blockade& source)
 // Print method to display the description and effect of the order
 ostream &Blockade::print(ostream& out) const
 {
-    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    std::string playerName = player == nullptr ? "nullptr" : player->getName();
     out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
@@ -941,7 +941,7 @@ ostream& operator << (ostream& out, const Airlift& source)
 // Print method to display the description and effect of the order
 ostream& Airlift::print(ostream& out) const
 {
-    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    std::string playerName = player == nullptr ? "nullptr" : player->getName();
     out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
@@ -986,7 +986,7 @@ Negotiate::Negotiate(Player& player, Player& targetPlayer):
     this->setType(Type::Negotiate);
 
     std::ostringstream stream;
-    stream << targetPlayer.getPlayerName() << " will be a diplomatic ally for this turn.";
+    stream << targetPlayer.getName() << " will be a diplomatic ally for this turn.";
     effect = stream.str();
 }
 
@@ -1005,7 +1005,7 @@ bool Negotiate::execute()
         targetPlayer->setUnattackable(player);
 
         std::ostringstream stream;
-        stream << targetPlayer->getPlayerName() << " is a diplomatic ally for this turn.";
+        stream << targetPlayer->getName() << " is a diplomatic ally for this turn.";
         saveEffect(stream.str());
 
         return true;
@@ -1053,7 +1053,7 @@ ostream& operator << (ostream& out, const Negotiate& source)
 // Print method to display the description and effect of the order
 ostream& Negotiate::print(ostream& out) const
 {
-    std::string playerName = player == nullptr ? "nullptr" : player->getPlayerName();
+    std::string playerName = player == nullptr ? "nullptr" : player->getName();
     out << "[" << getType() << " | " << playerName << "]";
     if (executed)
     {
