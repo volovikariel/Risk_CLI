@@ -85,6 +85,12 @@ public :
     // Returns the current players
     vector<Player*>& getPlayers();
 
+    // Returns the current non-eliminated players
+    vector<Player*>& getAlivePlayers();
+
+    // Returns the current eliminated players
+    vector<Player*>& getEliminatedPlayers();
+
     // Returns the neutral player
     Player& getNeutralPlayer();
 
@@ -94,11 +100,13 @@ public :
     // Executes a command. Returns a success status.
     bool executeCommand(Command& command);
 
+    // Creates main game loop for the game.
+    void mainGameLoop();
+
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
 
-    // Creates main game loop for the game.
-    void mainGameLoop();
+private:
 
     // Calculates Reinforcements for players.
     void reinforcementPhase();
@@ -112,11 +120,6 @@ public :
     // Verifies if a player need to be eliminated
     void eliminatePlayers();
 
-    // Check if player has been eliminated
-    bool isEliminated(Player& player);
-
-private:
-
     // Holds the current state
     State state;
 
@@ -126,8 +129,11 @@ private:
     // Holds the players
     vector<Player*> players;
 
-    // Holds elimination status for each player
-    vector<Player*> eliminated;
+    // Holds non-eliminated players
+    vector<Player*> alivePlayers;
+
+    // Holds eliminated players
+    vector<Player*> eliminatedPlayers;
 
     // Neutral player
     Player* neutralPlayer;

@@ -59,7 +59,8 @@ GameEngine::GameEngine():
     state(State::Start),
     map(new Map()),
     players(),
-    eliminated()
+    alivePlayers(),
+    eliminatedPlayers()
 {
     neutralPlayer = new Player();
     neutralPlayer->setName("Neutral");
@@ -88,7 +89,8 @@ GameEngine::GameEngine(const GameEngine& other):
     map(other.map),
     players(other.players),
     neutralPlayer(other.neutralPlayer),
-    eliminated(other.eliminated)
+    alivePlayers(other.alivePlayers),
+    eliminatedPlayers(other.eliminatedPlayers)
 {
 
 }
@@ -99,7 +101,8 @@ GameEngine& GameEngine::operator = (const GameEngine& other)
     map = other.map;
     players = other.players;
     neutralPlayer = other.neutralPlayer;
-    eliminated = other.eliminated;
+    alivePlayers = other.alivePlayers;
+    eliminatedPlayers = other.eliminatedPlayers;
     return *this;
 }
 
@@ -155,6 +158,16 @@ Map& GameEngine::getMap()
 vector<Player*>& GameEngine::getPlayers()
 {
     return players;
+}
+
+vector<Player*>& GameEngine::getAlivePlayers()
+{
+    return alivePlayers;
+}
+
+vector<Player*>& GameEngine::getEliminatedPlayers()
+{
+    return eliminatedPlayers;
 }
 
 Player& GameEngine::getNeutralPlayer()
@@ -399,7 +412,8 @@ bool GameEngine::executeCommand(Command& command)
                 delete player;
             }
             players.clear();
-            eliminated.clear();
+            alivePlayers.clear();
+            eliminatedPlayers.clear();
 
             mainDeck.releaseAllocs();
 
@@ -431,7 +445,7 @@ string GameEngine::stringToLog()
 void GameEngine::mainGameLoop()
 {
     // Check if more than one player remaining
-    while (eliminated.size() < getPlayers().size() - 1)
+    while (alivePlayers.size() > 1)
     {
         GameEngine::reinforcementPhase();
         GameEngine::issueOrdersPhase();
@@ -467,35 +481,31 @@ void GameEngine::reinforcementPhase()
 {
     transition(GameEngine::State::AssignReinforcements);
 
-    for (auto player : players)
+    for (auto player : alivePlayers)
     {
-        // Verify if player is not eliminated
-        if (!isEliminated(*player))
+        // Add Armies based on territory owned divided by 3
+        int armiesToAdd = static_cast<int>(player->getTerritories().size()) / 3;
+
+        // Check if player controls continents
+        vector<int> numTerritoriesPerContinent(map->continents.size());
+        for (auto territory : player->getTerritories())
         {
-            // Add Armies based on territory owned divided by 3
-            int armiesToAdd = static_cast<int>(player->getTerritories().size()) / 3;
-
-            // Check if player controls continents
-            vector<int> numTerritoriesPerContinent(map->continents.size());
-            for (auto territory : player->getTerritories())
-            {
-                numTerritoriesPerContinent[territory->continentID - 1]++;
-            }
-            for (auto continent : map->continents)
-            {
-                // If player controls continent add bonus
-                if (continent->territories.size() == numTerritoriesPerContinent[continent->ID - 1])
-                {
-                    armiesToAdd += continent->bonus;
-                }
-            }
-
-            // Set minimum armies given to 3
-            armiesToAdd = max(armiesToAdd, 3);
-
-            // Set player armies
-            player->setArmies(player->getArmies() + armiesToAdd);
+            numTerritoriesPerContinent[territory->continentID - 1]++;
         }
+        for (auto continent : map->continents)
+        {
+            // If player controls continent add bonus
+            if (continent->territories.size() == numTerritoriesPerContinent[continent->ID - 1])
+            {
+                armiesToAdd += continent->bonus;
+            }
+        }
+
+        // Set minimum armies given to 3
+        armiesToAdd = max(armiesToAdd, 3);
+
+        // Set player armies
+        player->setArmies(player->getArmies() + armiesToAdd);
     }
 }
 
@@ -509,25 +519,21 @@ void GameEngine::issueOrdersPhase()
     {
         int skipCount = 0;
 
-        for (Player* player : players)
+        for (Player* player : alivePlayers)
         {
-            // Verify if player is not eliminated
-            if (!isEliminated(*player))
+            Order *currOrder = player->issueOrder(*this);
+            if (currOrder == nullptr)
             {
-                Order *currOrder = player->issueOrder(*this);
-                if (currOrder == nullptr)
-                {
-                    skipCount++;
-                }
-                else
-                {
-                    player->getOrders()->addOrder(currOrder);
-                }
+                skipCount++;
+            }
+            else
+            {
+                player->getOrders()->addOrder(currOrder);
             }
         }
 
         // All players signaled they have no more orders to issue
-        if (skipCount == players.size() - eliminated.size())
+        if (skipCount == alivePlayers.size())
         {
             break;
         }
@@ -544,37 +550,33 @@ void GameEngine::executeOrdersPhase()
     {
         int skipCount = 0;
 
-        for (Player* player : players)
+        for (Player* player : alivePlayers)
         {
-            // Verify if player is not eliminated
-            if (!isEliminated(*player))
-            {
-                OrdersList* ordersList = player->getOrders();
-                vector<Order*>& orders = ordersList->getOrdersList();
+            OrdersList* ordersList = player->getOrders();
+            vector<Order*>& orders = ordersList->getOrdersList();
 
-                if (orders.size() == 0)
+            if (orders.size() == 0)
+            {
+                skipCount++;
+            }
+            else
+            {
+                Order* order = orders.front();
+
+                if (order->getType() == Order::Type::Deploy)
                 {
-                    skipCount++;
+                    order->execute();
+                    ordersList->remove(0);
                 }
                 else
                 {
-                    Order* order = orders.front();
-
-                    if (order->getType() == Order::Type::Deploy)
-                    {
-                        order->execute();
-                        ordersList->remove(0);
-                    }
-                    else
-                    {
-                        skipCount++;
-                    }
+                    skipCount++;
                 }
             }
         }
 
         // All players signaled they have no more deploy orders
-        if (skipCount == players.size() - eliminated.size())
+        if (skipCount == alivePlayers.size())
         {
             break;
         }
@@ -585,29 +587,25 @@ void GameEngine::executeOrdersPhase()
     {
         int skipCount = 0;
 
-        for (Player* player : players)
+        for (Player* player : alivePlayers)
         {
-            // Verify if player is not eliminated
-            if (!isEliminated(*player))
-            {
-                OrdersList* ordersList = player->getOrders();
-                vector<Order*>& orders = ordersList->getOrdersList();
+            OrdersList* ordersList = player->getOrders();
+            vector<Order*>& orders = ordersList->getOrdersList();
 
-                if (orders.size() == 0)
-                {
-                    skipCount++;
-                }
-                else
-                {
-                    Order* order = orders.front();
-                    order->execute();
-                    ordersList->remove(0);
-                }
+            if (orders.size() == 0)
+            {
+                skipCount++;
+            }
+            else
+            {
+                Order* order = orders.front();
+                order->execute();
+                ordersList->remove(0);
             }
         }
 
         // All players signaled they have no more orders
-        if (skipCount == players.size() - eliminated.size())
+        if (skipCount == alivePlayers.size())
         {
             break;
         }
@@ -617,19 +615,22 @@ void GameEngine::executeOrdersPhase()
 // Removes players that have no owned territories
 void GameEngine::eliminatePlayers()
 {
-    for (Player* player : players)
+    vector<Player*>::iterator i = alivePlayers.begin();
+    while (i != alivePlayers.end())
     {
-        if (player->getTerritories().size() == 0 && !isEliminated(*player))
+        Player* player = *i;
+
+        bool isAlive = player->getTerritories().size() > 0;
+        if (isAlive)
         {
-            eliminated.push_back(player);
+            ++i;
+        }
+        else
+        {
+            eliminatedPlayers.push_back(player);
+            i = alivePlayers.erase(i);
         }
     }
-}
-
-// Verify if a player is eliminated
-bool GameEngine::isEliminated(Player& player)
-{
-    return std::find(eliminated.begin(), eliminated.end(), &player) != eliminated.end();
 }
 
 
