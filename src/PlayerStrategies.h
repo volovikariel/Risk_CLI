@@ -20,8 +20,8 @@ public:
     friend std::ostream& operator << (std::ostream& out, const PlayerStrategy& source);
 
     virtual Order* issueOrder(GameEngine& gameEngine) = 0;
-    virtual vector<Territory*>& toAttack(GameEngine& gameEngine) = 0;
-    virtual vector<Territory*>& toDefend(GameEngine& gameEngine) = 0;
+    virtual vector<Territory*> toAttack(GameEngine& gameEngine) = 0;
+    virtual vector<Territory*> toDefend(GameEngine& gameEngine) = 0;
 
     Player* player;
 };
@@ -38,8 +38,8 @@ public:
     friend std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source);
 
     Order* issueOrder(GameEngine& gameEngine) override;
-    vector<Territory*>& toAttack(GameEngine& gameEngine) override;
-    vector<Territory*>& toDefend(GameEngine& gameEngine) override;
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;
 };
 
 class BenevolentPlayerStrategy : public PlayerStrategy
@@ -54,6 +54,22 @@ public:
     friend std::ostream& operator << (std::ostream& out, const BenevolentPlayerStrategy& source);
 
     Order* issueOrder(GameEngine& gameEngine) override;
-    vector<Territory*>& toAttack(GameEngine& gameEngine) override;
-    vector<Territory*>& toDefend(GameEngine& gameEngine) override;
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;
+};
+
+class AggressivePlayerStrategy : public PlayerStrategy
+{
+public:
+
+    AggressivePlayerStrategy();
+    AggressivePlayerStrategy(Player& player);
+    AggressivePlayerStrategy(AggressivePlayerStrategy& other);
+
+    AggressivePlayerStrategy& operator = (const AggressivePlayerStrategy& other);
+    friend std::ostream& operator << (std::ostream& out, const AggressivePlayerStrategy& source);
+
+    Order* issueOrder(GameEngine& gameEngine) override;
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;
 };

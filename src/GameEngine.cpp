@@ -421,7 +421,7 @@ bool GameEngine::executeCommand(Command& command)
             stream << endl;
             for (int map = 0; map < data->maps.size(); ++map)
             {
-                std::string& mapName = StringUtils::Filename(data->maps.at(map));
+                std::string mapName = StringUtils::Filename(data->maps.at(map));
                 stream << StringUtils::SpacePad(mapName, 16);
 
                 for (int game = 0; game < data->games; ++game)

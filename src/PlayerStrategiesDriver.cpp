@@ -39,9 +39,9 @@ void test1(GameEngine& gameEngine)
     p1.setName("NoStrategy");
 
     Player p2;
-    p2.setName("Benevolent");
-    BenevolentPlayerStrategy benevolentStrategy(p2);
-    p2.setPlayerStrategy(benevolentStrategy);
+    p2.setName("Aggressive");
+    AggressivePlayerStrategy aggressiveStrategy(p2);
+    p2.setPlayerStrategy(aggressiveStrategy);
 
     vector<Player*> players = { &p1, &p2 };
 

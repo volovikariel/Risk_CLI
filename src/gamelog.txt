@@ -1,0 +1,5 @@
+CommandProcessor: Last saved command has a type of 'GameStart'
+Order: UNFINISHED
+Command: Effect has been changed to 'Command's effect'
+OrdersList: Last order added to the list had a type of 'Order'
+GameEngine: State has been changed to 'MapLoaded'

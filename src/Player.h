@@ -35,9 +35,9 @@ public:
     // Returns the armies of the player
     int getArmies() const;
     // Returns a list of territories that the player wants to defend based on the current strategy
-    vector<Territory*>& toDefend(GameEngine& gameEngine);
+    vector<Territory*> toDefend(GameEngine& gameEngine);
     // Returns a list of territories that the player wants to attack based on the current strategy
-    vector<Territory*>& toAttack(GameEngine& gameEngine);
+    vector<Territory*> toAttack(GameEngine& gameEngine);
     // Returns the player's name
     const std::string& getName() const;
     // Checks if player owns a specific territory

@@ -296,6 +296,8 @@ Deploy::Deploy(int armies, Player& player, Territory& territory):
     territory(&territory)
 {
     this->setType(Type::Deploy);
+    player.setArmies(player.getArmies() - armies);
+    territory.armies += armies;
 
     std::ostringstream stream;
     stream << "Will deploy " << armies << " armies on territory " << territory.name;
@@ -313,9 +315,6 @@ bool Deploy::execute()
 {
     if (validate())
     {
-        player->setArmies(player->getArmies() - armies);
-        territory->armies += armies;
-
         std::ostringstream stream;
         stream << "Deployed " << armies << " armies on territory " << territory->name;
         saveEffect(stream.str());
@@ -324,6 +323,8 @@ bool Deploy::execute()
     }
     else
     {
+        player->setArmies(player->getArmies() + armies);
+        territory->armies += armies;
         return false;
     }
 }

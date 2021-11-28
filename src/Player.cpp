@@ -224,13 +224,13 @@ Order* Player::issueOrder(GameEngine& gameEngine)
 }
 
 // Returns a list of territories that the player wants to defend them based on the current strategy
-vector<Territory*>& Player::toDefend(GameEngine& gameEngine)
+vector<Territory*> Player::toDefend(GameEngine& gameEngine)
 {
     return strategy->toDefend(gameEngine);
 }
 
 // Returns a list of territories that the player wants to attack based on the current strategy
-vector<Territory*>& Player::toAttack(GameEngine& gameEngine)
+vector<Territory*> Player::toAttack(GameEngine& gameEngine)
 {
     return strategy->toAttack(gameEngine);
 }
