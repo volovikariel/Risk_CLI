@@ -73,3 +73,19 @@ public:
     vector<Territory*> toAttack(GameEngine& gameEngine) override;
     vector<Territory*> toDefend(GameEngine& gameEngine) override;
 };
+
+class CheaterPlayerStrategy : public PlayerStrategy
+{
+public:
+
+    CheaterPlayerStrategy();
+    CheaterPlayerStrategy(Player& player);
+    CheaterPlayerStrategy(CheaterPlayerStrategy& other);
+
+    CheaterPlayerStrategy& operator = (const CheaterPlayerStrategy& other);
+    friend std::ostream& operator << (std::ostream& out, const CheaterPlayerStrategy& source);
+
+    Order* issueOrder(GameEngine& gameEngine) override;
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;
+};

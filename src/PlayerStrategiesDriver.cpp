@@ -39,13 +39,15 @@ void test1(GameEngine& gameEngine)
     p1.setName("NoStrategy");
 
     Player p2;
-    p2.setName("Aggressive");
-    AggressivePlayerStrategy aggressiveStrategy(p2);
-    p2.setPlayerStrategy(aggressiveStrategy);
+    p2.setName("Cheater");
+    CheaterPlayerStrategy cheaterStrategy(p2);
+    p2.setPlayerStrategy(cheaterStrategy);
 
     vector<Player*> players = { &p1, &p2 };
 
     gameEngine.start(mapFile, players);
 
     gameEngine.executeTurn();
+
+    cout << "test";
 }

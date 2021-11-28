@@ -299,3 +299,72 @@ vector<Territory*> AggressivePlayerStrategy::toDefend(GameEngine& gameEngine)
     vector<Territory*> tmp;
     return tmp;
 }
+
+
+// CheaterPlayerStrategy
+
+CheaterPlayerStrategy::CheaterPlayerStrategy():
+        PlayerStrategy()
+{
+
+}
+
+CheaterPlayerStrategy::CheaterPlayerStrategy(Player& player):
+        PlayerStrategy(player)
+{
+
+}
+
+CheaterPlayerStrategy::CheaterPlayerStrategy(CheaterPlayerStrategy& other):
+        PlayerStrategy(other)
+{
+
+}
+
+CheaterPlayerStrategy& CheaterPlayerStrategy::operator = (const CheaterPlayerStrategy& other)
+{
+    PlayerStrategy::operator=(other);
+    return *this;
+}
+
+std::ostream& operator << (std::ostream& out, const CheaterPlayerStrategy& source)
+{
+    out << "Cheater";
+    return out;
+}
+
+Order* CheaterPlayerStrategy::issueOrder(GameEngine& gameEngine)
+{
+    // Prepare list of adjacent territories the player will attack and conquer this turn
+    vector<Territory*> territoriesToAttack = toAttack(gameEngine);
+
+    // Since cheater player ignores armies when conquering we will just stack their armies on it first owned territory
+    int num_armies_available = this->player->getArmies();
+    if(num_armies_available > 0) {
+        return new Deploy(num_armies_available, *this->player, *this->player->getTerritories().at(0));
+    }
+
+    // Get current amount of orders, to determine which territory we will attack assuming first order will always be deploy
+    int pos = this->player->getOrders()->getOrdersList().size();
+    if (pos <= territoriesToAttack.size()) {
+        return new Advance(99, *this->player, *this->player->getTerritories().at(0), *territoriesToAttack.at(pos - 1),true);
+        // All advance orders for all adjacent enemy territories are done so we stop issuing orders
+    } else {
+        return nullptr;
+    }
+
+}
+
+// Returning all adjacent enemy territories the player can attack
+vector<Territory*> CheaterPlayerStrategy::toAttack(GameEngine& gameEngine)
+{
+    vector<Territory*> tmp = canAttack(*this->player);
+    return tmp;
+}
+
+// Cheater doesn't focus on defending so we return an empty list
+vector<Territory*> CheaterPlayerStrategy::toDefend(GameEngine& gameEngine)
+{
+    vector<Territory*> tmp;
+    return tmp;
+}

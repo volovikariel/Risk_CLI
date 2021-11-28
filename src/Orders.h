@@ -115,7 +115,7 @@ public:
 
     Advance();                                                          // Default Constructor
     Advance(const Advance& other);                                      // Copy Constructor
-    Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory);    // Parameterized Constructor
+    Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, bool cheat=false);    // Parameterized Constructor
     ~Advance();                                                         // Destructor
     bool execute() override;                                            // First validates the order, and if valid executes its action
     bool validate() override;                                           // Checks if the order is valid
@@ -129,6 +129,7 @@ private:
     Player* player;
     Territory* sourceTerritory;
     Territory* targetTerritory;
+    bool cheat;
 };
 
 // ==================== Bomb Class ====================

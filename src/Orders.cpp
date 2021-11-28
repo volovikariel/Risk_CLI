@@ -395,7 +395,8 @@ Advance::Advance():
     armies(0),
     player(nullptr),
     sourceTerritory(nullptr),
-    targetTerritory(nullptr)
+    targetTerritory(nullptr),
+    cheat(false)
 {
     this->setType(Type::Advance);
 }
@@ -406,18 +407,20 @@ Advance::Advance(const Advance &other):
     armies(other.armies),
     player(other.player),
     sourceTerritory(other.sourceTerritory),
-    targetTerritory(other.targetTerritory)
+    targetTerritory(other.targetTerritory),
+    cheat(other.cheat)
 {
     this->setType(Type::Advance);
 }
 
 // Parameterized Constructor
-Advance::Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory):
+Advance::Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, bool cheat):
     Order(),
     armies(armies),
     player(&player),
     sourceTerritory(&sourceTerritory),
-    targetTerritory(&targetTerritory)
+    targetTerritory(&targetTerritory),
+    cheat(cheat)
 {
     this->setType(Type::Advance);
 
@@ -442,71 +445,81 @@ bool Advance::execute()
 {
     if (validate())
     {
-        // If the source and target territories both belong to the player, then we just move the armies there
-        if (player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory))
-        {
-            sourceTerritory->armies -= this->armies; // Move the number of armies to the target territory
-            targetTerritory->armies += this->armies;
+        if (cheat != true) {
+            // If the source and target territories both belong to the player, then we just move the armies there
+            if (player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)) {
+                sourceTerritory->armies -= this->armies; // Move the number of armies to the target territory
+                targetTerritory->armies += this->armies;
+
+                std::ostringstream stream;
+                stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name
+                       << " to territory " << targetTerritory->name;
+                saveEffect(stream.str());
+            }
+                // If the target territory does not belong to the player, then we attack.
+            else if (!player->hasTerritory(targetTerritory)) {
+                int armiesAttacking = armies;
+                int armiesDefending = targetTerritory->armies;
+
+                int armiesDefendingKilled = 0;
+                for (int i = 0; i < armiesAttacking; ++i) {
+                    if (random01() <= 0.6f) {
+                        armiesDefendingKilled++;
+                    }
+                }
+
+                int armiesAttackingKilled = 0;
+                for (int i = 0; i < armiesDefending; ++i) {
+                    if (random01() <= 0.7f) {
+                        armiesAttackingKilled++;
+                    }
+                }
+
+                int armiesAttackingLeft = max(0, armiesAttacking - armiesAttackingKilled);
+                int armiesDefendingLeft = max(0, armiesDefending - armiesDefendingKilled);
+
+                if (armiesDefendingLeft <= 0) {
+                    sourceTerritory->armies -= armiesAttacking;
+                    targetTerritory->armies = armiesAttackingLeft;
+
+                    targetTerritory->player->removeTerritory(targetTerritory);
+                    player->addTerritory(targetTerritory);
+                    targetTerritory->player = player;
+
+                    std::ostringstream stream;
+                    stream << "Attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
+                           " with " << armies << " armies. The territory was conquered. " << armiesAttackingLeft
+                           << " attacking armies are left and have occupied the territory.";
+                    saveEffect(stream.str());
+
+                    // GameEngine will give this player a card and reset this flag to false
+                    // before the start of the next turn
+                    player->hasConqueredThisTurn = true;
+                } else {
+                    sourceTerritory->armies -= armiesAttackingKilled;
+                    targetTerritory->armies = armiesDefendingLeft;
+
+                    std::ostringstream stream;
+                    stream << "Attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
+                           " with " << armies << " armies. " << armiesAttackingLeft << " attacking armies are left and "
+                           << armiesDefendingLeft << " defending armies are left.";
+                    saveEffect(stream.str());
+                }
+            }
+            // Player is cheating and will conquer the territory regardless of the game rules
+        } else {
+            targetTerritory->armies = 0;
+            targetTerritory->player->removeTerritory(targetTerritory);
+            player->addTerritory(targetTerritory);
+            targetTerritory->player = player;
 
             std::ostringstream stream;
-            stream << "Advanced " << armies << " armies from territory " << sourceTerritory->name << " to territory " << targetTerritory->name;
+            stream << player->getName() << " is cheating and has conquered " << sourceTerritory->name << " regardless of the game rules.";
             saveEffect(stream.str());
-        }
-        // If the target territory does not belong to the player, then we attack.
-        else if (!player->hasTerritory(targetTerritory))
-        {
-            int armiesAttacking = armies;
-            int armiesDefending = targetTerritory->armies;
 
-            int armiesDefendingKilled = 0;
-            for (int i = 0; i < armiesAttacking; ++i)
-            {
-                if (random01() <= 0.6f)
-                {
-                    armiesDefendingKilled++;
-                }
-            }
-
-            int armiesAttackingKilled = 0;
-            for (int i = 0; i < armiesDefending; ++i)
-            {
-                if (random01() <= 0.7f)
-                {
-                    armiesAttackingKilled++;
-                }
-            }
-
-            int armiesAttackingLeft = max(0, armiesAttacking - armiesAttackingKilled);
-            int armiesDefendingLeft = max(0, armiesDefending - armiesDefendingKilled);
-
-            if (armiesDefendingLeft <= 0)
-            {
-                sourceTerritory->armies -= armiesAttacking;
-                targetTerritory->armies = armiesAttackingLeft;
-
-                targetTerritory->player->removeTerritory(targetTerritory);
-                player->addTerritory(targetTerritory);
-                targetTerritory->player = player;
-
-                std::ostringstream stream;
-                stream << "Attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
-                    " with " << armies << " armies. The territory was conquered. " << armiesAttackingLeft << " attacking armies are left and have occupied the territory.";
-                saveEffect(stream.str());
-
-                // GameEngine will give this player a card and reset this flag to false
-                // before the start of the next turn
-                player->hasConqueredThisTurn = true;
-            }
-            else
-            {
-                sourceTerritory->armies -= armiesAttackingKilled;
-                targetTerritory->armies = armiesDefendingLeft;
-
-                std::ostringstream stream;
-                stream << "Attacked from territory " << sourceTerritory->name << " to " << targetTerritory->name <<
-                    " with " << armies << " armies. " << armiesAttackingLeft << " attacking armies are left and " << armiesDefendingLeft << " defending armies are left.";
-                saveEffect(stream.str());
-            }
+            // GameEngine will give this player a card and reset this flag to false
+            // before the start of the next turn
+            player->hasConqueredThisTurn = true;
         }
 
         return true;
@@ -536,7 +549,7 @@ bool Advance::validate()
     {
         saveEffect("The source territory does not belong to the player that issued the order", false);
     }
-    else if (!targetTerritory->isNeighbor(sourceTerritory))
+    else if (!targetTerritory->isNeighbor(sourceTerritory) && this->cheat != true)
     {
         saveEffect("The target territory is not adjacent to the source territory", false);
     }
