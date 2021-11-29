@@ -270,6 +270,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         else if (cardType == Card::Type::Bomb)
         {
+            // Don't bomb territories that have no armies on them
             if(weakest_enemy_territory->armies != 0)
             {
                 result = new Bomb(*this->player, *weakest_enemy_territory);
@@ -288,12 +289,12 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
     }
 
-    // Advance with your strongest army onto enemy neighbours (attacking them)
     vector<Order*> orders = this->player->getOrders()->getOrdersList();
+    // Advance with your strongest army onto enemy neighbours (attacking them)
+    // Only advance if you haven't already queued an advance with from this territory
     bool alreadyAdvancedFromStrongestTerritory = find_if(orders.begin(), orders.end(), [&](Order* order) {
         return order->getType() == Order::Type::Advance && dynamic_cast<Advance*>(order)->getSourceTerritory() == strongest_friendly_territory;
     }) != orders.end();
-    // Only advance if you haven't already queued an advance with from this territory
     if(!alreadyAdvancedFromStrongestTerritory) {
         for(Territory* neighbouring_territory : strongest_friendly_territory->neighbors)
         {
@@ -304,11 +305,11 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
     }
     
-    // If there are no enemy territories near it, just randomly attack with another of your territories
+    // If there are no enemy territories near your strongest territory, randomly attack with another of your territories
+    // As long as this territory hasn't already issued an advance order this turn
     for(Territory* neighbour : enemyTerritories[0]->neighbors)
     {
         bool neighbour_is_owned = neighbour->player == this->player;
-        // Don't advance with it if the territory you'll attack from has already advanced this turn
         bool alreadyAdvancedFromNeighbour = find_if(orders.begin(), orders.end(), [&](Order* order) {
             return order->getType() == Order::Type::Advance && dynamic_cast<Advance*>(order)->getSourceTerritory() == neighbour;
         }) != orders.end();
