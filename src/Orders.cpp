@@ -537,7 +537,7 @@ bool Advance::validate()
     {
         saveEffect("nullptr arguments passed", false);
     }
-    else if (armies <= 0)
+    else if (armies <= 0 || sourceTerritory->armies <= 0)
     {
         saveEffect("Not enough armies", false);
     }
@@ -594,6 +594,10 @@ ostream& Advance::print(ostream& out) const
     return out;
 }
 
+Territory* Advance::getSourceTerritory() const
+{
+    return this->sourceTerritory;
+}
 
 
 

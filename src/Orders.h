@@ -122,6 +122,7 @@ public:
     Advance& operator = (const Advance& advance);                       // Assignment operator overloading
     friend ostream& operator << (ostream& out, const Advance& source);  // Stream Insertion Operator
     ostream& print(ostream& out) const override;                        // Prints to an output stream
+    Territory* getSourceTerritory() const;
 
 private:
 

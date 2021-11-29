@@ -33,7 +33,21 @@ vector<Territory*> canAttack(Player& player)
     return canAttack;
 }
 
-// TODO: Returns true if we can keep issuing orders (if there's no previous deploy order or if we did at most 2 non-deploy orders after the last deploy order)
+// If one of the last three orders was a Deploy order, you can keep deploying
+bool canDeploy(Player& player)
+{
+    vector<Order*>& orders = player.getOrders()->getOrdersList();
+    if((int)orders.size() < 3) return true;
+    vector<Order*> lastThreeOrders(orders.end() - 3, orders.end());
+    for(Order* order : lastThreeOrders)
+    {
+        if(order->getType() == Order::Type::Deploy)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 // PlayerStrategy
 
@@ -223,6 +237,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     // --- Weakest enemy territory --- //
     vector<Territory*> enemyTerritories = toAttack(gameEngine); 
     vector<Territory*>::iterator it_enemy_min = max_element(enemyTerritories.begin(), enemyTerritories.end(), [&](Territory* a, Territory* b) {
+        if(a->armies == 0) return -1;
         return b->armies - a->armies;
     });
     int index_enemy_min = distance(enemyTerritories.begin(), it_enemy_min);
@@ -231,7 +246,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     
     // First deploy
     int num_armies_available = this->player->getArmies();
-    if(num_armies_available > 0) {
+    if(num_armies_available > 0 && canDeploy(*this->player)) {
         // As an aggressive player, we put all our armies on our strongest territory (on our territory which contains the most units)
         return new Deploy(num_armies_available, *this->player, *strongest_friendly_territory);
     }
@@ -247,12 +262,19 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
 
         if (cardType == Card::Type::Airlift)
         {
-            // Move our weakest territory's armies to our strongest territory's armies
-            result = new Airlift(weakest_friendly_territory->armies, *this->player, *weakest_friendly_territory, *strongest_friendly_territory);
+            // Move our weakest territory's armies to our strongest territory's armies as long as they're not the same
+            if(weakest_friendly_territory != strongest_friendly_territory)
+            {
+                result = new Airlift(weakest_friendly_territory->armies, *this->player, *weakest_friendly_territory, *strongest_friendly_territory);
+            }
         }
         else if (cardType == Card::Type::Bomb)
         {
-            result = new Bomb(*this->player, *weakest_enemy_territory);
+            if(weakest_enemy_territory->armies != 0)
+            {
+                result = new Bomb(*this->player, *weakest_enemy_territory);
+                card->play();
+            }
         }
         else if (cardType == Card::Type::Reinforcement)
         {
@@ -267,18 +289,30 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     }
 
     // Advance with your strongest army onto enemy neighbours (attacking them)
-    for(Territory* neighbouring_territory : strongest_friendly_territory->neighbors)
-    {
-        Player* neighbouring_territory_player = neighbouring_territory->player;
-        if(neighbouring_territory_player != this->player) {
-            return new Advance(strongest_friendly_territory->armies, *this->player, *strongest_friendly_territory, *neighbouring_territory);
+    vector<Order*> orders = this->player->getOrders()->getOrdersList();
+    bool alreadyAdvancedFromStrongestTerritory = find_if(orders.begin(), orders.end(), [&](Order* order) {
+        return order->getType() == Order::Type::Advance && dynamic_cast<Advance*>(order)->getSourceTerritory() == strongest_friendly_territory;
+    }) != orders.end();
+    // Only advance if you haven't already queued an advance with from this territory
+    if(!alreadyAdvancedFromStrongestTerritory) {
+        for(Territory* neighbouring_territory : strongest_friendly_territory->neighbors)
+        {
+            Player* neighbouring_territory_player = neighbouring_territory->player;
+            if(neighbouring_territory_player != this->player && strongest_friendly_territory->armies > 0) {
+                return new Advance(strongest_friendly_territory->armies, *this->player, *strongest_friendly_territory, *neighbouring_territory);
+            }
         }
     }
+    
     // If there are no enemy territories near it, just randomly attack with another of your territories
     for(Territory* neighbour : enemyTerritories[0]->neighbors)
     {
         bool neighbour_is_owned = neighbour->player == this->player;
-        if(neighbour_is_owned) {
+        // Don't advance with it if the territory you'll attack from has already advanced this turn
+        bool alreadyAdvancedFromNeighbour = find_if(orders.begin(), orders.end(), [&](Order* order) {
+            return order->getType() == Order::Type::Advance && dynamic_cast<Advance*>(order)->getSourceTerritory() == neighbour;
+        }) != orders.end();
+        if(neighbour_is_owned && neighbour->armies > 0 && !alreadyAdvancedFromNeighbour) {
             return new Advance(neighbour->armies, *this->player, *neighbour, *enemyTerritories[0]);
         }
     }
@@ -295,7 +329,7 @@ vector<Territory*> AggressivePlayerStrategy::toAttack(GameEngine& gameEngine)
 
 vector<Territory*> AggressivePlayerStrategy::toDefend(GameEngine& gameEngine)
 {
-    // Prioritize: Don't defend, ever - just return an empty vector of Territories
+    // Don't defend, ever - just return an empty vector of Territories
     vector<Territory*> tmp;
     return tmp;
 }
