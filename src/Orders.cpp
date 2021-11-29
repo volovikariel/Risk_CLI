@@ -514,7 +514,7 @@ bool Advance::execute()
             targetTerritory->player = player;
 
             std::ostringstream stream;
-            stream << player->getName() << " is cheating and has conquered " << sourceTerritory->name << " regardless of the game rules.";
+            stream << player->getName() << " is cheating and has conquered " << targetTerritory->name << " regardless of the game rules.";
             saveEffect(stream.str());
 
             // GameEngine will give this player a card and reset this flag to false
