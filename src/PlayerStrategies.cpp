@@ -403,3 +403,59 @@ vector<Territory*> CheaterPlayerStrategy::toDefend(GameEngine& gameEngine)
     vector<Territory*> tmp;
     return tmp;
 }
+
+
+
+
+
+
+
+
+
+//========== NeutralPlayerStrategy Class =========
+
+//Default Constructor
+NeutralPlayerStrategy::NeutralPlayerStrategy() : PlayerStrategy() {
+
+}
+
+//Parameterized Constructor
+NeutralPlayerStrategy::NeutralPlayerStrategy(Player &player) : PlayerStrategy(player) {
+
+}
+
+//Copy Constructor
+NeutralPlayerStrategy::NeutralPlayerStrategy(NeutralPlayerStrategy &other) : PlayerStrategy(other){
+
+}
+
+//Assignment Operator
+NeutralPlayerStrategy &NeutralPlayerStrategy::operator=(const NeutralPlayerStrategy &other) {
+    PlayerStrategy::operator=(other);
+    return *this;
+}
+
+//Input stream operator
+std::ostream &operator<<(ostream &out, const NeutralPlayerStrategy &source) {
+    out << "Neutral";
+    return out;
+}
+
+//issueOrder()
+//Does nothing. Issue order can't create any orders
+Order *NeutralPlayerStrategy::issueOrder(GameEngine &gameEngine) {
+    std::cout << this->player->getName() << " is a neutral player. Cannot issue any orders." << std::endl;
+    return nullptr;
+}
+
+//toAttack()
+vector<Territory *> NeutralPlayerStrategy::toAttack(GameEngine &gameEngine) {
+    return vector<Territory *>();
+}
+
+//toDefend()
+vector<Territory *> NeutralPlayerStrategy::toDefend(GameEngine &gameEngine) {
+    AggressivePlayerStrategy aggressiveStrategy(*this->player);
+    this->player->setPlayerStrategy(aggressiveStrategy);
+    return vector<Territory *>();
+}
