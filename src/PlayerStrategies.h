@@ -8,84 +8,113 @@ using std::vector;
 class Order;
 class Player;
 
+
+//========== PlayerStrategy (Abstract) Class ==========//
+
 class PlayerStrategy
 {
 public:
 
-    PlayerStrategy();
-    PlayerStrategy(Player& player);
-    PlayerStrategy(PlayerStrategy& other);
+    PlayerStrategy(); // Default Constructor
+    PlayerStrategy(Player& player); // Parametrized Constructor
+    PlayerStrategy(PlayerStrategy& other); // Parametrized Constructor
 
-    PlayerStrategy& operator = (const PlayerStrategy& other);
-    friend std::ostream& operator << (std::ostream& out, const PlayerStrategy& source);
+    PlayerStrategy& operator = (const PlayerStrategy& other); // Assignment operator overloading
+    friend std::ostream& operator << (std::ostream& out, const PlayerStrategy& source); // Input stream operator
 
-    virtual Order* issueOrder(GameEngine& gameEngine) = 0;
-    virtual vector<Territory*> toAttack(GameEngine& gameEngine) = 0;
-    virtual vector<Territory*> toDefend(GameEngine& gameEngine) = 0;
+    virtual Order* issueOrder(GameEngine& gameEngine) = 0;  // Pure virtual method issueOrder()
+    virtual vector<Territory*> toAttack(GameEngine& gameEngine) = 0; // Pure virtual method toAttack()
+    virtual vector<Territory*> toDefend(GameEngine& gameEngine) = 0; // Pure virtual method toDefend()
 
     Player* player;
 };
+
+
+//========== Human PlayerStrategy Class ==========//
 
 class HumanPlayerStrategy : public PlayerStrategy
 {
 public:
 
-    HumanPlayerStrategy();
-    HumanPlayerStrategy(Player& player);
-    HumanPlayerStrategy(HumanPlayerStrategy& other);
+    HumanPlayerStrategy();  // Default Constructor
+    HumanPlayerStrategy(Player& player);    // Parametrized Constructor
+    HumanPlayerStrategy(HumanPlayerStrategy& other);    // Parametrized Constructor
 
-    HumanPlayerStrategy& operator = (const HumanPlayerStrategy& other);
-    friend std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source);
+    HumanPlayerStrategy& operator = (const HumanPlayerStrategy& other); // Assignment operator overloading
+    friend std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source); // Input stream operator
 
-    Order* issueOrder(GameEngine& gameEngine) override;
-    vector<Territory*> toAttack(GameEngine& gameEngine) override;
-    vector<Territory*> toDefend(GameEngine& gameEngine) override;
+    Order* issueOrder(GameEngine& gameEngine) override; // Overriding virtual function issueOrder() from base class PlayerStrategy
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;   // Overriding virtual function toAttack() from base class PlayerStrategy
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;   // Overriding virtual function toDefend() from base class PlayerStrategy
 };
+
+
+
+//========== Benevolent PlayerStrategy Class ==========//
 
 class BenevolentPlayerStrategy : public PlayerStrategy
 {
 public:
 
-    BenevolentPlayerStrategy();
-    BenevolentPlayerStrategy(Player& player);
-    BenevolentPlayerStrategy(BenevolentPlayerStrategy& other);
+    BenevolentPlayerStrategy(); // Default Constructor
+    BenevolentPlayerStrategy(Player& player);   // Parameterized Constructor
+    BenevolentPlayerStrategy(BenevolentPlayerStrategy& other);  // Parameterized Constructor
 
-    BenevolentPlayerStrategy& operator = (const BenevolentPlayerStrategy& other);
-    friend std::ostream& operator << (std::ostream& out, const BenevolentPlayerStrategy& source);
+    BenevolentPlayerStrategy& operator = (const BenevolentPlayerStrategy& other); // Assignment operator overloading
+    friend std::ostream& operator << (std::ostream& out, const BenevolentPlayerStrategy& source); // Input stream operator
 
-    Order* issueOrder(GameEngine& gameEngine) override;
-    vector<Territory*> toAttack(GameEngine& gameEngine) override;
-    vector<Territory*> toDefend(GameEngine& gameEngine) override;
+    Order* issueOrder(GameEngine& gameEngine) override; // Overriding virtual function issueOrder() from base class PlayerStrategy
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;   // Overriding virtual function toAttack() from base class PlayerStrategy
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;   // Overriding virtual function toDefend() from base class PlayerStrategy
 };
+
+
+
+//========== Aggressive PlayerStrategy Class ==========//
 
 class AggressivePlayerStrategy : public PlayerStrategy
 {
 public:
 
-    AggressivePlayerStrategy();
-    AggressivePlayerStrategy(Player& player);
-    AggressivePlayerStrategy(AggressivePlayerStrategy& other);
+    AggressivePlayerStrategy(); // Default Constructor
+    AggressivePlayerStrategy(Player& player);   // Parameterized Constructor
+    AggressivePlayerStrategy(AggressivePlayerStrategy& other);  // Parameterized Constructor
 
-    AggressivePlayerStrategy& operator = (const AggressivePlayerStrategy& other);
-    friend std::ostream& operator << (std::ostream& out, const AggressivePlayerStrategy& source);
+    AggressivePlayerStrategy& operator = (const AggressivePlayerStrategy& other); // Assignment operator overloading
+    friend std::ostream& operator << (std::ostream& out, const AggressivePlayerStrategy& source); // Input stream operator
 
-    Order* issueOrder(GameEngine& gameEngine) override;
-    vector<Territory*> toAttack(GameEngine& gameEngine) override;
-    vector<Territory*> toDefend(GameEngine& gameEngine) override;
+    Order* issueOrder(GameEngine& gameEngine) override; // Overriding virtual function issueOrder() from base class PlayerStrategy
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;   // Overriding virtual function toAttack() from base class PlayerStrategy
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;   // Overriding virtual function toDefend() from base class PlayerStrategy
 };
+
+
+
+//========== Cheater PlayerStrategy Class ==========//
 
 class CheaterPlayerStrategy : public PlayerStrategy
 {
 public:
 
-    CheaterPlayerStrategy();
-    CheaterPlayerStrategy(Player& player);
-    CheaterPlayerStrategy(CheaterPlayerStrategy& other);
+    CheaterPlayerStrategy();    // Default Constructor
+    CheaterPlayerStrategy(Player& player);  // Parameterized Constructor
+    CheaterPlayerStrategy(CheaterPlayerStrategy& other);    // Parameterized Constructor
 
-    CheaterPlayerStrategy& operator = (const CheaterPlayerStrategy& other);
-    friend std::ostream& operator << (std::ostream& out, const CheaterPlayerStrategy& source);
+    CheaterPlayerStrategy& operator = (const CheaterPlayerStrategy& other); // Assignment operator overloading
+    friend std::ostream& operator << (std::ostream& out, const CheaterPlayerStrategy& source); // Input stream operator
 
-    Order* issueOrder(GameEngine& gameEngine) override;
-    vector<Territory*> toAttack(GameEngine& gameEngine) override;
-    vector<Territory*> toDefend(GameEngine& gameEngine) override;
+    Order* issueOrder(GameEngine& gameEngine) override; // Overriding virtual function issueOrder() from base class PlayerStrategy
+    vector<Territory*> toAttack(GameEngine& gameEngine) override;   // Overriding virtual function toAttack() from base class PlayerStrategy
+    vector<Territory*> toDefend(GameEngine& gameEngine) override;   // Overriding virtual function toDefend() from base class PlayerStrategy
+};
+
+
+
+//========== Neutral PlayerStrategy Class ==========//
+
+class NeutralPlayerStrategy : public PlayerStrategy
+{
+public:
+
+
 };
