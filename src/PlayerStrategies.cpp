@@ -115,6 +115,34 @@ std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source)
 
 Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
 {
+    int orderNum;
+    std::cout<<"Please input the corresponding number to the order you would like to issue from the list below.\n";
+    std::cout<<"1) Deploy\n2) Advance\n3) Bomb\n4) Blockade\n5) Airlift\n6) Negotiate\n";
+    std::cin>>orderNum;
+    switch (orderNum)
+    {
+    case 1:
+        std::cout<<"you chose Deploy";
+        break;
+    case 2:
+        std::cout<<"you chose Advance";
+        break;
+    case 3:
+        std::cout<<"you chose Bomb";
+        break;
+    case 4:
+        std::cout<<"you chose Blockade";
+        break;
+    case 5:
+        std::cout<<"you chose Airlift";
+        break;
+    case 6:
+        std::cout<<"you chose Negotiate";
+        break;
+    default:
+        break;
+    }
+
     return nullptr;
 }
 

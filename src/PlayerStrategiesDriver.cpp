@@ -42,8 +42,13 @@ void test1(GameEngine& gameEngine)
     p2.setName("AggressiveStrategy");
     AggressivePlayerStrategy aggressiveStrategy(p2);
     p2.setPlayerStrategy(aggressiveStrategy);
+    
+    Player p3;
+    p3.setName("HumanPlayerStrategy");
+    HumanPlayerStrategy humanPlayerStrategy(p3);
+    p3.setPlayerStrategy(humanPlayerStrategy);
 
-    vector<Player*> players = { &p1, &p2 };
+    vector<Player*> players{ &p1, &p2, &p3 };
 
     gameEngine.start(mapFile, players);
 
