@@ -122,7 +122,26 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
     switch (orderNum)
     {
     case 1:
-        std::cout<<"you chose Deploy";
+        std::cout<<"you chose Deploy\n";
+        int num_armies_available = this->player->getArmies();
+        if(num_armies_available > 0 && canDeploy(*this->player)) {
+            vector<Territory*> ownedTerritories = this->player->getTerritories();
+            std::cout<<"you have "<<num_armies_available<<" armies available to deploy. Please input the ID of the territory where you would like to deploy or input '0' to see a list of your owned territories?\n";
+            int deployTerritoryId;
+            std::cin>>deployTerritoryId;
+            if (deployTerritoryId==0){
+                for (int i: ownedTerritories){
+                    std::cout<<ownedTerritories[i];
+                }
+                std::cout<<"Please input the ID of the territory where you would like to deploy: ";
+                std::cin>>deployTerritoryId;
+            }
+            Territory* deployTerritory = getTerritoryByID(deployTerritoryId);
+            std::cout<<""
+
+            // As an aggressive player, we put all our armies on our strongest territory (on our territory which contains the most units)
+            //return new Deploy(num_armies_available, *this->player, *strongest_friendly_territory);
+        }
         break;
     case 2:
         std::cout<<"you chose Advance";
@@ -140,6 +159,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         std::cout<<"you chose Negotiate";
         break;
     default:
+        std::cout<<"That Input doesn't correspond to an order. Try again";
         break;
     }
 
