@@ -115,54 +115,6 @@ std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source)
 
 Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
 {
-    int orderNum;
-    std::cout<<"Please input the corresponding number to the order you would like to issue from the list below.\n";
-    std::cout<<"1) Deploy\n2) Advance\n3) Bomb\n4) Blockade\n5) Airlift\n6) Negotiate\n";
-    std::cin>>orderNum;
-    switch (orderNum)
-    {
-    case 1:
-        std::cout<<"you chose Deploy\n";
-        int num_armies_available = this->player->getArmies();
-        if(num_armies_available > 0 && canDeploy(*this->player)) {
-            vector<Territory*> ownedTerritories = this->player->getTerritories();
-            std::cout<<"you have "<<num_armies_available<<" armies available to deploy. Please input the ID of the territory where you would like to deploy or input '0' to see a list of your owned territories?\n";
-            int deployTerritoryId;
-            std::cin>>deployTerritoryId;
-            if (deployTerritoryId==0){
-                for (int i: ownedTerritories){
-                    std::cout<<ownedTerritories[i];
-                }
-                std::cout<<"Please input the ID of the territory where you would like to deploy: ";
-                std::cin>>deployTerritoryId;
-            }
-            Territory* deployTerritory = getTerritoryByID(deployTerritoryId);
-            std::cout<<""
-
-            // As an aggressive player, we put all our armies on our strongest territory (on our territory which contains the most units)
-            //return new Deploy(num_armies_available, *this->player, *strongest_friendly_territory);
-        }
-        break;
-    case 2:
-        std::cout<<"you chose Advance";
-        break;
-    case 3:
-        std::cout<<"you chose Bomb";
-        break;
-    case 4:
-        std::cout<<"you chose Blockade";
-        break;
-    case 5:
-        std::cout<<"you chose Airlift";
-        break;
-    case 6:
-        std::cout<<"you chose Negotiate";
-        break;
-    default:
-        std::cout<<"That Input doesn't correspond to an order. Try again";
-        break;
-    }
-
     return nullptr;
 }
 
@@ -213,18 +165,62 @@ std::ostream& operator << (std::ostream& out, const BenevolentPlayerStrategy& so
 
 Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
 {
-    return nullptr;
-}
+    //list of territories needed to be defended
+    vector<Territory*> territoriesToDefend = toDefend(gameEngine);
 
+    //Deploying the armies to the last territory
+    int num_armies_available = this->player->getArmies();
+    if(num_armies_available > 0) {
+        return new Deploy(num_armies_available, *this->player, *this->player->getTerritories().at(territoriesToDefend.size()-1));
+    }
+    //Player hand
+    Hand* main= this->player->getCards();
+    Card *lol;
+    for (int i = 0; i<main->getCards().size();i++)
+    {
+        Card::Type cardType = lol->getType();
+
+        Order* result = nullptr;
+
+        if (cardType == Card::Type::Reinforcement){
+            this->player->setArmies(this->player->getArmies() + 10);
+        }
+        else if (cardType == Card::Type::Airlift) {
+               return result = new Airlift(territoriesToDefend[0]->armies, *this->player, *territoriesToDefend[0], *territoriesToDefend[territoriesToDefend.size()-1]);
+        }
+        else if (cardType == Card::Type::Blockade){
+           return result = new Blockade(*this->player,gameEngine.getNeutralPlayer(),*territoriesToDefend[0]);
+        }
+
+        if (result != nullptr)
+        {
+            return result;
+        }
+    }
+    //Advance the armies.
+    int ordrenbr = this->player->getOrders()->getOrdersList().size();
+    if (ordrenbr <= territoriesToDefend.size()) {
+        return new Advance(5, *this->player, *this->player->getTerritories().at(0), *territoriesToDefend.at(ordrenbr - 1),false);
+    } else {
+        return nullptr;
+    }
+}
+//Benevolent player is not attacking any player. So return an empty vector of territories
 vector<Territory*> BenevolentPlayerStrategy::toAttack(GameEngine& gameEngine)
 {
     vector<Territory*> tmp;
     return tmp;
 }
 
+//Returns the list of territories with the least armies
 vector<Territory*> BenevolentPlayerStrategy::toDefend(GameEngine& gameEngine)
 {
-    vector<Territory*> tmp;
+    vector<Territory*> tmp = this->player->getTerritories();
+    stable_sort(tmp.begin(), tmp.end());
+
+    for (int i=0;i<tmp.size();i++){
+        std::cout<<tmp[i]->name<<" has " <<tmp[i]->armies<< " armies" <<endl;
+    }
     return tmp;
 }
 
