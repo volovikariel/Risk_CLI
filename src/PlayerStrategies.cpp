@@ -123,31 +123,77 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
     {
     case 1:
         std::cout<<"you chose Deploy\n";
-        int num_armies_available = this->player->getArmies();
-        if(num_armies_available > 0 && canDeploy(*this->player)) {
-            vector<Territory*> ownedTerritories = this->player->getTerritories();
-            std::cout<<"you have "<<num_armies_available<<" armies available to deploy. Please input the ID of the territory where you would like to deploy or input '0' to see a list of your owned territories?\n";
-            int deployTerritoryId;
-            std::cin>>deployTerritoryId;
-            if (deployTerritoryId==0){
-                for (int i: ownedTerritories){
-                    std::cout<<ownedTerritories[i];
-                }
-                std::cout<<"Please input the ID of the territory where you would like to deploy: ";
+        Deploy* deployTemp;
+        do
+        {
+            int num_armies_available = this->player->getArmies();
+            if(num_armies_available > 0 && canDeploy(*this->player)) 
+            {
+                vector<Territory*> ownedTerritories = this->player->getTerritories();
+                std::cout<<"you have "<<num_armies_available<<" armies available to deploy. Please input the ID of the territory where you would like to deploy or input '0' to see a list of your owned territories:\n";
+                int deployTerritoryId, deployNumArmies;
                 std::cin>>deployTerritoryId;
+                if (deployTerritoryId==0)
+                {
+                    for (Territory* territories: ownedTerritories)
+                    {
+                        std::cout<<territories;
+                    }
+                    std::cout<<"Please input the ID of the territory where you would like to deploy: \n";
+                    std::cin>>deployTerritoryId;
+                }
+                Territory* deployTerritory = gameEngine.getMap().getTerritoryByID(deployTerritoryId);
+                std::cout<<"How many armies would you like to deploy here? ("<<num_armies_available<<" available)\n";
+                std::cin>>deployNumArmies;
+                deployTemp= new Deploy(deployNumArmies,*this->player,*deployTerritory);
             }
-            Territory* deployTerritory = getTerritoryByID(deployTerritoryId);
-            std::cout<<""
-
-            // As an aggressive player, we put all our armies on our strongest territory (on our territory which contains the most units)
-            //return new Deploy(num_armies_available, *this->player, *strongest_friendly_territory);
-        }
+        } while (!deployTemp->validate());
+        return deployTemp;
         break;
     case 2:
         std::cout<<"you chose Advance";
+        Advance* advanceTemp;
+        do
+        {
+            int sourceTerritoryId,targetTerritoryId, armies;
+            std::cout<<"Please input the ID of the territory where you would like to advance armies from or input '0' to see a list of your owned territories:\n";
+            
+            std::cin>>sourceTerritoryId;
+            if (sourceTerritoryId==0)
+            {
+                vector<Territory*> ownedTerritories = this->player->getTerritories();
+                for (Territory* territories: ownedTerritories)
+                {
+                    std::cout<<territories;
+                }
+                std::cout<<"Please input the ID of the territory where you would like to advance armies from: \n";
+                std::cin>>sourceTerritoryId;
+            }
+            Territory* sourceTerritory = gameEngine.getMap().getTerritoryByID(sourceTerritoryId);
+
+            std::cout<<"Please input the ID of the territory where you would like to advance armies to or input '0' to see a list of neighboring territories:\n";
+            std::cin>>targetTerritoryId;
+            if (targetTerritoryId==0)
+            {
+                
+                for (Territory* territories: sourceTerritory->neighbors)
+                {
+                    std::cout<<territories;
+                }
+                std::cout<<"Please input the ID of the territory where you would like to advance armies to: \n";
+                std::cin>>targetTerritoryId;
+            }
+            Territory* targetTerritory = gameEngine.getMap().getTerritoryByID(targetTerritoryId);
+            std::cout<<"How many armies would you like to advance? ("<<sourceTerritory->armies<<" available)\n";
+            std::cin>>armies;
+            advanceTemp=new Advance(armies,*this->player,*sourceTerritory,*targetTerritory);
+        } while (!advanceTemp->validate());
+        return advanceTemp;
+        //Advance(int armies, Player& player, Territory& sourceTerritory, Territory& targetTerritory, bool cheat=false);  
         break;
     case 3:
         std::cout<<"you chose Bomb";
+        
         break;
     case 4:
         std::cout<<"you chose Blockade";
