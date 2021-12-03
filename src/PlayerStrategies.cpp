@@ -452,10 +452,11 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
     for (Card* card : main->getCards())
     {
         Card::Type cardType = card->getType();
-
         Order* result = nullptr;
 
         if (cardType == Card::Type::Reinforcement){
+            card->play();
+            cout<<cardType;
             this->player->setArmies(this->player->getArmies() + 10);
         }
         else if (cardType == Card::Type::Airlift) {
@@ -468,7 +469,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
 
         else if (cardType == Card::Type::Diplomacy){
-            // return result = new Negotiate(*this->player,gameEngine.getAlivePlayers());
+           card->play();
         }
 
         if (result != nullptr)
@@ -476,6 +477,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
             return result;
         }
     }
+
     //Advance the armies.
     vector<Order*> orders = this->player->getOrders()->getOrdersList();
     for(Territory* friendly_territory : toDefend(gameEngine))
@@ -491,7 +493,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
         {
             if(neighbouring_territory->player == this->player)
             {
-                return new Advance(friendly_territory->armies, *this->player, *friendly_territory, *neighbouring_territory, false);
+                return new Advance(5, *this->player, *friendly_territory, *neighbouring_territory, false);
             }
         }
     }
@@ -511,10 +513,6 @@ vector<Territory*> BenevolentPlayerStrategy::toDefend(GameEngine& gameEngine)
 {
     vector<Territory*> tmp = this->player->getTerritories();
     stable_sort(tmp.begin(), tmp.end());
-
-    // for (int i=0;i<tmp.size();i++){
-    //     std::cout<<tmp[i]->name<<" has " <<tmp[i]->armies<< " armies" <<endl;
-    // }
     return tmp;
 }
 
