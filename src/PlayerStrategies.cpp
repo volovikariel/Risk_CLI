@@ -483,6 +483,25 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
     }
 }
 
+//Benevolent player is not attacking any player. So return an empty vector of territories
+vector<Territory*> BenevolentPlayerStrategy::toAttack(GameEngine& gameEngine)
+{
+    vector<Territory*> tmp;
+    return tmp;
+}
+
+//Returns the list of territories with the least armies
+vector<Territory*> BenevolentPlayerStrategy::toDefend(GameEngine& gameEngine)
+{
+    vector<Territory*> tmp = this->player->getTerritories();
+    stable_sort(tmp.begin(), tmp.end());
+
+    for (int i=0;i<tmp.size();i++){
+        std::cout<<tmp[i]->name<<" has " <<tmp[i]->armies<< " armies" <<endl;
+    }
+    return tmp;
+}
+
 // AggressivePlayerStrategy
 
 AggressivePlayerStrategy::AggressivePlayerStrategy():
