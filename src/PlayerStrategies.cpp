@@ -115,6 +115,7 @@ std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source)
 
 Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
 {
+    // Ask the human player which order they would like to issue
     int orderNum;
     std::cout<<"Please input the corresponding number to the order you would like to issue from the list below.\n";
     std::cout<<"1) Deploy\n2) Advance\n3) Bomb\n4) Blockade\n5) Airlift\n6) Negotiate\n";
@@ -123,6 +124,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
     {
         case 1:
         {
+            //-------DEPLOY---------
+            // ask the user which territory they would like to deploy to and how many armies to deploy
             std::cout<<"you chose Deploy\n";
             Deploy* deployTemp;
             do
@@ -154,6 +157,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         case 2:
         {
+            //-------ADVANCE---------
+            // ask the user which territories to advance to and from and how many armies to advance
             std::cout<<"you chose Advance";
             Advance* advanceTemp;
             do
@@ -196,6 +201,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         case 3:
         {
+            //-------BOMB---------
+            // check if the player has the bomb card. if they do then ask which territory to bomb
             std::cout<<"you chose Bomb";
             Hand* playerHand = this->player->getCards();
             bool hasCard = false;
@@ -231,6 +238,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         case 4:
         {
+            //-------BLOCKADE---------
+            // check if the player has the blockade card. if they do then ask which territory to blockade
             std::cout<<"you chose Blockade";
             Hand* playerHand = this->player->getCards();
             bool hasCard = false;
@@ -258,7 +267,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     std::cin>>blockadeTerritoryId;
                 }
                 Territory* blockadeTerritory = gameEngine.getMap().getTerritoryByID(blockadeTerritoryId);
-                return new Bomb(*this->player,gameEngine.getNeutralPlayer(),*blockadeTerritory);
+                return new Blockade(*this->player,gameEngine.getNeutralPlayer(),*blockadeTerritory);
             }else{
                 std::cout<<"You don't have a Blockade card in your hand.\n";
             }
@@ -266,6 +275,9 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         case 5:
         {
+            //-------AIRLIFT---------
+            // check if the player has the airlift card. if they do then ask which territories to airlift to and from
+            // and how many armies to airlift
             std::cout<<"you chose Airlift";
             Hand* playerHand = this->player->getCards();
             bool hasCard = false;
@@ -305,6 +317,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         case 6:
         {
+            //-------NEGOTIATE---------
+            // check if the player has the bomb card. if they do then ask which player to negotiate with
             std::cout<<"you chose Negotiate";
             Hand* playerHand = this->player->getCards();
             bool hasCard = false;
@@ -320,7 +334,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             if (hasCard)
             {
                 int targetPlayerID;
-                std::cout<<"Please input the name of the player you would like to negotiate with or input '0' to see a list of players:\n";
+                std::cout<<"Please input the id of the player you would like to negotiate with or input '0' to see a list of players:\n";
                 std::cin>>targetPlayerID;
                 if (targetPlayerID == 0)
                 {
@@ -354,6 +368,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
         default:
         {
+            //-------DEFAULT---------
+            // if the user didn't pick a correct option from the list of orders output to console that the input is invalid 
             std::cout<<"That Input doesn't correspond to an order.\n";
             break;
         }
@@ -362,12 +378,13 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
     return nullptr;
 }
 
+// returns a vector of all territories that can be attacked by the player
 vector<Territory*> HumanPlayerStrategy::toAttack(GameEngine& gameEngine)
 {
     vector<Territory*> tmp=canAttack(*this->player);
     return tmp;
 }
-
+// returns a vector of all territories owned by the player
 vector<Territory*> HumanPlayerStrategy::toDefend(GameEngine& gameEngine)
 {
     vector<Territory*> tmp=this->player->getTerritories();;
