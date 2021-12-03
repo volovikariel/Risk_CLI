@@ -459,10 +459,11 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
             this->player->setArmies(this->player->getArmies() + 10);
         }
         else if (cardType == Card::Type::Airlift) {
+            card->play();
             return result = new Airlift(territoriesToDefend[0]->armies, *this->player, *territoriesToDefend[territoriesToDefend.size()-1], *territoriesToDefend[0]);
         }
         else if (cardType == Card::Type::Blockade){
-            cout << territoriesToDefend[0]->armies;
+            card->play();
             return result = new Blockade(*this->player,gameEngine.getNeutralPlayer(),*territoriesToDefend[0]);
         }
 
@@ -476,12 +477,26 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
         }
     }
     //Advance the armies.
-    int ordrenbr = this->player->getOrders()->getOrdersList().size();
-    if (ordrenbr <= territoriesToDefend.size()) {
-       return new Advance(5, *this->player, *this->player->getTerritories().at(0), *territoriesToDefend.at(ordrenbr - 1),false);
-    } else {
-        return nullptr;
+    vector<Order*> orders = this->player->getOrders()->getOrdersList();
+    for(Territory* friendly_territory : toDefend(gameEngine))
+    {
+         bool alreadyAdvancedFromThisTerritory = find_if(orders.begin(), orders.end(), [&](Order* order) {
+            return order->getType() == Order::Type::Advance && dynamic_cast<Advance*>(order)->getSourceTerritory() == friendly_territory;
+        }) != orders.end();
+        // Don't even consider advancing from this territory if you've already advanced from it this turn
+        // We also can't advance from it onto a neighbouring friendly territory if it has no armies on it in the first place
+        if(alreadyAdvancedFromThisTerritory || friendly_territory->armies == 0) continue;
+        // If you haven't, see if it has neighbouring friendly territories which you could advance to
+        for(Territory* neighbouring_territory : friendly_territory->neighbors)
+        {
+            if(neighbouring_territory->player == this->player)
+            {
+                return new Advance(friendly_territory->armies, *this->player, *friendly_territory, *neighbouring_territory, false);
+            }
+        }
     }
+
+    return nullptr;
 }
 
 //Benevolent player is not attacking any player. So return an empty vector of territories
@@ -497,9 +512,9 @@ vector<Territory*> BenevolentPlayerStrategy::toDefend(GameEngine& gameEngine)
     vector<Territory*> tmp = this->player->getTerritories();
     stable_sort(tmp.begin(), tmp.end());
 
-    for (int i=0;i<tmp.size();i++){
-        std::cout<<tmp[i]->name<<" has " <<tmp[i]->armies<< " armies" <<endl;
-    }
+    // for (int i=0;i<tmp.size();i++){
+    //     std::cout<<tmp[i]->name<<" has " <<tmp[i]->armies<< " armies" <<endl;
+    // }
     return tmp;
 }
 
