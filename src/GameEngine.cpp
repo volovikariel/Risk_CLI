@@ -320,38 +320,23 @@ bool GameEngine::executeCommand(Command& command)
 
                         if (strategy == "aggressive")
                         {
-                            for (Player* player : roundPlayers)
-                            {
-                                delete player;
-                            }
-                            command.saveEffect("Aggressive player strategy not yet implemented");
-                            state = State::Start;
-                            return false;
+                            AggressivePlayerStrategy* aggressiveStrategy = new AggressivePlayerStrategy(*player);
+                            player->setPlayerStrategy(*aggressiveStrategy);
                         }
                         else if (strategy == "benevolent")
                         {
-                            BenevolentPlayerStrategy* strategy = new BenevolentPlayerStrategy(*player);
-                            player->setPlayerStrategy(*strategy);
+                            BenevolentPlayerStrategy* benevolentStrategy = new BenevolentPlayerStrategy(*player);
+                            player->setPlayerStrategy(*benevolentStrategy);
                         }
                         else if (strategy == "neutral")
                         {
-                            for (Player* player : roundPlayers)
-                            {
-                                delete player;
-                            }
-                            command.saveEffect("Neutral player strategy not yet implemented");
-                            state = State::Start;
-                            return false;
+                            NeutralPlayerStrategy* neutralStrategy = new NeutralPlayerStrategy(*player);
+                            player->setPlayerStrategy(*neutralStrategy);
                         }
                         else if (strategy == "cheater")
                         {
-                            for (Player* player : roundPlayers)
-                            {
-                                delete player;
-                            }
-                            command.saveEffect("Cheater player strategy not yet implemented");
-                            state = State::Start;
-                            return false;
+                            CheaterPlayerStrategy* cheaterStrategy = new CheaterPlayerStrategy(*player);
+                            player->setPlayerStrategy(*cheaterStrategy);
                         }
                         else
                         {
