@@ -139,7 +139,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     {
                         for (Territory* territories: toDefend(gameEngine))
                         {
-                            std::cout<<territories;
+                            std::cout<<*territories<<endl;
                         }
                         std::cout<<"Please input the ID of the territory where you would like to deploy: \n";
                         std::cin>>deployTerritoryId;
@@ -170,7 +170,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 //vector<Territory*> ownedTerritories = toDefend(gameEngine);
                 for (Territory* territories: toDefend(gameEngine))
                 {
-                    std::cout<<territories;
+                    std::cout<<*territories<<endl;
                 }
                 std::cout<<"Please input the ID of the territory where you would like to advance armies from: \n";
                 std::cin>>sourceTerritoryId;
@@ -184,7 +184,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 
                 for (Territory* territories: sourceTerritory->neighbors)
                 {
-                    std::cout<<territories;
+                    std::cout<<*territories<<endl;
                 }
                 std::cout<<"Please input the ID of the territory where you would like to advance armies to: \n";
                 std::cin>>targetTerritoryId;
@@ -225,7 +225,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     
                     for (Territory* territories: toAttack(gameEngine))
                     {
-                        std::cout<<territories;
+                        std::cout<<*territories<<endl;
                     }
                     std::cout<<"Please input the ID of the territory where you would like to advance armies to: \n";
                     std::cin>>targetTerritoryId;
@@ -266,7 +266,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     
                     for (Territory* territories: toDefend(gameEngine))
                     {
-                        std::cout<<territories;
+                        std::cout<<*territories<<endl;
                     }
                     std::cout<<"Please input the ID of the territory you would like to blockade: \n";
                     std::cin>>blockadeTerritoryId;
@@ -304,7 +304,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     
                     for (Territory* territories: toDefend(gameEngine))
                     {
-                        std::cout<<territories;
+                        std::cout<<*territories<<endl;
                     }
                     std::cout<<"Please input the ID of the territory you would like to airlift from: \n";
                     std::cin>>sourceTerritoryId;
@@ -346,7 +346,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     int id = 1;
                     for (Player* player: gameEngine.getAlivePlayers())
                     {
-                        std::cout << "[" << id << "] " << player;
+                        std::cout << "[" << id << "] " << player<<endl;
                         id++;
                     }
                     std::cout<<"Please input the id of the player you would like to negotiate with: \n";
@@ -459,7 +459,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
             this->player->setArmies(this->player->getArmies() + 10);
         }
         else if (cardType == Card::Type::Airlift) {
-            return result = new Airlift(territoriesToDefend[0]->armies, *this->player, *territoriesToDefend[0], *territoriesToDefend[territoriesToDefend.size()-1]);
+            return result = new Airlift(territoriesToDefend[0]->armies, *this->player, *territoriesToDefend[territoriesToDefend.size()-1], *territoriesToDefend[0]);
         }
         else if (cardType == Card::Type::Blockade){
             return result = new Blockade(*this->player,gameEngine.getNeutralPlayer(),*territoriesToDefend[0]);
@@ -477,7 +477,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
     //Advance the armies.
     int ordrenbr = this->player->getOrders()->getOrdersList().size();
     if (ordrenbr <= territoriesToDefend.size()) {
-        return new Advance(5, *this->player, *this->player->getTerritories().at(0), *territoriesToDefend.at(ordrenbr - 1),false);
+       return new Advance(5, *this->player, *this->player->getTerritories().at(0), *territoriesToDefend.at(ordrenbr - 1),false);
     } else {
         return nullptr;
     }
