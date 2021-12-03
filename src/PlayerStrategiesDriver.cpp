@@ -48,14 +48,14 @@ void test1(GameEngine& gameEngine)
     CheaterPlayerStrategy cheatingStrategy (p3);
     p3.setPlayerStrategy(cheatingStrategy);
 
-    Player p4;
-    p4.setName("BStrategy");
-    BenevolentPlayerStrategy BenevolentStrategy(p4);
-    p4.setPlayerStrategy(BenevolentStrategy);
+    // Player p4;
+    // p4.setName("BStrategy");
+    // BenevolentPlayerStrategy BenevolentStrategy(p4);
+    // p4.setPlayerStrategy(BenevolentStrategy);
    // p4.toDefend(gameEngine);
     //BenevolentStrategy.toDefend(gameEngine);
 
-    vector<Player*> players = { &p1, &p2, &p3, &p4 };
+    vector<Player*> players = { &p1, &p2, &p3 };
 
     gameEngine.start(mapFile, players);
 

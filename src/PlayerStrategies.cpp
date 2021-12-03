@@ -462,6 +462,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
             return result = new Airlift(territoriesToDefend[0]->armies, *this->player, *territoriesToDefend[territoriesToDefend.size()-1], *territoriesToDefend[0]);
         }
         else if (cardType == Card::Type::Blockade){
+            cout << territoriesToDefend[0]->armies;
             return result = new Blockade(*this->player,gameEngine.getNeutralPlayer(),*territoriesToDefend[0]);
         }
 
@@ -588,6 +589,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
             if(weakest_friendly_territory != strongest_friendly_territory)
             {
                 result = new Airlift(weakest_friendly_territory->armies, *this->player, *weakest_friendly_territory, *strongest_friendly_territory);
+                card->play();
             }
         }
         else if (cardType == Card::Type::Bomb)
@@ -602,6 +604,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
         else if (cardType == Card::Type::Reinforcement)
         {
             this->player->setArmies(this->player->getArmies() + 5);
+            card->play();
             return nullptr;
         }
 
