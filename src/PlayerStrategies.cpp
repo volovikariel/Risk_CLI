@@ -503,7 +503,5 @@ vector<Territory *> NeutralPlayerStrategy::toAttack(GameEngine &gameEngine) {
 
 //toDefend()
 vector<Territory *> NeutralPlayerStrategy::toDefend(GameEngine &gameEngine) {
-    AggressivePlayerStrategy aggressiveStrategy(*this->player);
-    this->player->setPlayerStrategy(aggressiveStrategy);
     return vector<Territory *>();
 }
