@@ -308,6 +308,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             std::cout<<"you chose Negotiate";
             Hand* playerHand = this->player->getCards();
             bool hasCard = false;
+            Player* targetPlayer;
             for (Card* card : playerHand->getCards())
             {
                 Card::Type cardType = card->getType();
@@ -318,19 +319,33 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             }
             if (hasCard)
             {
-                std::string targetPlayerName;
+                int targetPlayerID;
                 std::cout<<"Please input the name of the player you would like to negotiate with or input '0' to see a list of players:\n";
-                std::cin>>targetPlayerName;
-                if (targetPlayerName=="0")
+                std::cin>>targetPlayerID;
+                if (targetPlayerID == 0)
                 {
-                    for (Player* players: gameEngine.getAlivePlayers())
+                    int id = 1;
+                    for (Player* player: gameEngine.getAlivePlayers())
                     {
-                        std::cout<<players;
+                        std::cout << "[" << id << "] " << player;
+                        id++;
                     }
-                    std::cout<<"Please input the name of the player you would like to negotiate with: \n";
-                    std::cin>>targetPlayerName;
+                    std::cout<<"Please input the id of the player you would like to negotiate with: \n";
+                    std::cin>>targetPlayerID;
                 }
-                Player* targetPlayer=
+
+                //Check if the input is valid and positive
+                if(targetPlayerID > 0){
+                    int counter = 1;
+                    for(Player* p : gameEngine.getAlivePlayers()){
+                        if(counter == targetPlayerID){
+                            targetPlayer = p;
+                            break;
+                        }
+                        counter++;
+                    }
+                }
+
                 return new Negotiate(*this->player,*targetPlayer);
             }else{
                 std::cout<<"You don't have a Diplomacy card in your hand.\n";

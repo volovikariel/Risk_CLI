@@ -1,6 +1,7 @@
 #include "Orders.h"
 #include "Map.h"
 #include "Player.h"
+#include "PlayerStrategies.h"
 
 #include <algorithm>
 #include <sstream>
@@ -445,7 +446,7 @@ bool Advance::execute()
 {
     if (validate())
     {
-        if (cheat != true) {
+        if (!cheat) {
             // If the source and target territories both belong to the player, then we just move the armies there
             if (player->hasTerritory(sourceTerritory) && player->hasTerritory(targetTerritory)) {
                 sourceTerritory->armies -= this->armies; // Move the number of armies to the target territory
@@ -458,6 +459,14 @@ bool Advance::execute()
             }
                 // If the target territory does not belong to the player, then we attack.
             else if (!player->hasTerritory(targetTerritory)) {
+
+                //If the territory that we are attacking belongs to a neutral player, then we make the neutral player aggressive
+                if(dynamic_cast<NeutralPlayerStrategy*>(&targetTerritory->player->getPlayerStrategy()) != nullptr){
+                    AggressivePlayerStrategy aggressivePlayerStrategy;
+                    targetTerritory->player->setPlayerStrategy(aggressivePlayerStrategy);
+                    cout << "Neutral player: " << targetTerritory->player->getName() << " was attacked. It has now become an aggressive player!" << endl;
+                }
+
                 int armiesAttacking = armies;
                 int armiesDefending = targetTerritory->armies;
 
