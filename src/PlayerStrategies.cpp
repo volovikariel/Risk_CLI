@@ -321,9 +321,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 std::string targetPlayerName;
                 std::cout<<"Please input the name of the player you would like to negotiate with or input '0' to see a list of players:\n";
                 std::cin>>targetPlayerName;
-                if (sourceTerritoryId==0)
+                if (targetPlayerName=="0")
                 {
-                    
                     for (Player* players: gameEngine.getAlivePlayers())
                     {
                         std::cout<<players;
