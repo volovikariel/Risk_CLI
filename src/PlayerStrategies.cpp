@@ -334,7 +334,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             if (hasCard)
             {
                 int targetPlayerID;
-                std::cout<<"Please input the id of the player you would like to negotiate with or input '0' to see a list of players:\n";
+                std::cout<<"Please input the id of the player you would like to negotiate with or input '0' to see a list of players IDs:\n";
                 std::cin>>targetPlayerID;
                 if (targetPlayerID == 0)
                 {
@@ -346,21 +346,29 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     }
                     std::cout<<"Please input the id of the player you would like to negotiate with: \n";
                     std::cin>>targetPlayerID;
+                    while (targetPlayerID>id||targetPlayerID<1||targetPlayerID!=0)
+                    {
+                        std::cout<<"Invalid ID. Please try again (Or enter '0' to cancel): \n";
+                        std::cin>>targetPlayerID;
+                    }
                 }
 
                 //Check if the input is valid and positive
-                if(targetPlayerID > 0){
+                if (targetPlayerID > 0)
+                {
                     int counter = 1;
-                    for(Player* p : gameEngine.getAlivePlayers()){
-                        if(counter == targetPlayerID){
+                    
+                    for(Player* p : gameEngine.getAlivePlayers())
+                    {
+                        if(counter == targetPlayerID)
+                        {
                             targetPlayer = p;
                             break;
                         }
                         counter++;
                     }
                 }
-
-                return new Negotiate(*this->player,*targetPlayer);
+                    return new Negotiate(*this->player,*targetPlayer);
             }else{
                 std::cout<<"You don't have a Diplomacy card in your hand.\n";
             }
