@@ -573,7 +573,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     // --- Weakest enemy territory --- //
     vector<Territory*> enemyTerritories = toAttack(gameEngine); 
     vector<Territory*>::iterator it_enemy_min = max_element(enemyTerritories.begin(), enemyTerritories.end(), [&](Territory* a, Territory* b) {
-        if(a->armies == 0) return -1;
+        if (a->armies == 0 && b->armies > 0) return -1;
         return b->armies - a->armies;
     });
     int index_enemy_min = distance(enemyTerritories.begin(), it_enemy_min);
@@ -753,23 +753,34 @@ vector<Territory*> CheaterPlayerStrategy::toDefend(GameEngine& gameEngine)
 //========== NeutralPlayerStrategy Class =========
 
 //Default Constructor
-NeutralPlayerStrategy::NeutralPlayerStrategy() : PlayerStrategy() {
+NeutralPlayerStrategy::NeutralPlayerStrategy():
+    PlayerStrategy(),
+    becameAggressive(false)
+{
 
 }
 
 //Parameterized Constructor
-NeutralPlayerStrategy::NeutralPlayerStrategy(Player &player) : PlayerStrategy(player) {
+NeutralPlayerStrategy::NeutralPlayerStrategy(Player &player):
+    PlayerStrategy(player),
+    becameAggressive(false)
+{
 
 }
 
 //Copy Constructor
-NeutralPlayerStrategy::NeutralPlayerStrategy(NeutralPlayerStrategy &other) : PlayerStrategy(other){
+NeutralPlayerStrategy::NeutralPlayerStrategy(NeutralPlayerStrategy &other):
+    PlayerStrategy(other),
+    becameAggressive(other.becameAggressive)
+{
 
 }
 
 //Assignment Operator
-NeutralPlayerStrategy &NeutralPlayerStrategy::operator=(const NeutralPlayerStrategy &other) {
+NeutralPlayerStrategy &NeutralPlayerStrategy::operator=(const NeutralPlayerStrategy &other)
+{
     PlayerStrategy::operator=(other);
+    becameAggressive = other.becameAggressive;
     return *this;
 }
 
@@ -781,17 +792,30 @@ std::ostream &operator<<(ostream &out, const NeutralPlayerStrategy &source) {
 
 //issueOrder()
 //Does nothing. Issue order can't create any orders
-Order *NeutralPlayerStrategy::issueOrder(GameEngine &gameEngine) {
-    std::cout << this->player->getName() << " is a neutral player. Cannot issue any orders." << std::endl;
+Order *NeutralPlayerStrategy::issueOrder(GameEngine &gameEngine)
+{
     return nullptr;
 }
 
 //toAttack()
-vector<Territory *> NeutralPlayerStrategy::toAttack(GameEngine &gameEngine) {
-    return vector<Territory *>();
+vector<Territory *> NeutralPlayerStrategy::toAttack(GameEngine &gameEngine)
+{
+    return vector<Territory*>();
 }
 
 //toDefend()
-vector<Territory *> NeutralPlayerStrategy::toDefend(GameEngine &gameEngine) {
-    return vector<Territory *>();
+vector<Territory *> NeutralPlayerStrategy::toDefend(GameEngine &gameEngine)
+{
+    return vector<Territory*>();
+}
+
+void NeutralPlayerStrategy::becomeAggressive()
+{
+    if (!becameAggressive)
+    {
+        becameAggressive = true;
+
+        AggressivePlayerStrategy* aggressivePlayerStrategy = new AggressivePlayerStrategy(*player);
+        player->setPlayerStrategy(*aggressivePlayerStrategy);
+    }
 }

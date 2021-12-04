@@ -15,6 +15,7 @@ using std::vector;
 
 // Declare test function signatures
 void testCheater(GameEngine& gameEngine);
+void testNeutral(GameEngine& gameEngine);
 void test1(GameEngine& gameEngine);
 
 int main()
@@ -30,6 +31,7 @@ int main()
 
     // Launch tests
     testCheater(gameEngine);
+    testNeutral(gameEngine);
 }
 
 void testCheater(GameEngine& gameEngine)
@@ -39,13 +41,43 @@ void testCheater(GameEngine& gameEngine)
     Player p1;
     p1.setName("NoStrategy");
 
-    //Cheating Player
+    // Cheating Player
     Player p2;
     p2.setName("CheatingStrategy");
     CheaterPlayerStrategy cheatingStrategy(p2);
     p2.setPlayerStrategy(cheatingStrategy);
 
     vector<Player*> players = { &p1, &p2 };
+
+    gameEngine.start(mapFile, players);
+
+    gameEngine.executeTurn();
+    gameEngine.executeTurn();
+    gameEngine.executeTurn();
+
+    cout << "testCheater";
+}
+
+void testNeutral(GameEngine& gameEngine)
+{
+    string mapFile = "../maps/canada.map";
+
+    Player p1;
+    p1.setName("NoStrategy");
+
+    // Cheating Player
+    Player p2;
+    p2.setName("CheatingStrategy");
+    CheaterPlayerStrategy cheatingStrategy(p2);
+    p2.setPlayerStrategy(cheatingStrategy);
+
+    // Neutral Player
+    Player p3;
+    p3.setName("NeutralStrategy");
+    NeutralPlayerStrategy neutralStrategy(p3);
+    p3.setPlayerStrategy(neutralStrategy);
+
+    vector<Player*> players = { &p1, &p2, &p3 };
 
     gameEngine.start(mapFile, players);
 

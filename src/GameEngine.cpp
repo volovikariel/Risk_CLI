@@ -230,6 +230,9 @@ bool GameEngine::start(string mapFilepath, vector<Player*>& players)
     // Cleanup memory from previous game
     cleanup(true);
 
+    // Reset state
+    state = State::Start;
+
     Command loadMap(Command::Type::LoadMap, mapFilepath);
     Command validateMap(Command::Type::ValidateMap);
     Command gameStart(Command::Type::GameStart);

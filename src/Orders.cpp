@@ -460,11 +460,10 @@ bool Advance::execute()
                 // If the target territory does not belong to the player, then we attack.
             else if (!player->hasTerritory(targetTerritory)) {
 
-                //If the territory that we are attacking belongs to a neutral player, then we make the neutral player aggressive
-                if(dynamic_cast<NeutralPlayerStrategy*>(&targetTerritory->player->getPlayerStrategy()) != nullptr){
-                    AggressivePlayerStrategy aggressivePlayerStrategy;
-                    targetTerritory->player->setPlayerStrategy(aggressivePlayerStrategy);
-                    cout << "Neutral player: " << targetTerritory->player->getName() << " was attacked. It has now become an aggressive player!" << endl;
+                // If the territory that we are attacking belongs to a neutral player, then we make the neutral player aggressive
+                NeutralPlayerStrategy* neutralStrategy = dynamic_cast<NeutralPlayerStrategy*>(&targetTerritory->player->getPlayerStrategy());
+                if (neutralStrategy != nullptr) {
+                    neutralStrategy->becomeAggressive();
                 }
 
                 int armiesAttacking = armies;
@@ -517,6 +516,12 @@ bool Advance::execute()
             }
             // Player is cheating and will conquer the territory regardless of the game rules
         } else {
+            // If the territory that we are attacking belongs to a neutral player, then we make the neutral player aggressive
+            NeutralPlayerStrategy* neutralStrategy = dynamic_cast<NeutralPlayerStrategy*>(&targetTerritory->player->getPlayerStrategy());
+            if (neutralStrategy != nullptr) {
+                neutralStrategy->becomeAggressive();
+            }
+
             targetTerritory->armies = 0;
             targetTerritory->player->removeTerritory(targetTerritory);
             player->addTerritory(targetTerritory);
