@@ -655,6 +655,9 @@ void GameEngine::executeTurn()
 
     // Removes players with no territories
     eliminatePlayers();
+
+    // Increment turn counter
+    turnIndex++;
 }
 
 // Give players armies based on territories owns and bonus from continent
@@ -812,6 +815,11 @@ void GameEngine::eliminatePlayers()
             i = alivePlayers.erase(i);
         }
     }
+}
+
+int GameEngine::getTurnIndex() const
+{
+    return turnIndex;
 }
 
 

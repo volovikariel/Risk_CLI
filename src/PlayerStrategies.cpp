@@ -86,19 +86,25 @@ std::ostream& operator << (std::ostream& out, const PlayerStrategy& source)
 // HumanPlayerStrategy
 
 HumanPlayerStrategy::HumanPlayerStrategy():
-    PlayerStrategy()
+    PlayerStrategy(),
+    lastTurnIdx(-1),
+    finishedOrders(false)
 {
 
 }
 
 HumanPlayerStrategy::HumanPlayerStrategy(Player& player):
-    PlayerStrategy(player)
+    PlayerStrategy(player),
+    lastTurnIdx(-1),
+    finishedOrders(false)
 {
 
 }
 
 HumanPlayerStrategy::HumanPlayerStrategy(HumanPlayerStrategy& other):
-    PlayerStrategy(other)
+    PlayerStrategy(other),
+    lastTurnIdx(other.lastTurnIdx),
+    finishedOrders(other.finishedOrders)
 {
 
 }
@@ -106,6 +112,8 @@ HumanPlayerStrategy::HumanPlayerStrategy(HumanPlayerStrategy& other):
 HumanPlayerStrategy& HumanPlayerStrategy::operator = (const HumanPlayerStrategy& other)
 {
     PlayerStrategy::operator=(other);
+    lastTurnIdx = other.lastTurnIdx;
+    finishedOrders = other.finishedOrders;
     return *this;
 }
 
@@ -117,6 +125,19 @@ std::ostream& operator << (std::ostream& out, const HumanPlayerStrategy& source)
 
 Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
 {
+    // Reset "end orders" flag on new turn
+    if (gameEngine.getTurnIndex() != lastTurnIdx)
+    {
+        lastTurnIdx = gameEngine.getTurnIndex();
+        finishedOrders = false;
+    }
+
+    // Remember that the user is done issuing orders this turn
+    if (finishedOrders)
+    {
+        return nullptr;
+    }
+
     // Ask the human player which order they would like to issue
     int orderNum;
     std::cout << endl;
@@ -136,7 +157,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
     std::cout << "Your hand: " << hand << endl;
 
     std::cout<<"Please input the corresponding number to the order you would like to issue from the list below.\n";
-    std::cout<<"1) Deploy\n2) Advance\n3) Bomb\n4) Blockade\n5) Airlift\n6) Negotiate\n7) End Order\n";
+    std::cout<<"1) Deploy\n2) Advance\n3) Bomb\n4) Blockade\n5) Airlift\n6) Negotiate\n7) Stop issuing orders for this turn\n";
     std::cin>>orderNum;
 
     switch (orderNum)
@@ -423,7 +444,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
         {
             //-------End Order---------
             // Allows the user to stop issuing orders
-            std::cout<<"You chose end order.\n";
+            std::cout<<"You chose to stop issuing orders for this turn.\n";
+            finishedOrders = true;
             break;
         }
         default:

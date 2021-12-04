@@ -115,6 +115,10 @@ public :
     // Implementation of stringToLog function inherited from ILoggable
     string stringToLog();
 
+    // Incremented every turn
+    // Doesn't get reset between games
+    int getTurnIndex() const;
+
 private:
 
     // Call before starting a new game
@@ -149,6 +153,10 @@ private:
 
     // Neutral player
     Player* neutralPlayer;
+
+    // Incremented every turn
+    // Doesn't get reset between games
+    int turnIndex;
 };
 
 // Describes a State's graph connectivity

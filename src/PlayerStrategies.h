@@ -48,6 +48,11 @@ public:
     Order* issueOrder(GameEngine& gameEngine) override; // Overriding virtual function issueOrder() from base class PlayerStrategy
     vector<Territory*> toAttack(GameEngine& gameEngine) override;   // Overriding virtual function toAttack() from base class PlayerStrategy
     vector<Territory*> toDefend(GameEngine& gameEngine) override;   // Overriding virtual function toDefend() from base class PlayerStrategy
+
+private:
+
+    int lastTurnIdx;
+    bool finishedOrders;
 };
 
 
