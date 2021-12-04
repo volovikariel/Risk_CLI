@@ -558,14 +558,14 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     // First we find the iterator of Territory with the most armies
     // We're guaranteed that this won't be owned.end() because if the player had no territories, then the player would have already lost
     vector<Territory*>::iterator it_friendly_max = max_element(ownedTerritories.begin(), ownedTerritories.end(), [&](Territory* a, Territory* b) {
-        return a->armies - b->armies;
+        return a->armies - b->armies > 0;
     });
     int index_friendly_max = distance(ownedTerritories.begin(), it_friendly_max);
     Territory* strongest_friendly_territory = ownedTerritories.at(index_friendly_max);
 
     // --- Weakest --- //
     vector<Territory*>::iterator it_friendly_min = max_element(ownedTerritories.begin(), ownedTerritories.end(), [&](Territory* a, Territory* b) {
-        return b->armies - a->armies;
+        return b->armies - a->armies > 0;
     });
     int index_friendly_min = distance(ownedTerritories.begin(), it_friendly_min);
     Territory* weakest_friendly_territory = ownedTerritories.at(index_friendly_min);
@@ -573,8 +573,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     // --- Weakest enemy territory --- //
     vector<Territory*> enemyTerritories = toAttack(gameEngine); 
     vector<Territory*>::iterator it_enemy_min = max_element(enemyTerritories.begin(), enemyTerritories.end(), [&](Territory* a, Territory* b) {
-        if (a->armies == 0 && b->armies > 0) return -1;
-        return b->armies - a->armies;
+        return b->armies - a->armies > 0;
     });
     int index_enemy_min = distance(enemyTerritories.begin(), it_enemy_min);
     Territory* weakest_enemy_territory = enemyTerritories.at(index_enemy_min);
