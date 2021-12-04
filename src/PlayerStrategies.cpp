@@ -268,17 +268,17 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             // check if the player has the bomb card. if they do then ask which territory to bomb
             std::cout<<"you chose Bomb\n";
             Hand* playerHand = this->player->getCards();
-            bool hasCard = false;
+            Card* cardInHand = nullptr;
             Bomb* bombTemp;
             for (Card* card : playerHand->getCards())
             {
                 Card::Type cardType = card->getType();
                 if (cardType == Card::Type::Bomb)
                 {
-                    bool hasCard=true;
+                    cardInHand = card;
                 }
             }
-            if (hasCard)
+            if (cardInHand != nullptr)
             {
                 int targetTerritoryId;
                 std::cout<<"Please input the ID of the territory you would like to bomb or input '0' to see a list of territories which can be bombed:\n";
@@ -296,6 +296,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 bombTemp=new Bomb(*this->player,*targetTerritory);
                 if (bombTemp->validate())
                 {
+                    cardInHand->play();
                     return bombTemp;
                 }
             }else{
@@ -309,16 +310,16 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             // check if the player has the blockade card. if they do then ask which territory to blockade
             std::cout<<"you chose Blockade\n";
             Hand* playerHand = this->player->getCards();
-            bool hasCard = false;
+            Card* cardInHand = false;
             for (Card* card : playerHand->getCards())
             {
                 Card::Type cardType = card->getType();
                 if (cardType == Card::Type::Blockade)
                 {
-                    bool hasCard=true;
+                    cardInHand = card;
                 }
             }
-            if (hasCard)
+            if (cardInHand != nullptr)
             {
                 int blockadeTerritoryId;
                 std::cout<<"Please input the ID of the territory you would like to blockade or input '0' to see a list of territories which you own:\n";
@@ -333,6 +334,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     std::cin>>blockadeTerritoryId;
                 }
                 Territory* blockadeTerritory = gameEngine.getMap().getTerritoryByID(blockadeTerritoryId);
+
+                cardInHand->play();
                 return new Blockade(*this->player,gameEngine.getNeutralPlayer(),*blockadeTerritory);
             }else{
                 std::cout<<"You don't have a Blockade card in your hand.\n";
@@ -346,16 +349,16 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             // and how many armies to airlift
             std::cout<<"you chose Airlift\n";
             Hand* playerHand = this->player->getCards();
-            bool hasCard = false;
+            Card* cardInHand = nullptr;
             for (Card* card : playerHand->getCards())
             {
                 Card::Type cardType = card->getType();
                 if (cardType == Card::Type::Airlift)
                 {
-                    bool hasCard=true;
+                    cardInHand = card;
                 }
             }
-            if (hasCard)
+            if (cardInHand != nullptr)
             {
                 int sourceTerritoryId,targetTerritoryId,armies;
                 std::cout<<"Please input the ID of the territory you would like to Airlift from or input '0' to see a list of territories which you own:\n";
@@ -375,6 +378,9 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 std::cin>>targetTerritoryId;
                 Territory* targetTerritory = gameEngine.getMap().getTerritoryByID(targetTerritoryId);
                 std::cout<<"How many armies would you like to airlift? ("<<sourceTerritory->armies<<" available)\n";
+                std::cin >> armies;
+
+                cardInHand->play();
                 return new Airlift(armies,*this->player,*sourceTerritory,*targetTerritory);
             }else{
                 std::cout<<"You don't have a Airlift card in your hand.\n";
@@ -387,17 +393,17 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             // check if the player has the bomb card. if they do then ask which player to negotiate with
             std::cout<<"you chose Negotiate\n";
             Hand* playerHand = this->player->getCards();
-            bool hasCard = false;
+            Card* cardInHand = nullptr;
             Player* targetPlayer;
             for (Card* card : playerHand->getCards())
             {
                 Card::Type cardType = card->getType();
                 if (cardType == Card::Type::Diplomacy)
                 {
-                    bool hasCard=true;
+                    cardInHand = card;
                 }
             }
-            if (hasCard)
+            if (cardInHand != nullptr)
             {
                 int targetPlayerID;
                 std::cout<<"Please input the id of the player you would like to negotiate with or input '0' to see a list of players IDs:\n";
@@ -407,12 +413,12 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     int id = 1;
                     for (Player* player: gameEngine.getAlivePlayers())
                     {
-                        std::cout << "[" << id << "] " << player<<endl;
+                        std::cout << "[" << id << "] " << player->getName() <<endl;
                         id++;
                     }
                     std::cout<<"Please input the id of the player you would like to negotiate with: \n";
                     std::cin>>targetPlayerID;
-                    while (targetPlayerID>id||targetPlayerID<1||targetPlayerID!=0)
+                    while (targetPlayerID>id||targetPlayerID<1)
                     {
                         std::cout<<"Invalid ID. Please try again (Or enter '0' to cancel): \n";
                         std::cin>>targetPlayerID;
@@ -434,7 +440,8 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                         counter++;
                     }
                 }
-                    return new Negotiate(*this->player,*targetPlayer);
+                cardInHand->play();
+                return new Negotiate(*this->player,*targetPlayer);
             }else{
                 std::cout<<"You don't have a Diplomacy card in your hand.\n";
             }
