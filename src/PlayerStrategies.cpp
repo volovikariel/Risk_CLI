@@ -843,3 +843,27 @@ void NeutralPlayerStrategy::becomeAggressive()
         strategiesCreated.push_back(aggressivePlayerStrategy);
     }
 }
+
+
+//========== StringUtils Namespace =========
+string StringUtils::strategyToString(PlayerStrategy& strategy)
+{
+    auto human = dynamic_cast<HumanPlayerStrategy*>(&strategy);
+    auto aggressive = dynamic_cast<AggressivePlayerStrategy*>(&strategy);
+    auto benevolent = dynamic_cast<BenevolentPlayerStrategy*>(&strategy);
+    auto neutral = dynamic_cast<NeutralPlayerStrategy*>(&strategy);
+    auto cheater = dynamic_cast<CheaterPlayerStrategy*>(&strategy);
+
+    if (human != nullptr)
+        return "Human";
+    else if (aggressive != nullptr)
+        return "Aggressive";
+    else if (benevolent != nullptr)
+        return "Benevolent";
+    else if (neutral != nullptr)
+        return "Neutral";
+    else if (cheater != nullptr)
+        return "Cheater";
+    else
+        return "Unknown";
+}

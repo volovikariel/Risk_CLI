@@ -351,6 +351,23 @@ bool GameEngine::executeCommand(Command& command)
                             state = State::Start;
                             return false;
                         }
+
+                        player->setName(StringUtils::strategyToString(player->getPlayerStrategy()));
+
+                        // Make sure the player strategy is unique
+                        for (const Player* otherPlayer : roundPlayers)
+                        {
+                            if (otherPlayer != player && otherPlayer->getName() == player->getName())
+                            {
+                                for (Player* player : roundPlayers)
+                                {
+                                    delete player;
+                                }
+                                command.saveEffect("Duplicate player strategies provided: " + strategy);
+                                state = State::Start;
+                                return false;
+                            }
+                        }
                     }
 
                     // Load map, set players, initial setup
@@ -371,7 +388,7 @@ bool GameEngine::executeCommand(Command& command)
                         if (alivePlayers.size() == 1)
                         {
                             std::ostringstream stream;
-                            stream << alivePlayers.front()->getPlayerStrategy();
+                            stream << StringUtils::strategyToString(alivePlayers.front()->getPlayerStrategy());
                             winningStrategy = stream.str();
                         }
 
@@ -607,7 +624,8 @@ void GameEngine::executeTurn()
     // Give players who conquered a territory last turn a card
     for (Player* player : alivePlayers)
     {
-        if (player->hasConqueredThisTurn)
+        bool hasMaxCardsInHand = player->getCards()->getCards().size() >= 6;
+        if (player->hasConqueredThisTurn && !hasMaxCardsInHand)
         {
             player->hasConqueredThisTurn = false;
             player->getCards()->addCard(*mainDeck.draw());

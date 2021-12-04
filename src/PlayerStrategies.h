@@ -4,6 +4,8 @@
 
 #include <vector>
 using std::vector;
+#include <string>
+using std::string;
 
 class Order;
 class Player;
@@ -134,3 +136,8 @@ private:
     bool becameAggressive;
     vector<PlayerStrategy*> strategiesCreated;
 };
+
+namespace StringUtils
+{
+    string strategyToString(PlayerStrategy& strategy);
+}
