@@ -14,11 +14,11 @@
 using std::vector;
 
 // Declare test function signatures
-/*void testCheater(GameEngine& gameEngine);
+void testCheater(GameEngine& gameEngine);
 void testAggressive(GameEngine& gameEngine);
-void testNeutral(GameEngine& gameEngine);*/
-void testHuman(GameEngine& gameEngine);
+void testNeutral(GameEngine& gameEngine);
 void testBenevolent(GameEngine& gameEngine);
+void testHuman(GameEngine& gameEngine);
 
 int main()
 {
@@ -32,7 +32,6 @@ int main()
     gameEngine.attach(logObserver);
 
     // Launch tests
-    /*
     logObserver.appendLine("TESTING CHEATER");
     testCheater(gameEngine);
 
@@ -40,14 +39,15 @@ int main()
     testAggressive(gameEngine);
 
     logObserver.appendLine("\n\n\n\nTESTING NEUTRAL");
-    testNeutral(gameEngine);*/
-    logObserver.appendLine("\n\n\n\nTESTING HUMAN");
-    testHuman(gameEngine);
+    testNeutral(gameEngine);
 
     logObserver.appendLine("\n\n\n\nTESTING BENEVOLENT");
     testBenevolent(gameEngine);
+
+    logObserver.appendLine("\n\n\n\nTESTING HUMAN");
+    testHuman(gameEngine);
 }
-/*
+
 void testCheater(GameEngine& gameEngine)
 {
     string mapFile = "../maps/canada.map";
@@ -131,36 +131,6 @@ void testNeutral(GameEngine& gameEngine)
 
     cout << "testNeutral" << endl;
 }
-*/
-void testHuman(GameEngine& gameEngine)
-{
-    string mapFile = "../maps/canada.map";
-
-    Player p1;
-    p1.setName("NoStrategy");
-
-    // Human Player
-    Player p2;
-    p2.setName("humanStrategy");
-    HumanPlayerStrategy humanStrategy(p2);
-    p2.setPlayerStrategy(humanStrategy);
-
-    // Neutral Player
-    Player p3;
-    p3.setName("NeutralStrategy");
-    NeutralPlayerStrategy neutralStrategy(p3);
-    p3.setPlayerStrategy(neutralStrategy);
-
-    vector<Player*> players = { &p1, &p2, &p3 };
-
-    gameEngine.start(mapFile, players);
-
-    gameEngine.executeTurn();
-    gameEngine.executeTurn();
-    gameEngine.executeTurn();
-
-    cout << "testHuman" << endl;
-}
 
 void testBenevolent(GameEngine& gameEngine)
 {
@@ -190,4 +160,34 @@ void testBenevolent(GameEngine& gameEngine)
     gameEngine.executeTurn();
 
     cout << "testBenevolent" << endl;
+}
+
+void testHuman(GameEngine& gameEngine)
+{
+    string mapFile = "../maps/canada.map";
+
+    Player p1;
+    p1.setName("NoStrategy");
+
+    // Human Player
+    Player p2;
+    p2.setName("humanStrategy");
+    HumanPlayerStrategy humanStrategy(p2);
+    p2.setPlayerStrategy(humanStrategy);
+
+    // Neutral Player
+    Player p3;
+    p3.setName("NeutralStrategy");
+    NeutralPlayerStrategy neutralStrategy(p3);
+    p3.setPlayerStrategy(neutralStrategy);
+
+    vector<Player*> players = { &p1, &p2, &p3 };
+
+    gameEngine.start(mapFile, players);
+
+    gameEngine.executeTurn();
+    gameEngine.executeTurn();
+    gameEngine.executeTurn();
+
+    cout << "testHuman" << endl;
 }

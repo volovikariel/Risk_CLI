@@ -138,7 +138,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     std::cin>>deployTerritoryId;
                     if (deployTerritoryId==0)
                     {
-                        for (Territory* territories: toDefend(gameEngine))
+                        for (Territory* territories: player->getTerritories())
                         {
                             std::cout<<*territories<<endl;
                         }
@@ -149,8 +149,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                     if (gameEngine.getMap().getTerritoryByID(deployTerritoryId)!=nullptr) {
                         deployTerritory = gameEngine.getMap().getTerritoryByID(deployTerritoryId);
                         std::cout << *deployTerritory << "\t" << deployTerritoryId<<"\n";
-                        if (std::find(toDefend(gameEngine).begin(), toDefend(gameEngine).end(), deployTerritory) ==
-                            toDefend(gameEngine).end())
+                        if (std::find(player->getTerritories().begin(), player->getTerritories().end(), deployTerritory) == player->getTerritories().end())
                         {
                             std::cout << "Invalid ID. Cannot deploy to this territory\n";
                             break;
@@ -202,7 +201,6 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             std::cin>>targetTerritoryId;
             if (targetTerritoryId==0)
             {
-                
                 for (Territory* territories: sourceTerritory->neighbors)
                 {
                     std::cout<<*territories<<endl;
@@ -248,7 +246,6 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 std::cin>>targetTerritoryId;
                 if (targetTerritoryId==0)
                 {
-                    
                     for (Territory* territories: toAttack(gameEngine))
                     {
                         std::cout<<*territories<<endl;
@@ -289,7 +286,6 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
                 std::cin>>blockadeTerritoryId;
                 if (blockadeTerritoryId==0)
                 {
-                    
                     for (Territory* territories: toDefend(gameEngine))
                     {
                         std::cout<<*territories<<endl;
