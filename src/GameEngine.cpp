@@ -313,6 +313,21 @@ bool GameEngine::executeCommand(Command& command)
             {
                 for (const string& map : data->maps)
                 {
+                    // Make sure the map is unique
+                    int mapCount = 0;
+                    for (const string& otherMap : data->maps)
+                    {
+                        if (otherMap == map)
+                        {
+                            mapCount++;
+                        }
+                    }
+                    if (mapCount > 1)
+                    {
+                        command.saveEffect("Duplicate map provided: " + map);
+                        return false;
+                    }
+
                     vector<Player*> roundPlayers;
 
                     // Assign player strategy
