@@ -445,7 +445,7 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
     //Deploying the armies to the last territory
     int num_armies_available = this->player->getArmies();
     if(num_armies_available > 0) {
-        return new Deploy(num_armies_available, *this->player, *this->player->getTerritories().at(territoriesToDefend.size()-1));
+        return new Deploy(min(num_armies_available, 10), *this->player, *territoriesToDefend.at(0));
     }
     //Player hand
     Hand* main= this->player->getCards();
@@ -456,7 +456,6 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
 
         if (cardType == Card::Type::Reinforcement){
             card->play();
-            cout<<cardType;
             this->player->setArmies(this->player->getArmies() + 10);
         }
         else if (cardType == Card::Type::Airlift) {
@@ -467,9 +466,15 @@ Order* BenevolentPlayerStrategy::issueOrder(GameEngine& gameEngine)
             card->play();
             return result = new Blockade(*this->player,gameEngine.getNeutralPlayer(),*territoriesToDefend[0]);
         }
-
         else if (cardType == Card::Type::Diplomacy){
-           card->play();
+           for (Player* otherPlayer : gameEngine.getAlivePlayers())
+           {
+               if (otherPlayer != player)
+               {
+                   card->play();
+                   return result = new Negotiate(*this->player, *otherPlayer);
+               }
+           }
         }
 
         if (result != nullptr)
@@ -512,7 +517,10 @@ vector<Territory*> BenevolentPlayerStrategy::toAttack(GameEngine& gameEngine)
 vector<Territory*> BenevolentPlayerStrategy::toDefend(GameEngine& gameEngine)
 {
     vector<Territory*> tmp = this->player->getTerritories();
-    stable_sort(tmp.begin(), tmp.end());
+    stable_sort(tmp.begin(), tmp.end(), [&](const Territory* a, const Territory* b) -> bool
+    {
+        return a->armies < b->armies;
+    });
     return tmp;
 }
 

@@ -17,6 +17,7 @@ using std::vector;
 void testCheater(GameEngine& gameEngine);
 void testAggressive(GameEngine& gameEngine);
 void testNeutral(GameEngine& gameEngine);
+void testBenevolent(GameEngine& gameEngine);
 
 int main()
 {
@@ -38,6 +39,9 @@ int main()
 
     logObserver.appendLine("\n\n\n\nTESTING NEUTRAL");
     testNeutral(gameEngine);
+
+    logObserver.appendLine("\n\n\n\nTESTING BENEVOLENT");
+    testBenevolent(gameEngine);
 }
 
 void testCheater(GameEngine& gameEngine)
@@ -122,4 +126,34 @@ void testNeutral(GameEngine& gameEngine)
     gameEngine.executeTurn();
 
     cout << "testNeutral" << endl;
+}
+
+void testBenevolent(GameEngine& gameEngine)
+{
+    string mapFile = "../maps/canada.map";
+
+    Player p1;
+    p1.setName("NoStrategy");
+
+    // Cheating Player
+    Player p2;
+    p2.setName("CheatingStrategy");
+    CheaterPlayerStrategy cheatingStrategy(p2);
+    p2.setPlayerStrategy(cheatingStrategy);
+
+    // Benevolent Player
+    Player p3;
+    p3.setName("BenevolentStrategy");
+    BenevolentPlayerStrategy benevolentStrategy(p3);
+    p3.setPlayerStrategy(benevolentStrategy);
+
+    vector<Player*> players = { &p1, &p2, &p3 };
+
+    gameEngine.start(mapFile, players);
+
+    gameEngine.executeTurn();
+    gameEngine.executeTurn();
+    gameEngine.executeTurn();
+
+    cout << "testBenevolent" << endl;
 }
