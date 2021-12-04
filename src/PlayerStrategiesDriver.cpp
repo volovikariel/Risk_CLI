@@ -85,7 +85,7 @@ void testAggressive(GameEngine& gameEngine)
     AggressivePlayerStrategy aggressiveStrategy_1(p2);
     p2.setPlayerStrategy(aggressiveStrategy_1);
 
-    // Neutral Player
+    // Aggressive Player 2
     Player p3;
     p3.setName("AggressiveStrategy_2");
     AggressivePlayerStrategy aggressiveStrategy_2(p3);
@@ -171,15 +171,15 @@ void testHuman(GameEngine& gameEngine)
 
     // Human Player
     Player p2;
-    p2.setName("humanStrategy");
+    p2.setName("HumanStrategy");
     HumanPlayerStrategy humanStrategy(p2);
     p2.setPlayerStrategy(humanStrategy);
 
-    // Neutral Player
+    // Aggressive Player
     Player p3;
-    p3.setName("NeutralStrategy");
-    NeutralPlayerStrategy neutralStrategy(p3);
-    p3.setPlayerStrategy(neutralStrategy);
+    p3.setName("AggressiveStrategy");
+    AggressivePlayerStrategy aggressiveStrategy(p3);
+    p3.setPlayerStrategy(aggressiveStrategy);
 
     vector<Player*> players = { &p1, &p2, &p3 };
 
