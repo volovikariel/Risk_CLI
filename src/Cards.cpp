@@ -6,6 +6,16 @@
 // The one true deck, declared as extern in Cards.h
 Deck mainDeck = Deck();
 
+// Stream insertion operator for a card type
+std::ostream& operator << (std::ostream& out, const Card::Type& source)
+{
+    static const vector<std::string> types{ "Bomb", "Reinforcement", "Blockade", "Airlift", "Diplomacy" };
+
+    int typeIndex = static_cast<int>(source);
+    out << types[typeIndex];
+    return out;
+}
+
 // CARD
 // Card Default constructor
 Card::Card():
@@ -47,10 +57,7 @@ void Card::operator = (const Card& other)
 // Stream insertion operator for a card
 std::ostream& operator << (std::ostream& out, const Card& source)
 {
-    static const vector<std::string> types{ "bomb", "reinforcement", "blockade", "airlift", "diplomacy" };
-
-    int typeIndex = static_cast<int>(source.type);
-    out << "Card[TYPE=" << types[typeIndex] << "]";
+    out << "Card[TYPE=" << source.type << "]";
     return out;
 }
 

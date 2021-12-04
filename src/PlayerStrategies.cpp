@@ -3,6 +3,8 @@
 #include "Player.h"
 
 #include <algorithm>
+#include <iostream>
+#include <sstream>
 
 // Utils
 
@@ -117,6 +119,22 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
 {
     // Ask the human player which order they would like to issue
     int orderNum;
+    std::cout << endl;
+    std::cout << "You have " << player->getArmies() << " armies in reserve. You own " << player->getTerritories().size() << " territories.\n";
+
+    std::string hand = "Empty";
+    if (player->getCards()->getCards().size() > 0)
+    {
+        std::ostringstream stream;
+        for (Card* card : player->getCards()->getCards())
+        {
+            stream << card->getType() << " ";
+        }
+        hand = stream.str();
+    }
+
+    std::cout << "Your hand: " << hand << endl;
+
     std::cout<<"Please input the corresponding number to the order you would like to issue from the list below.\n";
     std::cout<<"1) Deploy\n2) Advance\n3) Bomb\n4) Blockade\n5) Airlift\n6) Negotiate\n7) End Order\n";
     std::cin>>orderNum;

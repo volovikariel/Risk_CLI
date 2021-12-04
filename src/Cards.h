@@ -26,6 +26,9 @@ public:
         Diplomacy
     };
 
+    // Stream insertion operator for Type
+    friend std::ostream& operator << (std::ostream& out, const Type& source);
+
     // Default constructor
     Card();
     // Card constructor which allows it to be instantiated with a type
