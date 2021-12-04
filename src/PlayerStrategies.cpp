@@ -755,7 +755,8 @@ vector<Territory*> CheaterPlayerStrategy::toDefend(GameEngine& gameEngine)
 //Default Constructor
 NeutralPlayerStrategy::NeutralPlayerStrategy():
     PlayerStrategy(),
-    becameAggressive(false)
+    becameAggressive(false),
+    strategiesCreated()
 {
 
 }
@@ -763,7 +764,8 @@ NeutralPlayerStrategy::NeutralPlayerStrategy():
 //Parameterized Constructor
 NeutralPlayerStrategy::NeutralPlayerStrategy(Player &player):
     PlayerStrategy(player),
-    becameAggressive(false)
+    becameAggressive(false),
+    strategiesCreated()
 {
 
 }
@@ -771,9 +773,20 @@ NeutralPlayerStrategy::NeutralPlayerStrategy(Player &player):
 //Copy Constructor
 NeutralPlayerStrategy::NeutralPlayerStrategy(NeutralPlayerStrategy &other):
     PlayerStrategy(other),
-    becameAggressive(other.becameAggressive)
+    becameAggressive(other.becameAggressive),
+    strategiesCreated(other.strategiesCreated)
 {
 
+}
+
+// Destructor
+NeutralPlayerStrategy::~NeutralPlayerStrategy()
+{
+    // Cleanup created strategies we created
+    for (PlayerStrategy* strategy : strategiesCreated)
+    {
+        delete strategy;
+    }
 }
 
 //Assignment Operator
@@ -781,6 +794,7 @@ NeutralPlayerStrategy &NeutralPlayerStrategy::operator=(const NeutralPlayerStrat
 {
     PlayerStrategy::operator=(other);
     becameAggressive = other.becameAggressive;
+    strategiesCreated = other.strategiesCreated;
     return *this;
 }
 
@@ -817,5 +831,8 @@ void NeutralPlayerStrategy::becomeAggressive()
 
         AggressivePlayerStrategy* aggressivePlayerStrategy = new AggressivePlayerStrategy(*player);
         player->setPlayerStrategy(*aggressivePlayerStrategy);
+
+        // Ensure cleanup of memory
+        strategiesCreated.push_back(aggressivePlayerStrategy);
     }
 }

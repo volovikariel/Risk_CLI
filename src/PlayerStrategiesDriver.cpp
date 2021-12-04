@@ -30,7 +30,10 @@ int main()
     gameEngine.attach(logObserver);
 
     // Launch tests
+    logObserver.appendLine("TESTING CHEATER");
     testCheater(gameEngine);
+
+    logObserver.appendLine("\n\n\n\nTESTING NEUTRAL");
     testNeutral(gameEngine);
 }
 

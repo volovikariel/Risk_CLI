@@ -119,6 +119,8 @@ public:
     NeutralPlayerStrategy(Player& player); // Parameterized Constructor
     NeutralPlayerStrategy(NeutralPlayerStrategy& other); // Copy Constructor
 
+    virtual ~NeutralPlayerStrategy(); // Destructor
+
     NeutralPlayerStrategy& operator = (const NeutralPlayerStrategy& other); // Assignment operator overloading
     friend std::ostream& operator << (std::ostream& out, const NeutralPlayerStrategy& source); // Input stream operator
 
@@ -130,4 +132,5 @@ public:
 
 private:
     bool becameAggressive;
+    vector<PlayerStrategy*> strategiesCreated;
 };

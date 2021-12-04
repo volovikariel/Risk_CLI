@@ -17,6 +17,7 @@ class ILoggable {
         friend std::ostream& operator << (std::ostream& out, const ILoggable& source);
         // String to log function whose implementation specifies what is logged to the "gamelog.txt" file
         virtual string stringToLog() = 0;
+
     private:
         // Observer copy constructor
         ILoggable(const ILoggable& other);
@@ -35,6 +36,7 @@ class Observer {
         friend std::ostream& operator << (std::ostream& out, const Observer& source);
         // Update method which signifies an update to the state was received and we will act on it (be it updating a view or in this case, writing to a file)
         virtual void update(Subject& subject) = 0;
+
     private:
         // Observer copy constructor
         Observer(const Observer& other);
@@ -79,8 +81,11 @@ class LogObserver : public Observer {
         friend std::ostream& operator << (std::ostream& out, const LogObserver& source);
         // Update method implementation inherited from Observer
         void update(Subject& subject);
+        // Writes a line to the file
+        void appendLine(const char* line);
         // Returns status of log file
         bool isOpen() const;
+
     private:
         // LogObserver copy constructor
         LogObserver(const LogObserver& other);

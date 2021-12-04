@@ -165,6 +165,14 @@ void LogObserver::update(Subject& log)
     filestream.flush();
 }
 
+// Writes a line to the file
+void LogObserver::appendLine(const char* line)
+{
+    // Write to file
+    filestream << line << endl;
+    filestream.flush();
+}
+
 // Returns status of log file
 bool LogObserver::isOpen() const
 {
