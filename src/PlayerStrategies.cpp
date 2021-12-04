@@ -310,7 +310,7 @@ Order* HumanPlayerStrategy::issueOrder(GameEngine& gameEngine)
             // check if the player has the blockade card. if they do then ask which territory to blockade
             std::cout<<"you chose Blockade\n";
             Hand* playerHand = this->player->getCards();
-            Card* cardInHand = false;
+            Card* cardInHand = nullptr;
             for (Card* card : playerHand->getCards())
             {
                 Card::Type cardType = card->getType();
