@@ -566,7 +566,7 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     // First we find the iterator of Territory with the most armies
     // We're guaranteed that this won't be owned.end() because if the player had no territories, then the player would have already lost
     vector<Territory*>::iterator it_friendly_max = max_element(ownedTerritories.begin(), ownedTerritories.end(), [&](Territory* a, Territory* b) {
-        return a->armies - b->armies > 0;
+        return a->armies < b->armies;
     });
     int index_friendly_max = distance(ownedTerritories.begin(), it_friendly_max);
     Territory* strongest_friendly_territory = ownedTerritories.at(index_friendly_max);
