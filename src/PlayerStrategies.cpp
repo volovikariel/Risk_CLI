@@ -644,23 +644,20 @@ Order* AggressivePlayerStrategy::issueOrder(GameEngine& gameEngine)
     vector<Territory*>::iterator it_friendly_max = max_element(ownedTerritories.begin(), ownedTerritories.end(), [&](Territory* a, Territory* b) {
         return a->armies < b->armies;
     });
-    int index_friendly_max = distance(ownedTerritories.begin(), it_friendly_max);
-    Territory* strongest_friendly_territory = ownedTerritories.at(index_friendly_max);
+    Territory* strongest_friendly_territory = *it_friendly_max;
 
     // --- Weakest --- //
     vector<Territory*>::iterator it_friendly_min = max_element(ownedTerritories.begin(), ownedTerritories.end(), [&](Territory* a, Territory* b) {
         return b->armies - a->armies > 0;
     });
-    int index_friendly_min = distance(ownedTerritories.begin(), it_friendly_min);
-    Territory* weakest_friendly_territory = ownedTerritories.at(index_friendly_min);
+    Territory* weakest_friendly_territory = *it_friendly_min;
 
     // --- Weakest enemy territory --- //
     vector<Territory*> enemyTerritories = toAttack(gameEngine); 
     vector<Territory*>::iterator it_enemy_min = max_element(enemyTerritories.begin(), enemyTerritories.end(), [&](Territory* a, Territory* b) {
         return b->armies - a->armies > 0;
     });
-    int index_enemy_min = distance(enemyTerritories.begin(), it_enemy_min);
-    Territory* weakest_enemy_territory = enemyTerritories.at(index_enemy_min);
+    Territory* weakest_enemy_territory = *it_enemy_min;
 
     
     // First deploy
@@ -801,7 +798,7 @@ Order* CheaterPlayerStrategy::issueOrder(GameEngine& gameEngine)
     }
 
     // Get current amount of orders, to determine which territory we will attack assuming first order will always be deploy
-    int pos = this->player->getOrders()->getOrdersList().size();
+    size_t pos = this->player->getOrders()->getOrdersList().size();
     if (pos <= territoriesToAttack.size()) {
         return new Advance(99, *this->player, *this->player->getTerritories().at(0), *territoriesToAttack.at(pos - 1),true);
         // All advance orders for all adjacent enemy territories are done so we stop issuing orders
