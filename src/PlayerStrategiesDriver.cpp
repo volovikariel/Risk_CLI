@@ -22,6 +22,9 @@ void testHuman(GameEngine& gameEngine);
 
 int main()
 {
+    // Randomize seed
+    srand(time(NULL));
+
     // Log to file
     LogObserver logObserver;
 
