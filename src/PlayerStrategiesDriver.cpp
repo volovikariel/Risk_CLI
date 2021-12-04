@@ -61,7 +61,7 @@ void testCheater(GameEngine& gameEngine)
     gameEngine.executeTurn();
     gameEngine.executeTurn();
 
-    cout << "testCheater";
+    cout << "testCheater" << endl;
 }
 
 void testAggressive(GameEngine& gameEngine)
@@ -91,7 +91,7 @@ void testAggressive(GameEngine& gameEngine)
     gameEngine.executeTurn();
     gameEngine.executeTurn();
 
-    cout << "testAggressive";
+    cout << "testAggressive" << endl;
 }
 
 void testNeutral(GameEngine& gameEngine)
@@ -121,5 +121,5 @@ void testNeutral(GameEngine& gameEngine)
     gameEngine.executeTurn();
     gameEngine.executeTurn();
 
-    cout << "testNeutral";
+    cout << "testNeutral" << endl;
 }
