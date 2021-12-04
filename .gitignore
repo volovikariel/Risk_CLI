@@ -37,3 +37,7 @@
 /.vs
 /out
 /dist/gamelog.txt
+/src/gamelog.txt
+
+# Mac
+.DS_Store
