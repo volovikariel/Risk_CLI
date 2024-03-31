@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.11...3.29)
+set(CMAKE_CXX_STANDARD 14)
 
-project(Warzone)
+project(Warzone VERSION 1.0
+                DESCRIPTION "A Risk game simulator that runs in the terminal"
+                LANGUAGES CXX)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/dist CACHE PATH ${CMAKE_SOURCE_DIR}/dist FORCE)
 
