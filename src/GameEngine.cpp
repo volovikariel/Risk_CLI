@@ -283,7 +283,7 @@ bool GameEngine::executeCommand(Command& command)
             if (numStrategies < 2 || numStrategies > 4)
             {
                 std::ostringstream stream;
-                stream << "Must have between 1 and 5 strategies, got: " << numStrategies;
+                stream << "Must have between 2 and 4 strategies, got: " << numStrategies;
 
                 command.saveEffect(stream.str());
                 return false;

@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.11...3.29)
+set(CMAKE_CXX_STANDARD 14)
 
-project(Warzone)
-
-set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/dist CACHE PATH ${CMAKE_SOURCE_DIR}/dist FORCE)
+project(Warzone VERSION 1.0
+                DESCRIPTION "A Risk game simulator that runs in the terminal"
+                LANGUAGES CXX)
 
 if(WIN32)
     set(CMAKE_CONFIGURATION_TYPES "Debug" CACHE STRING "Debug" FORCE)
@@ -11,9 +11,10 @@ endif()
 
 add_executable(Warzone_PlayerStrategies src/CommandProcessing.cpp src/Cards.cpp src/GameEngine.cpp src/LoggingObserver.cpp src/Map.cpp src/Orders.cpp src/Player.cpp src/PlayerStrategies.cpp src/PlayerStrategiesDriver.cpp)
 add_executable(Warzone_Tournament src/CommandProcessing.cpp src/Cards.cpp src/GameEngine.cpp src/LoggingObserver.cpp src/Map.cpp src/Orders.cpp src/Player.cpp src/PlayerStrategies.cpp src/TournamentDriver.cpp)
+
 list(APPEND BIN Warzone_PlayerStrategies)
 list(APPEND BIN Warzone_Tournament)
-
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/dist CACHE PATH ${CMAKE_SOURCE_DIR}/dist FORCE)
 install(TARGETS ${BIN} DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Enable all compiler warnings
