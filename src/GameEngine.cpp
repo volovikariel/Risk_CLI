@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <random>
 #include <sstream>
 #include <cmath>
 
@@ -563,7 +564,7 @@ bool GameEngine::executeCommand(Command& command)
             }
 
             // Shuffle in a random manner the order of players
-            std::random_shuffle(players.begin(), players.end());
+            std::shuffle(players.begin(), players.end(), std::default_random_engine());
 
             // Gives the players 50 armies
             for (Player* player : players)
@@ -604,6 +605,14 @@ bool GameEngine::executeCommand(Command& command)
             command.saveEffect("Quitting game");
 
             return transition(Transition::Quit);
+        }
+        case Command::Type::NumTypes:
+        {
+            break;
+        }
+        case Command::Type::Invalid:
+        {
+            break;
         }
     }
 

@@ -33,7 +33,7 @@ public:
 
     Order();                                                            // Default Constructor
     Order(const Order& other);                                          // Copy Constructor
-    ~Order();                                                           // Destructor
+    virtual ~Order();                                                           // Destructor
     explicit Order(const Type orderType);                               // Parameterized Constructor to define the type of Order
     Type getType() const;                                               // Getter for the order type
     Order& operator = (const Order& other);                             // Assignment operator overloading

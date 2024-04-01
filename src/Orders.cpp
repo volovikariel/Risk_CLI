@@ -252,6 +252,10 @@ void OrdersList::deepCopy(const vector<Order*>& orderList)
                 this->orderList.push_back(new Negotiate(*static_cast<const Negotiate*>(order)));
                 break;
             }
+            case (Order::Type::Order):
+            {
+                break;
+            }
         }
     }
 }
