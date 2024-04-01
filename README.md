@@ -5,8 +5,7 @@ Ensure that `cmake` is installed.
 mkdir build &&
 cd build &&
 cmake .. &&
-cmake --build . &&
-cmake --install .
+cmake --build . --target install
 ```
 
 In the `dist` directory, you will now have binaries called `Warzone_PlayerStrategies` and `Warzone_Tournament`. The `Warzone_PlayerStrategies` binary puts the user in a pre-configured game. Whereas the `Warzone_Tournament` binary allows for entirely custom games and tournaments to be played.
