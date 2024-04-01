@@ -1,3 +1,11 @@
+## Demos
+### Tournament
+https://github.com/volovikariel/Risk_CLI/assets/16262535/bea742a6-136b-4e29-a23a-eec5f8591e10
+
+
+### PlayerStrategies
+https://github.com/volovikariel/Risk_CLI/assets/16262535/4656d308-46fe-4a32-b444-2494942031c1
+
 ## Building
 Ensure that `cmake` is installed.
 
