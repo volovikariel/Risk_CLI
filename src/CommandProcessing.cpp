@@ -166,7 +166,7 @@ Command::~Command()
 {
     if (data != nullptr)
     {
-        delete data;
+        delete reinterpret_cast<TournamentCommandData*>(data);
     }
 }
 

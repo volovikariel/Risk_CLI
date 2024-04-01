@@ -20,7 +20,7 @@ public:
     PlayerStrategy(); // Default Constructor
     PlayerStrategy(Player& player); // Parametrized Constructor
     PlayerStrategy(PlayerStrategy& other); // Copy Constructor
-
+    virtual ~PlayerStrategy() = default; // Destructor
     PlayerStrategy& operator = (const PlayerStrategy& other); // Assignment operator overloading
     friend std::ostream& operator << (std::ostream& out, const PlayerStrategy& source); // Input stream operator
 

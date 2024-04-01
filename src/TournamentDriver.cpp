@@ -79,6 +79,23 @@ int main()
                 std::cout << "Command execution failed:" << std::endl;
             }
             std::cout << *command << std::endl;
+
+            if (success && command->getType() == Command::Type::GameStart) {
+                const std::vector<Player*> players = gameEngine.getPlayers();
+                std::vector<PlayerStrategy*> strategies;
+
+                // Assign strategies
+                for (Player* player : players) {
+                    PlayerStrategy* strategy = new HumanPlayerStrategy(*player);
+                    strategies.push_back(strategy);
+                    player->setPlayerStrategy(*strategy);
+                }
+                gameEngine.mainGameLoop();
+
+                for (PlayerStrategy* strategy : strategies) {
+                    delete strategy;
+                }
+            }
         }
     }
 }
